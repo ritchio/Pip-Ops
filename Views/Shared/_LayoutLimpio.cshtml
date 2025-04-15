@@ -1,0 +1,97 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>@ViewBag.titulo</title>
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link href="~/lib/jsvectormap/dist/jsvectormap.css?1744111186" rel="stylesheet" />
+    <!-- END PAGE LEVEL STYLES -->
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="/css/tabler.min.css?1744111186" rel="stylesheet" integrity="sha384-pAQE2kJ68M5BfDVCRPdGdaXrZagu/B50dMc4ukkjzgoAyoY+U92JUlEG9N8NsMZh" />
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <!-- BEGIN PLUGINS STYLES -->
+    <link href="/css/tabler-flags.min.css?1744111186"
+          rel="stylesheet"
+          integrity="sha384-J4S9gTOgB6a60d8OIMRu7vveDJCqxLAcDfzDN24CQxXmfi1iIFoU3uelSShCMfAD" />
+    <link href="/css/tabler-socials.min.css?1744111186"
+          rel="stylesheet"
+          integrity="sha384-M/p2rVRhhVGWQaE5KAPB4+/uWqFtmb6ag3/NXG8E3SL2MAROPCfB5YJvDHmS5Rms" />
+    <link href="/css/tabler-payments.min.css?1744111186"
+          rel="stylesheet"
+          integrity="sha384-YnhOMEPyU5QfErzSK9sD18FMXdRCn/HB4a+88mFXbd45fFRNWKWeARptNw1k16+/" />
+    <link href="/css/tabler-vendors.min.css?1744111186"
+          rel="stylesheet"
+          integrity="sha384-cFz/XfWTmyCb5jkPFO3b51Vgc16vyrRzL3LLD2Ah7yFnpVjxN6nalaCc02Xg2vh4" />
+    <link href="/css/tabler-marketing.min.css?1744111186"
+          rel="stylesheet"
+          integrity="sha384-/IK/eDAkWg4gzAdp6tVmpjq6GEQGamdwbnfsuK0PNDDQPsD9ytW0gIXSK/dZWgAK" />
+    <link href="/css/tabler-themes.min.css?1744111186"
+          rel="stylesheet"
+          integrity="sha384-Bj8pP2O3iJP6JH/ZdDBnxIH/3XOJF8DSyYUUHs8wTxb0PRUe5DU01llAmog5ybpg" />
+    <!-- END PLUGINS STYLES -->
+    <!-- BEGIN DEMO STYLES -->
+    <!--link href="./preview/css/demo.min.css?1744111186" rel="stylesheet" integrity="sha384-BUDq2P684xwRBf0GDlySvob+KJg4ko8y2K7njgvYBscmEuqoVVqJ75zcTDozwkFA" />
+    <!-- END DEMO STYLES -->
+    <!-- BEGIN CUSTOM FONT -->
+    <link href="https://rsms.me/inter/inter.css" rel="stylesheet">
+    <!-- END CUSTOM FONT -->
+</head>
+<body>
+    <!-- BEGIN GLOBAL THEME SCRIPT -->
+    <script src="~/js/tabler-theme.min.js?1744111186" integrity="sha384-xCA/37z74Ws4TlN18VkTDQ/T5bWJpvhV8k5y5Qp8qMKqKMHSHdAOcQ9qGPn0pUJj"></script>
+    <!-- END GLOBAL THEME SCRIPT -->
+    <div class="page">
+        <div class="page-wrapper">
+            <!-- BEGIN PAGE BODY -->
+            <div class="page-body">
+                <div class="container-xl">
+                    <div class="row row-deck row-cards">
+
+                        @RenderBody()
+
+                    </div>
+                </div>
+            </div>
+            <!-- END PAGE BODY -->
+            <!--  BEGIN FOOTER  -->
+            <footer class="footer footer-transparent d-print-none">
+                <div class="container-xl">
+                    <div class="row text-center align-items-center flex-row-reverse">
+                        &copy; 2025 - HelpDesk - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    </div>
+                </div>
+            </footer>
+            <!--  END FOOTER  -->
+        </div>
+
+        @* <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+ *@
+        @*     <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - HelpDesk - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer> *@
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        @await RenderSectionAsync("Scripts", required: false)
+
+    </div>
+
+    <!-- BEGIN PAGE LIBRARIES -->
+    <script src="~/lib/apexcharts/dist/apexcharts.min.js?1744111186" defer></script>
+    <script src="~/lib/jsvectormap/dist/jsvectormap.min.js?1744111186" defer></script>
+    <script src="~/lib/jsvectormap/dist/maps/world.js?1744111186" defer></script>
+    <script src="~/lib/jsvectormap/dist/maps/world-merc.js?1744111186" defer></script>
+    <!-- END PAGE LIBRARIES -->
+    <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
+    <script src="~/dist/js/tabler.min.js?1744111186" defer integrity="sha384-uSpys8fjyVTPrXxPMi+NhnEMIp1YSGFZSCDrRHjYIUVdInIvlHft8JHLm6Oiw3vA"></script>
+    <!-- END GLOBAL MANDATORY SCRIPTS -->
+</body>
+</html>
