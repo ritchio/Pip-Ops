@@ -8,10 +8,10 @@ namespace HelpDesk.Controllers
     public class AccesoController : Controller
     {
 
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<Cat_Usuario> _signInManager;
+        private readonly UserManager<Cat_Usuario> _userManager;
 
-        public AccesoController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+        public AccesoController(SignInManager<Cat_Usuario> signInManager, UserManager<Cat_Usuario> userManager)
         {
             _signInManager = signInManager;
             _userManager = userManager;

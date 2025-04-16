@@ -1,0 +1,49 @@
+﻿@using HelpDesk.Models.ViewModels
+@model IEnumerable<CatAreaViewModel>
+
+@{
+    ViewData["Title"] = "Plazas / Áreas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="row">
+    <div class="col-8">
+        
+        <h2 class="page-title">Plazas / Áreas</h2>
+        <div class="page-pretitle">Creación y gestión de plazas y áreas</div>
+    </div>
+    <div class="col-4 justify-content-end d-flex">
+        <a asp-action="Crear" class="btn btn-primary">Nueva plaza / área</a>
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Estado)
+            </th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Estado)
+            </td>
+            <td>
+                <a asp-action="Editar" asp-route-id="@item.IdArea" class="btn btn-primary"><i class="ti ti-edit"></i></a> |
+                    <a asp-action="Eliminar" asp-route-id="@item.IdArea" class="btn btn-danger"><i class="ti ti-trash"></i></a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
