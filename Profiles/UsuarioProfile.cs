@@ -9,11 +9,11 @@ namespace HelpDesk.Profiles
         public UsuarioProfile()
         {
             // De entidad a ViewModel
-            CreateMap<ApplicationUser, AspNetUsersViewModel>()
+            CreateMap<Cat_Usuario, AspNetUsersViewModel>()
                 .ForMember(dest => dest.CorreoElectronico, opt => opt.MapFrom(src => src.Email));
 
             // De ViewModel a entidad (si necesitas guardar/actualizar datos desde el ViewModel)
-            CreateMap<AspNetUsersViewModel, ApplicationUser>()
+            CreateMap<AspNetUsersViewModel, Cat_Usuario>()
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.CorreoElectronico));
         }
     }

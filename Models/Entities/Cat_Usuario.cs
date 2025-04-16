@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HelpDesk.Models.Entities
 {
-    public class ApplicationUser : IdentityUser
+    public class Cat_Usuario : IdentityUser
     {
         // Datos personales
         public required string PrimerNombre { get; set; }
@@ -21,5 +21,9 @@ namespace HelpDesk.Models.Entities
 
         [ForeignKey("IdPlaza")]
         public virtual Cat_Plaza? Plaza { get; set; }
+
+        //public virtual ICollection<Rel_UsuarioArea> UsuarioAreas { get; set; }
+        //public virtual ICollection<Rel_UsuarioRol> UsuarioRoles { get; set; }
+        //public virtual ICollection<Rel_UsuarioPermiso> UsuarioPermisos { get; set; }
     }
 }

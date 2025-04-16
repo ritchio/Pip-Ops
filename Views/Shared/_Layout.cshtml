@@ -1,10 +1,17 @@
-﻿<!doctype html>
+﻿ @{  
+   if (ViewData["titulo"] == null)  
+   {  
+       ViewData["titulo"] = "HelpDesk";  
+   }  
+}  
+
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>@ViewBag.titulo</title>
+    <title>@ViewData["titulo"]</title>
     <!-- BEGIN PAGE LEVEL STYLES -->
     <link href="~/lib/jsvectormap/dist/jsvectormap.css?1744111186" rel="stylesheet" />
     <!-- END PAGE LEVEL STYLES -->
@@ -51,66 +58,7 @@
         <partial name="_NavBar" />
       <!-- END NAVBAR  -->
         <div class="page-wrapper">
-            <!-- BEGIN PAGE HEADER -->
-            <div class="page-header d-print-none">
-                <div class="container-xl">
-                    <div class="row g-2 align-items-center">
-                        <div class="col">
-                            <!-- Page pre-title -->
-                            <div class="page-pretitle">Overview</div>
-                            <h2 class="page-title">Combo layout</h2>
-                        </div>
-                        <!-- Page title actions -->
-                        <div class="col-auto ms-auto d-print-none">
-                            <div class="btn-list">
-                                <span class="d-none d-sm-inline">
-                                    <a href="#" class="btn btn-1"> New view </a>
-                                </span>
-                                <a href="#" class="btn btn-primary btn-5 d-none d-sm-inline-block" data-bs-toggle="modal" data-bs-target="#modal-report">
-                                    <!-- Download SVG icon from http://tabler.io/icons/icon/plus -->
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                         width="24"
-                                         height="24"
-                                         viewBox="0 0 24 24"
-                                         fill="none"
-                                         stroke="currentColor"
-                                         stroke-width="2"
-                                         stroke-linecap="round"
-                                         stroke-linejoin="round"
-                                         class="icon icon-2">
-                                        <path d="M12 5l0 14" />
-                                        <path d="M5 12l14 0" />
-                                    </svg>
-                                    Create new report
-                                </a>
-                                <a href="#"
-                                   class="btn btn-primary btn-6 d-sm-none btn-icon"
-                                   data-bs-toggle="modal"
-                                   data-bs-target="#modal-report"
-                                   aria-label="Create new report">
-                                    <!-- Download SVG icon from http://tabler.io/icons/icon/plus -->
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                         width="24"
-                                         height="24"
-                                         viewBox="0 0 24 24"
-                                         fill="none"
-                                         stroke="currentColor"
-                                         stroke-width="2"
-                                         stroke-linecap="round"
-                                         stroke-linejoin="round"
-                                         class="icon icon-2">
-                                        <path d="M12 5l0 14" />
-                                        <path d="M5 12l14 0" />
-                                    </svg>
-                                </a>
-                            </div>
-                            <!-- BEGIN MODAL -->
-                            <!-- END MODAL -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- END PAGE HEADER -->
+
             <!-- BEGIN PAGE BODY -->
             <div class="page-body">
                 <div class="container-xl">
@@ -133,19 +81,8 @@
             <!--  END FOOTER  -->
         </div>
 
-    @* <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
- *@
-@*     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - HelpDesk - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer> *@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 
@@ -158,7 +95,34 @@
     <script src="~/lib/jsvectormap/dist/maps/world-merc.js?1744111186" defer></script>
     <!-- END PAGE LIBRARIES -->
     <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
-    <script src="~/dist/js/tabler.min.js?1744111186" defer integrity="sha384-uSpys8fjyVTPrXxPMi+NhnEMIp1YSGFZSCDrRHjYIUVdInIvlHft8JHLm6Oiw3vA"></script>
+    @* <script src="~/js/tabler.min.js"  integrity="sha384-uSpys8fjyVTPrXxPMi+NhnEMIp1YSGFZSCDrRHjYIUVdInIvlHft8JHLm6Oiw3vA"></script> *@
+    <script>
+
+
+        @if (TempData["Notificacion"] != null)
+        {
+            var json = System.Text.Json.JsonSerializer.Serialize(TempData["Notificacion"]);
+            <text>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        mostrarNotificacion(@Html.Raw(json))
+                    });
+            </text>
+        }
+    </script>
     <!-- END GLOBAL MANDATORY SCRIPTS -->
+    <!-- Notificaciones -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div class="toast" id="toastExito" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+            
+            <div class="toast-header">
+                
+                <strong class="me-auto" id="toastExito">Notificación</strong>
+
+                <button type="button" class="ms-2 btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toastMensaje">Mensaje.</div>
+        </div>
+
+    </div>
 </body>
 </html>

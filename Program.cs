@@ -1,9 +1,15 @@
+#region  [ Usings ]
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using HelpDesk.Data;
 using HelpDesk.Services.Usuario.Interfaces;
 using HelpDesk.Services.Usuario.Services;
 using HelpDesk.Models.Entities;
+using HelpDesk.Services.Plaza.Services;
+using HelpDesk.Services.Plaza.Interfaces;
+using HelpDesk.Services.Area.Interfaces;
+using HelpDesk.Services.Area.Services;
+#endregion [ Usings ]
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,12 +21,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     );
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<Cat_Usuario>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
+#region [ Servicios ]
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddScoped<IPlazaService, PlazaService>();
+builder.Services.AddScoped<IAreaService, AreaService>();
+#endregion [ Servicios ]
+
 
 builder.Services.AddAutoMapper(typeof(Program)); 
 
@@ -50,5 +61,17 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+#region [ Configuracion inicial ]
+//// Inicializar la base de datos y los roles
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
+//    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+//    await IdentityDataInitializer.SeedRolesAsync(roleManager);
+//}
+
+#endregion [ Configuracion inicial ]
+
 
 app.Run();

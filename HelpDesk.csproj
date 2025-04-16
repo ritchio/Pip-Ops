@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\Entities\Rel_RolPermiso.cs" />
+    <Compile Remove="Models\Entities\Rel_UsuarioArea.cs" />
+    <Compile Remove="Models\Entities\Rel_UsuarioPermiso.cs" />
+    <Compile Remove="Models\Entities\Rel_UsuarioRol.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.14" />

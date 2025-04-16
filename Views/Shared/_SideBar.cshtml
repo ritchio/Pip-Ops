@@ -288,10 +288,25 @@
                    </a>
                    <div class="dropdown-menu">
                        <div class="dropdown-menu-columns">
-                           <a class="dropdown-item" asp-controller="CatalogoUsuarios" asp-action="Index">
-                                <i class="ti ti-users-group"></i>
-                               Catálogo de usuarios
-                           </a>
+
+                            <div class="dropdown-menu-column">
+
+                                <a class="dropdown-item" asp-controller="CatalogoUsuarios" asp-action="Index">
+                                    <i class="ti ti-users-group"></i>
+                                    Catálogo de usuarios
+                                </a>
+
+                                <a class="dropdown-item" asp-controller="CatalogoPlazas" asp-action="Index">
+                                    <i class="ti ti-building-store"></i>
+                                    Catálogo de plazas / <wbr />áreas
+                                </a>
+
+                                <a class="dropdown-item" asp-controller="CatalogoAreas" asp-action="Index">
+                                    <i class="ti ti-building-store"></i>
+                                    Catálogo de areas
+                                </a>
+                            </div>
+
                        </div>
                    </div>
                 </li>
