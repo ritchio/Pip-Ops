@@ -11,6 +11,7 @@ using HelpDesk.Services.Usuario.Interfaces;
 using HelpDesk.Services.Usuario.Services;
 using HelpDesk.Models.Entities;
 using HelpDesk.Models.Utils;
+using System.Text.Json;
 
 namespace HelpDesk.Controllers
 {
@@ -124,13 +125,17 @@ namespace HelpDesk.Controllers
 
                     if (response != null)
                     {
-                        TempData["Notificacion"] = new RespuestaGenerica
+                        TempData["Notificacion"] = JsonSerializer.Serialize(new RespuestaGenerica
                         {
                             Exito = true,
                             Mensaje = "Usuario actualizado con éxito.",
-                        };
+                        });
                     }
-
+                    TempData["Notificacion"] = JsonSerializer.Serialize(new RespuestaGenerica
+                    {
+                        Exito = true,
+                        Mensaje = "Usuario actualizado con éxito.",
+                    });
                     return View(response);
                 }
                 catch (DbUpdateConcurrencyException)
