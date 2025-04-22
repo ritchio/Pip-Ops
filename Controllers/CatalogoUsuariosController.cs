@@ -125,13 +125,13 @@ namespace HelpDesk.Controllers
 
                     if (response != null)
                     {
-                        TempData["Notificacion"] = JsonSerializer.Serialize(new RespuestaGenerica
+                        TempData["Notificacion"] = JsonSerializer.Serialize(new RespuestaGenerica<string>
                         {
                             Exito = true,
                             Mensaje = "Usuario actualizado con éxito.",
                         });
                     }
-                    TempData["Notificacion"] = JsonSerializer.Serialize(new RespuestaGenerica
+                    TempData["Notificacion"] = JsonSerializer.Serialize(new RespuestaGenerica<string>
                     {
                         Exito = true,
                         Mensaje = "Usuario actualizado con éxito.",

@@ -1,0 +1,39 @@
+﻿@model HelpDesk.Models.ViewModels.CatPlazaAreaViewModel
+
+<div class="modal-header">
+    <h5 class="modal-title">Editar Área</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <div class="col-md-12">
+        <form asp-controller="CatalogoAreas" asp-action="Editar">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Area.IdArea" />
+            <div class="form-group">
+                <label asp-for="Area.Nombre" class="control-label"></label>
+                <input asp-for="Area.Nombre" class="form-control" />
+                <span asp-validation-for="Area.Nombre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="Area.IdPlaza" class="control-label">Seleccione una Plaza</label>
+                <select asp-for="Area.IdPlaza" class="form-control" asp-items="@(new SelectList(Model.CatalogoPlazas, "IdPlaza", "Nombre"))">
+                    <option value="">-- Seleccione una Plaza --</option>
+                </select>
+                <span asp-validation-for="Area.IdPlaza" class="text-danger"></span>
+            </div>
+
+           
+            <div class="form-group mt-4">
+                <input type="submit" value="Guardar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <a asp-controller="CatalogoPlazas" asp-action="Index" class="btn btn-danger">Cancelar</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

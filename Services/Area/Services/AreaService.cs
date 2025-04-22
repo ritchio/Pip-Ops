@@ -27,7 +27,9 @@ namespace HelpDesk.Services.Area.Services
                     IdArea = p.IdArea,
                     Nombre = p.Nombre,
                     Activo = p.Activo,
-                    Estado = p.Activo.HasValue && p.Activo.Value ? "Activo" : "Inactivo"
+                    Estado = p.Activo? "Activo" : "Inactivo",
+                    IdPlaza = p.IdPlaza,
+                    NombrePlaza = p.Plaza.Nombre
                 }).ToList();
             }
             catch (Exception ex)
@@ -46,7 +48,8 @@ namespace HelpDesk.Services.Area.Services
                 IdArea = Area.IdArea,
                 Nombre = Area.Nombre,
                 Activo = Area.Activo,
-                Estado = Area.Activo.HasValue && Area.Activo.Value ? "Activo" : "Inactivo"
+                Estado = Area.Activo? "Activo" : "Inactivo",
+                IdPlaza = Area.IdPlaza
             };
         }
 
@@ -57,7 +60,8 @@ namespace HelpDesk.Services.Area.Services
                 var entity = new Cat_Area
                 {
                     Nombre = Area.Nombre,
-                    Activo = Area.Activo
+                    Activo = true,
+                    IdPlaza = Area.IdPlaza
                 };
 
                 _context.Cat_Area.Add(entity);
@@ -78,7 +82,7 @@ namespace HelpDesk.Services.Area.Services
                 if (entity == null) return false;
 
                 entity.Nombre = Area.Nombre;
-                entity.Activo = Area.Activo;
+                entity.IdPlaza = Area.IdPlaza;
 
                 _context.Cat_Area.Update(entity);
                 await _context.SaveChangesAsync();
@@ -90,16 +94,17 @@ namespace HelpDesk.Services.Area.Services
             }
         }
 
-        public async Task<bool> EliminarAreaAsync(int id)
+        public async Task<bool> CambiarEstadoAreaAsync(int id)
         {
             try
             {
                 var entity = await _context.Cat_Area.FindAsync(id);
                 if (entity == null) return false;
 
-                _context.Cat_Area.Remove(entity);
+                entity.Activo = !entity.Activo;
+                _context.Cat_Area.Update(entity);
                 await _context.SaveChangesAsync();
-                return true;
+                return entity.Activo;
             }
             catch
             {

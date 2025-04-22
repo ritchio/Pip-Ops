@@ -9,22 +9,41 @@ using HelpDesk.Data;
 using HelpDesk.Models.Entities;
 using HelpDesk.Models.ViewModels;
 using HelpDesk.Services.Plaza.Interfaces;
+using HelpDesk.Services.Area.Interfaces;
+using HelpDesk.Models.Utils;
 
 namespace HelpDesk.Controllers
 {
     public class CatalogoPlazasController : Controller
     {
+        #region [ Atributos ]
         private readonly IPlazaService _plazaService;
+        private readonly IAreaService _areaService;
+        #endregion [ Atributos ]
 
-        public CatalogoPlazasController(IPlazaService plazaService)
+        #region [ Constructor ]
+
+        public CatalogoPlazasController(
+            IPlazaService plazaService,
+            IAreaService areaService)
         {
             _plazaService = plazaService;
+            _areaService = areaService;
         }
 
+        #endregion [ Constructor ]
         public async Task<IActionResult> Index()
         {
             var plazasViewModel = await _plazaService.ObtenerPlazasAsync();
-            return View(plazasViewModel);
+            var areasViewModel = await _areaService.ObtenerAreasAsync();
+
+            var viewModel = new CatPlazasAreasViewModel
+            {
+                Plazas = plazasViewModel,
+                Areas = areasViewModel
+            };
+
+            return View(viewModel);
         }
 
         public async Task<IActionResult> Detalles(int? id)
@@ -37,9 +56,20 @@ namespace HelpDesk.Controllers
             return View(plaza);
         }
 
-        public IActionResult Crear()
+        public async Task<IActionResult> Crear()
         {
-            return View();
+            var model = new CatPlazaAreaViewModel();
+
+            var catalogoPlazas = await _plazaService.ObtenerPlazasAsync();
+
+            model.CatalogoPlazas = catalogoPlazas.Where(p => p.Activo == true).ToList();
+
+            var respuesta = new RespuestaGenerica<string>
+            {
+                Exito = true,
+                Datos = this.RenderizarVista("_Crear", model, true)
+            };
+            return Ok(respuesta);
         }
 
         [HttpPost]
@@ -60,7 +90,13 @@ namespace HelpDesk.Controllers
             var plaza = await _plazaService.ObtenerPlazaPorIdAsync(id.Value);
             if (plaza == null) return NotFound();
 
-            return View(plaza);
+            var respuesta = new RespuestaGenerica<string>
+            {
+                Exito = true,
+                Datos = this.RenderizarVista("_Editar", plaza, true)
+            };
+
+            return Ok(respuesta);
         }
 
         [HttpPost]
@@ -77,24 +113,21 @@ namespace HelpDesk.Controllers
             return View(plaza);
         }
 
-        public async Task<IActionResult> Eliminar(int? id)
+        public async Task<IActionResult> CambiarEstado(int? id)
         {
             if (id == null) return NotFound();
 
-            var plaza = await _plazaService.ObtenerPlazaPorIdAsync(id.Value);
-            if (plaza == null) return NotFound();
+            var plaza = await _plazaService.CambiarEstadoPlazaAsync(id.Value);
 
-            return View(plaza);
+            var respuesta = new RespuestaGenerica<string> {
+                Exito = true,
+                Mensaje = "Estatus de la plaza cambiado con éxito.",
+                Datos = plaza?"Activo":"Inactivo"
+            };
+
+            return Ok(respuesta);
         }
 
-        [HttpPost, ActionName("Eliminar")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EliminarConfirmado(int id)
-        {
-            var success = await _plazaService.EliminarPlazaAsync(id);
-            if (success) return RedirectToAction(nameof(Index));
-
-            return NotFound();
-        }
     }
+    
 }
