@@ -27,7 +27,7 @@ namespace HelpDesk.Services.Plaza.Services
                     IdPlaza = p.IdPlaza,
                     Nombre = p.Nombre,
                     Activo = p.Activo,
-                    Estado = p.Activo.HasValue && p.Activo.Value ? "Activo" : "Inactivo"
+                    Estado = p.Activo? "Activo" : "Inactivo"
                 }).ToList();
             }
             catch (Exception ex)
@@ -46,7 +46,7 @@ namespace HelpDesk.Services.Plaza.Services
                 IdPlaza = plaza.IdPlaza,
                 Nombre = plaza.Nombre,
                 Activo = plaza.Activo,
-                Estado = plaza.Activo.HasValue && plaza.Activo.Value ? "Activo" : "Inactivo"
+                Estado = plaza.Activo? "Activo" : "Inactivo"
             };
         }
 
@@ -57,7 +57,7 @@ namespace HelpDesk.Services.Plaza.Services
                 var entity = new Cat_Plaza
                 {
                     Nombre = plaza.Nombre,
-                    Activo = plaza.Activo
+                    Activo = true
                 };
 
                 _context.Cat_Plaza.Add(entity);
@@ -78,7 +78,6 @@ namespace HelpDesk.Services.Plaza.Services
                 if (entity == null) return false;
 
                 entity.Nombre = plaza.Nombre;
-                entity.Activo = plaza.Activo;
 
                 _context.Cat_Plaza.Update(entity);
                 await _context.SaveChangesAsync();
@@ -90,16 +89,16 @@ namespace HelpDesk.Services.Plaza.Services
             }
         }
 
-        public async Task<bool> EliminarPlazaAsync(int id)
+        public async Task<bool> CambiarEstadoPlazaAsync(int id)
         {
             try
             {
                 var entity = await _context.Cat_Plaza.FindAsync(id);
                 if (entity == null) return false;
-
-                _context.Cat_Plaza.Remove(entity);
+                entity.Activo = !entity.Activo;
+                _context.Cat_Plaza.Update(entity);
                 await _context.SaveChangesAsync();
-                return true;
+                return entity.Activo;
             }
             catch
             {

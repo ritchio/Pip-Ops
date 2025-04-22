@@ -1,12 +1,10 @@
 ﻿@using HelpDesk.Models.ViewModels
-@model IEnumerable<CatPlazaViewModel>
+@model HelpDesk.Models.ViewModels.CatPlazasAreasViewModel
 
 @{
     ViewData["Title"] = "Plazas / Áreas";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-
 
 <div class="row">
     <div class="col-8">
@@ -15,35 +13,103 @@
         <div class="page-pretitle">Creación y gestión de plazas y áreas</div>
     </div>
     <div class="col-4 justify-content-end d-flex">
-        <a asp-action="Crear" class="btn btn-primary">Nueva plaza / área</a>
+        <button onclick="nuevoRegistro()" class="btn btn-primary">Nueva plaza / área</button>
     </div>
 </div>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nombre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Estado)
-            </th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Estado)
-            </td>
-            <td>
-                <a asp-action="Editar" asp-route-id="@item.IdPlaza" class="btn btn-primary"><i class="ti ti-edit"></i></a> |
-                    <a asp-action="Eliminar" asp-route-id="@item.IdPlaza" class="btn btn-danger"><i class="ti ti-trash"></i></a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="col-lg-6">
+    <div class="card">
+        <div class="card-header">
+           <h4>Plazas</h4>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Plazas.First().Nombre)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Plazas.First().Estado)
+                        </th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+            @foreach (var item in Model.Plazas) {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IdPlaza)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Nombre)
+                        </td>
+                        <td id="plazaEstado_@item.IdPlaza">
+                            @Html.DisplayFor(modelItem => item.Estado)
+                        </td>
+                        <td>
+                                <button id="botonEstadoPlaza_@item.IdPlaza" type="button" onclick="desactivarPlaza(@item.IdPlaza)" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva la plaza">
+                                    <i class="ti ti-square-@(item.Activo.HasValue ? (item.Activo.Value ? "x" : "check") : "x")"></i>
+                                </button>
+                                <button type="button" onclick="obtenerPlazaPorId(@item.IdPlaza)" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite la edición de la plaza"><i class="ti ti-edit"></i></button>
+                        </td>
+                    </tr>
+            }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-6">
+    <div class="card">
+        <div class="card-header">
+            <h4>Áreas</h4>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            #
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Areas.First().Nombre)
+                        </th>
+                        <th>Pertenece a</th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Areas.First().Estado)
+                        </th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Areas)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.IdArea)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Nombre)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.NombrePlaza)
+                            </td>
+                            <td id="areaEstado_@item.IdArea">
+                                @Html.DisplayFor(modelItem => item.Estado)
+                            </td>
+                            <td>
+                                <button id="botonEstadoArea_@item.IdArea" type="button" onclick="desactivarArea(@item.IdArea)" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva el área">
+                                    <i class="ti ti-square-@(item.Activo.HasValue ? (item.Activo.Value ? "x" : "check") : "x")"></i>
+                                </button>
+                                <button type="button" onclick="obtenerAreaPorId(@item.IdArea)" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite la edicion del área"><i class="ti ti-edit"></i></button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="~/js/CatalogoPlazas/index.js"></script>

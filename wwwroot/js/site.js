@@ -10,25 +10,38 @@ function mostrarNotificacion(respuesta) {
     }
 
 
-    if (respuesta.Exito) {
-        $("#toastMensaje").text(respuesta.Mensaje || 'Operación exitosa');
+    if (respuesta.exito) {
+        $("#notificacionMensaje").text(respuesta.mensaje || 'Operación exitosa');
     } else {
-        $("#toastMensaje").text(respuesta.Mensaje || 'Ocurrió un error');
+        $("#notificacionMensaje").text(respuesta.mensaje || 'Ocurrió un error');
     }
 
     // Detalles
-    if (respuesta.Datos) {
-        $("#toastMensaje").text(respuesta.datos);
+    if (respuesta.datos) {
+        $("#notificaionMensaje").text(respuesta.datos);
     }
 
-    const toastEl = document.getElementById('toastExito');
+    const toastEl = document.getElementById('notificacionToast');
     const toast = new bootstrap.Toast(toastEl); 
     toast.show(); //
 
     // Redirigir si hay URL
-    if (respuesta.Redireccion) {
+    if (respuesta.redireccion) {
         setTimeout(() => {
-            window.location.href = respuesta.Redireccion;
+            window.location.href = respuesta.redireccion;
         }, 2000);
     }
 }
+
+function mostrarModalGenerico(html) {
+    if (html != null) {
+        $("#modalGenericoCuerpo").html(html);
+        $("#modalGenerico").modal("show");
+    }
+    
+}
+// tooltips
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+})

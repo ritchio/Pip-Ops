@@ -11,9 +11,14 @@ namespace HelpDesk.Models.Entities
 
         public required string Nombre { get; set; }
 
-        public bool? Activo { get; set; }
+        public bool Activo { get; set; }
 
-        //public virtual ICollection<Rel_UsuarioArea>? UsuarioAreas { get; set; }
+        public required int IdPlaza { get; set; }
+
+        [ForeignKey("IdPlaza")]
+        public virtual Cat_Plaza? Plaza { get; set; }
+
+        //public virtual ICollection<Rel_UsuarioArea>? UsuarioAreas { get; set; }  
     }
 
 }
