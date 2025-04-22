@@ -8,7 +8,11 @@ namespace HelpDesk.Models.ViewModels
         public int IdArea{ get; set; }
         public required string Nombre { get; set; }
         public bool? Activo { get; set; }
-        [Display(Name = "Estado")]
+        [Display(Name = "Estatus")]
         public string? Estado { get; set; }
+        public required int IdPlaza { get; set; }
+
+        public string? NombrePlaza { get; set; }
+
     }
 }

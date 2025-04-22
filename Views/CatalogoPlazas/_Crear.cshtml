@@ -1,0 +1,79 @@
+﻿@model HelpDesk.Models.ViewModels.CatPlazaAreaViewModel
+<!-- inicio modal --->
+
+<div class="modal-body">
+    <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
+                <li class="nav-item">
+                    <a href="#tabs-home-ex2" class="nav-link active" data-bs-toggle="tab">
+                        <i class="ti ti-map-pins mr-2"></i>
+                        Nueva Plaza
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#tabs-profile-ex2" class="nav-link" data-bs-toggle="tab">
+                        <i class="ti ti-building mr-2"></i>
+                        Nueva Área
+                    </a>
+                </li>
+               
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content">
+                <div class="tab-pane active show" id="tabs-home-ex2">
+                    <h2>Nueva Plaza</h2>
+                    <div>
+                        <form asp-controller="CatalogoPlazas" asp-action="Crear">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="Plaza.Nombre" class="control-label"></label>
+                                <input asp-for="Plaza.Nombre" class="form-control" />
+                                <span asp-validation-for="Plaza.Nombre" class="text-danger"></span>
+                            </div>
+                            
+                            <div class="form-group mt-4">
+                                <input type="submit" value="Agregar" class="btn btn-primary" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="tab-pane" id="tabs-profile-ex2">
+                    <h2>Nueva Área</h2>
+                    <div>
+                        <form asp-controller="CatalogoAreas" asp-action="Crear">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="Area.Nombre" class="control-label"></label>
+                                <input asp-for="Area.Nombre" class="form-control" />
+                                <span asp-validation-for="Area.Nombre" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group">
+                               <label for="Area.IdPlaza" class="control-label">Seleccione una Plaza</label>
+                               <select asp-for="Area.IdPlaza" class="form-control" asp-items="@(new SelectList(Model.CatalogoPlazas, "IdPlaza", "Nombre"))">
+                               </select>
+                               <span asp-validation-for="Area.IdPlaza" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mt-4">
+                                <input type="submit" value="Agregar" class="btn btn-primary" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" data-bs-dismiss="modal" class="btn btn-danger">Cancelar</button>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+<!-- fin modal -->

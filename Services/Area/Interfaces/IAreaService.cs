@@ -9,6 +9,6 @@ namespace HelpDesk.Services.Area.Interfaces
         Task<CatAreaViewModel> ObtenerAreaPorIdAsync(int id);
         Task<bool> CrearAreaAsync(Cat_Area Area);
         Task<bool> ActualizarAreaAsync(Cat_Area Area);
-        Task<bool> EliminarAreaAsync(int id);
+        Task<bool> CambiarEstadoAreaAsync(int id);
     }
 }

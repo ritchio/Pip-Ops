@@ -17,6 +17,6 @@ namespace HelpDesk.Models.Entities
         public required string Nombre { get; set; }
 
         [Column("Activo")]
-        public bool? Activo { get; set; }
+        public bool Activo { get; set; }
     }
 }
