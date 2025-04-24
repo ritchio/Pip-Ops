@@ -8,36 +8,45 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HelpDesk.Services.Usuario.Services
 {
-    public class UsuarioService : IUsuarioService
+    public class UsuarioService(
+        ApplicationDbContext context,
+        IMapper mapper) : IUsuarioService
     {
         #region [ Atributos ]
-        private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
+        private readonly ApplicationDbContext _context = context;
+        private readonly IMapper _mapper = mapper;
+
         #endregion [ Atributos ]
-
-        #region [ Constructor ]
-        public UsuarioService(
-            ApplicationDbContext context,
-            IMapper mapper)
-        {
-            _context = context;
-            _mapper = mapper;
-        }
-        #endregion [ Constructor ]
-
         public async Task<List<AspNetUsersViewModel>> ObtenerUsuarios()
         {
-            return await _context.Users  
+            try
+            {
+                var usuarios = await _context.Users
+                .Include(u => u.RolesUsuario)
+                    .ThenInclude(ur => ur.Rol)
+                .Include(u => u.Plaza)
                 .Select(u => new AspNetUsersViewModel
                 {
-                    Id = u.Id,
+                    NumeroUsuario = u.NumeroUsuario,
                     PrimerNombre = u.PrimerNombre,
                     SegundoNombre = u.SegundoNombre,
                     ApellidoPaterno = u.ApellidoPaterno,
                     ApellidoMaterno = u.ApellidoMaterno,
-                    CorreoElectronico = u.Email ?? ""
+                    CorreoElectronico = u.Email ?? "",
+                    PlazaNombre = u.Plaza.Nombre,
+                    RolNombre = u.RolesUsuario.FirstOrDefault().Rol.Name ?? "Sin Rol",
+                    AreaNombre = "Área no definida",
+                    FechaInactivacion = u.FechaInactivacion
                 })
                 .ToListAsync();
+
+
+                return usuarios;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         public async Task<AspNetUsersViewModel> ObtenerUsuarioPorId(string id)
