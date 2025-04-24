@@ -44,7 +44,14 @@
     <!-- BEGIN CUSTOM FONT -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/&#64;tabler/icons-webfont@latest/tabler-icons.min.css">
     <link href="https://rsms.me/inter/inter.css" rel="stylesheet">
+    <link href="~/css/site.css" rel="stylesheet">
     <!-- END CUSTOM FONT -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/&#64;popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet"  href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css"></link>
+    <script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
 </head>
 <body>
         <!-- BEGIN GLOBAL THEME SCRIPT -->
@@ -80,15 +87,10 @@
             </footer>
             <!--  END FOOTER  -->
         </div>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/&#64;popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+            
     <script src="~/js/site.js" asp-append-version="true"></script>
         <script src="~/js/Shared/axiosRequest.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
-
     </div>
 
     <!-- BEGIN PAGE LIBRARIES -->

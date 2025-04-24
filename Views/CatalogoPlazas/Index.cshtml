@@ -49,7 +49,7 @@
                         </td>
                         <td>
                                 <button id="botonEstadoPlaza_@item.IdPlaza" type="button" onclick="desactivarPlaza(@item.IdPlaza)" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva la plaza">
-                                    <i class="ti ti-square-@(item.Activo.HasValue ? (item.Activo.Value ? "x" : "check") : "x")"></i>
+                                    <i class="ti ti-circle-@(item.Activo.HasValue ? (item.Activo.Value ? "x" : "check") : "x")"></i>
                                 </button>
                                 <button type="button" onclick="obtenerPlazaPorId(@item.IdPlaza)" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite la edición de la plaza"><i class="ti ti-edit"></i></button>
                         </td>
@@ -101,7 +101,7 @@
                             </td>
                             <td>
                                 <button id="botonEstadoArea_@item.IdArea" type="button" onclick="desactivarArea(@item.IdArea)" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva el área">
-                                    <i class="ti ti-square-@(item.Activo.HasValue ? (item.Activo.Value ? "x" : "check") : "x")"></i>
+                                    <i class="ti ti-circle-@(item.Activo.HasValue ? (item.Activo.Value ? "x" : "check") : "x")"></i>
                                 </button>
                                 <button type="button" onclick="obtenerAreaPorId(@item.IdArea)" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite la edicion del área"><i class="ti ti-edit"></i></button>
                             </td>

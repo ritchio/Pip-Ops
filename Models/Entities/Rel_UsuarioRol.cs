@@ -5,11 +5,8 @@ namespace HelpDesk.Models.Entities
 {
     public class Rel_UsuarioRol : IdentityUserRole<string>
     {
-        //[ForeignKey(nameof(UserId))]
-        //public virtual Cat_Usuario Usuario { get; set; }
-
-        //[ForeignKey(nameof(RoleId))]
-        //public virtual Cat_Rol Rol { get; set; }
+        public virtual Cat_Usuario Usuario { get; set; } = default!;
+        public virtual IdentityRole Rol { get; set; } = default!;
     }
 
 }
