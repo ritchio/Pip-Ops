@@ -7,23 +7,28 @@ namespace HelpDesk.Models.Entities
     public class Cat_Usuario : IdentityUser
     {
         // Datos personales
+        public int NumeroUsuario { get; set; }
         public required string PrimerNombre { get; set; }
         public string? SegundoNombre { get; set; }
         public required string ApellidoPaterno { get; set; }
         public string? ApellidoMaterno { get; set; }
+
         // Estado
         public bool? Activo { get; set; }
         public DateTime? FechaActivacion { get; set; }
         public DateTime? FechaInactivacion { get; set; }
 
         // Relación con plaza
-        public int? IdPlaza { get; set; }
+        public int IdPlaza { get; set; }
 
         [ForeignKey("IdPlaza")]
-        public virtual Cat_Plaza? Plaza { get; set; }
+        public virtual Cat_Plaza Plaza { get; set; }
 
-        //public virtual ICollection<Rel_UsuarioArea> UsuarioAreas { get; set; }
-        //public virtual ICollection<Rel_UsuarioRol> UsuarioRoles { get; set; }
-        //public virtual ICollection<Rel_UsuarioPermiso> UsuarioPermisos { get; set; }
+        // Relación con roles
+        //public virtual ICollection<IdentityUserRole<string>> UserRoles { get; set; } = new List<IdentityUserRole<string>>();
+
+        public virtual ICollection<Rel_UsuarioRol> RolesUsuario { get; set; } = new List<Rel_UsuarioRol>();
+
     }
+
 }

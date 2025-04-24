@@ -5,6 +5,7 @@ namespace HelpDesk.Models.ViewModels
     public class AspNetUsersViewModel
     {
         public string Id { get; set; }
+        public int NumeroUsuario { get; set; }
         [Display(Name = "Correo Electrónico")]
         public required string CorreoElectronico { get; set; }
         [Display(Name = "Primer Nombre")]
@@ -26,11 +27,16 @@ namespace HelpDesk.Models.ViewModels
 
         [Display(Name = "Fecha de Activación")]
         public DateTime? FechaActivacion { get; set; }
-        [Display(Name = "Fecha de Inactivación")]
+        [Display(Name = "Fecha Inactivado")]
         public DateTime? FechaInactivacion { get; set; }
 
-        // Relación con Plaza
+        // Relaciones
         public int? IdPlaza { get; set; }
-        public string? PlazaNombre { get; set; } // Campo opcional si necesitas mostrar el nombre de la plaza
+        [Display(Name = "Plaza")]
+        public string? PlazaNombre { get; set; }
+        [Display(Name = "Área")]
+        public string? AreaNombre { get; set; }
+        [Display(Name = "Tipo de Usuario")]
+        public string? RolNombre { get; set; }
     }
 }

@@ -15,40 +15,22 @@ using System.Text.Json;
 
 namespace HelpDesk.Controllers
 {
-    public class CatalogoUsuariosController : Controller
+    public class CatalogoUsuariosController(
+        ApplicationDbContext context,
+        IUsuarioService usuarioService
+            ) : Controller
     {
         #region [ Atributos ]
-        private readonly ApplicationDbContext _context;
-        private readonly IUsuarioService _usuarioService;
+        private readonly ApplicationDbContext _context = context;
+        private readonly IUsuarioService _usuarioService = usuarioService;
 
         #endregion [ Atributos ]
-
-        #region [ Constructor ]
-        public CatalogoUsuariosController(
-            ApplicationDbContext context,
-            IUsuarioService usuarioService)
-        {
-            _context = context;
-            _usuarioService = usuarioService;
-
-        }
-        #endregion [ Constructor ]
 
 
         // GET: CatalogoUsuarios
         public async Task<IActionResult> Index()
         {
-            var usuarios = await _context.Users
-            .Select(u => new AspNetUsersViewModel
-            {
-                Id = u.Id,
-                PrimerNombre = u.PrimerNombre,
-                SegundoNombre = u.SegundoNombre,
-                ApellidoPaterno = u.ApellidoPaterno,
-                ApellidoMaterno = u.ApellidoMaterno,
-                CorreoElectronico = u.Email ?? ""
-            })
-            .ToListAsync();
+            var usuarios = await _usuarioService.ObtenerUsuarios();
             return View(usuarios);
         }
 
