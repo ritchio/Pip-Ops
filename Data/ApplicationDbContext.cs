@@ -15,13 +15,22 @@ public class ApplicationDbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
+    #region [ Entidades ]
     public DbSet<Cat_Plaza> Cat_Plaza { get; set; }
     public DbSet<Cat_Area> Cat_Area { get; set; } = default!;
+    public DbSet<Rel_UsuarioArea> Rel_UsuarioArea { get; set; }
 
+    #endregion [ Entidades ]
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
+        builder.Entity<Cat_Usuario>()
+            .HasKey(cu => cu.Id );
+
+        builder.Entity<Cat_Usuario>()
+        .Property(u => u.NumeroUsuario)
+        .HasDefaultValueSql("NEXT VALUE FOR NumeroUsuario_Seq");
 
         builder.Entity<Rel_UsuarioRol>()
            .HasKey(ur => new { ur.UserId, ur.RoleId });
@@ -36,26 +45,9 @@ public class ApplicationDbContext
             .WithMany()
             .HasForeignKey(ur => ur.RoleId);
 
-        //// Configuración para incluir los roles relacionados
-        //builder.Entity<Cat_Usuario>()
-        //    .HasMany(u => u.UserRoles)
-        //    .WithOne()
-        //    .HasForeignKey(ur => ur.UserId)
-        //    .IsRequired();
-
-        //builder.Entity<IdentityRole>()
-        //    .HasMany<IdentityUserRole<string>>()
-        //    .WithOne()
-        //    .HasForeignKey(ur => ur.RoleId)
-        //    .IsRequired();
-        //// Configuración para la relación entre Cat_Usuario y Roles
-        //builder.Entity<Cat_Usuario>()
-        //    .HasMany(u => u.Roles)
-        //    .WithMany()
-        //    .UsingEntity<IdentityUserRole<string>>(
-        //        j => j.HasOne<IdentityRole>().WithMany().HasForeignKey(ur => ur.RoleId),
-        //        j => j.HasOne<Cat_Usuario>().WithMany().HasForeignKey(ur => ur.UserId)
-        //    );
+        builder.Entity<Rel_UsuarioArea>()
+            .HasKey(rua => new { rua.IdUsuario, rua.IdArea });
+       
     }
 
 

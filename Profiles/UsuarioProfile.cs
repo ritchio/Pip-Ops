@@ -8,13 +8,16 @@ namespace HelpDesk.Profiles
     {
         public UsuarioProfile()
         {
-            // De entidad a ViewModel
+            // pa'delante
             CreateMap<Cat_Usuario, AspNetUsersViewModel>()
-                .ForMember(dest => dest.CorreoElectronico, opt => opt.MapFrom(src => src.Email));
+                .ForMember(dest => dest.CorreoElectronico, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.NumeroUsuario, opt => opt.Ignore());
 
-            // De ViewModel a entidad (si necesitas guardar/actualizar datos desde el ViewModel)
+            //pa'trás
             CreateMap<AspNetUsersViewModel, Cat_Usuario>()
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.CorreoElectronico));
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.CorreoElectronico))
+                .ForMember(dest => dest.NumeroUsuario, opt => opt.Ignore());
+
         }
     }
 }

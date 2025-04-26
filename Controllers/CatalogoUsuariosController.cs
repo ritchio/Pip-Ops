@@ -12,18 +12,23 @@ using HelpDesk.Services.Usuario.Services;
 using HelpDesk.Models.Entities;
 using HelpDesk.Models.Utils;
 using System.Text.Json;
+using HelpDesk.Services.Plaza.Interfaces;
+using HelpDesk.Services.Area.Interfaces;
 
 namespace HelpDesk.Controllers
 {
     public class CatalogoUsuariosController(
         ApplicationDbContext context,
-        IUsuarioService usuarioService
+        IUsuarioService usuarioService,
+        IPlazaService plazaService,
+        IAreaService areaService
             ) : Controller
     {
         #region [ Atributos ]
         private readonly ApplicationDbContext _context = context;
         private readonly IUsuarioService _usuarioService = usuarioService;
-
+        private readonly IPlazaService _plazaService = plazaService;
+        private readonly IAreaService _areaService = areaService;
         #endregion [ Atributos ]
 
 
@@ -52,10 +57,29 @@ namespace HelpDesk.Controllers
             return View(aspNetUsersViewModel);
         }
 
-        // GET: CatalogoUsuarios/Create
-        public IActionResult Create()
+        // GET: CatalogoUsuarios/Create  
+        public async Task<IActionResult> Crear()
         {
-            return View();
+            var usuariomodel = new AspNetUsersViewModel
+            {
+                CorreoElectronico = "",
+                PrimerNombre = "",
+                ApellidoPaterno = "",
+                IdAreas = [],
+                IdRol = ""
+            };
+
+            usuariomodel.Roles = await _context.Roles.ToListAsync();
+            usuariomodel.Plazas = await _plazaService.ObtenerPlazasAsync();
+            usuariomodel.Areas = await _areaService.ObtenerAreasAsync();
+
+            var respuesta = new RespuestaGenerica<string>
+            {
+                Datos = this.RenderizarVista("_Crear", usuariomodel, true),
+                Exito = true
+            };
+
+            return Ok(respuesta);
         }
 
         // POST: CatalogoUsuarios/Create
@@ -63,15 +87,58 @@ namespace HelpDesk.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserName,NormalizedUserName,Email,NormalizedEmail,EmailConfirmed,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEnd,LockoutEnabled,AccessFailedCount,PrimerNombre,SegundoNombre,ApellidoPaterno,ApellidoMaterno,Activo,FechaActivacion,FechaInactivacion,IdPlaza,PlazaNombre")] AspNetUsersViewModel aspNetUsersViewModel)
+        public async Task<IActionResult> Crear(AspNetUsersViewModel aspNetUsersViewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(aspNetUsersViewModel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //_context.Add(aspNetUsersViewModel);
+                //await _context.SaveChangesAsync();
+                //return RedirectToAction(nameof(Index));
+                var usuarioCreado = await _usuarioService.Crear(aspNetUsersViewModel);
+                if(usuarioCreado.Exito)
+                {
+                    var respuesta = new RespuestaGenerica<string>
+                    {
+                        Exito = true,
+                        Mensaje = "Usuario creado con éxito.",
+
+                    };
+
+                    TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    var respuesta = new RespuestaGenerica<string>
+                    {
+                        Exito = false,
+                        Mensaje =usuarioCreado.Mensaje,
+                        
+                    };
+
+                    TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                    return RedirectToAction("Index");
+
+                }
+                
             }
-            return View(aspNetUsersViewModel);
+            else
+            {
+                var errores = ModelState
+                .Where(ms => ms.Value.Errors.Any())
+                .SelectMany(ms => ms.Value.Errors.Select(e => e.ErrorMessage))
+                .ToList();
+
+                var respuesta = new RespuestaGenerica<string>
+                {
+                    Datos = errores.ToString(),
+                    Exito = false,
+                    Mensaje = errores.ToString()
+                };
+                return Ok(errores);
+            }
+
+                
         }
 
         // GET: CatalogoUsuarios/Edit/5

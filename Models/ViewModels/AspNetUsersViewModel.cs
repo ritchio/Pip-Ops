@@ -1,11 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace HelpDesk.Models.ViewModels
 {
     public class AspNetUsersViewModel
     {
-        public string Id { get; set; }
-        public int NumeroUsuario { get; set; }
+        public string? Id { get; set; }
+        public int? NumeroUsuario { get; set; }
         [Display(Name = "Correo Electrónico")]
         public required string CorreoElectronico { get; set; }
         [Display(Name = "Primer Nombre")]
@@ -31,12 +32,26 @@ namespace HelpDesk.Models.ViewModels
         public DateTime? FechaInactivacion { get; set; }
 
         // Relaciones
+        //Plazas
         public int? IdPlaza { get; set; }
         [Display(Name = "Plaza")]
         public string? PlazaNombre { get; set; }
+        public List<CatPlazaViewModel>? Plazas { get; set; }
+        //Áreas
+        public required List<int> IdAreas { get; set; }
         [Display(Name = "Área")]
         public string? AreaNombre { get; set; }
+        [Display(Name = "Área")]
+        public List<CatAreaViewModel>? Areas { get; set; }
+
+        //Roles
+        [Display(Name = "Tipo de Usuario")]
+
+        public required string IdRol { get; set; }
         [Display(Name = "Tipo de Usuario")]
         public string? RolNombre { get; set; }
+
+        public List<IdentityRole>? Roles { get; set; }
+        
     }
 }

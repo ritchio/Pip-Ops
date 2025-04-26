@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <Compile Remove="Models\Entities\Rel_RolPermiso.cs" />
-    <Compile Remove="Models\Entities\Rel_UsuarioArea.cs" />
     <Compile Remove="Models\Entities\Rel_UsuarioPermiso.cs" />
   </ItemGroup>
 
