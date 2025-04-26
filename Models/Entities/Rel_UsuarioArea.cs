@@ -7,10 +7,10 @@ namespace HelpDesk.Models.Entities
         public string IdUsuario { get; set; }  // Relación con Cat_Usuario
         public int IdArea { get; set; }  // Relación con Cat_Area
 
-        //[ForeignKey(nameof(IdUsuario))]
-        //public virtual Cat_Usuario Usuario { get; set; }
+        [ForeignKey(nameof(IdUsuario))]
+        public virtual Cat_Usuario Usuario { get; set; }
 
-        //[ForeignKey(nameof(IdArea))]
-        //public virtual Cat_Area Area { get; set; }
+        [ForeignKey(nameof(IdArea))]
+        public virtual Cat_Area Area { get; set; }
     }
 }

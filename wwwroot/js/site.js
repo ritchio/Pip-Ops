@@ -1,38 +1,40 @@
-﻿
-function mostrarNotificacion(respuesta) {
-    if (typeof respuesta === "string") {
-        try {
-            respuesta = JSON.parse(respuesta);
-        } catch (e) {
-            console.error("No se pudo parsear la notificación:", e);
-            return;
+﻿function mostrarNotificacion(respuesta) {
+    try {
+        if (typeof respuesta === "string") {
+            // Parseamos y convertimos las claves a minúsculas
+            const temp = JSON.parse(respuesta);
+            respuesta = {};
+            for (const key in temp) {
+                if (Object.hasOwn(temp, key)) {
+                    respuesta[key.toLowerCase()] = temp[key];
+                }
+            }
         }
-    }
 
+        const { exito, mensaje, datos, redireccion } = respuesta;
 
-    if (respuesta.exito) {
-        $("#notificacionMensaje").text(respuesta.mensaje || 'Operación exitosa');
-    } else {
-        $("#notificacionMensaje").text(respuesta.mensaje || 'Ocurrió un error');
-    }
+        $("#notificacionTitulo").text(exito?"Notificación":"Error");
+        
 
-    // Detalles
-    if (respuesta.datos) {
-        $("#notificaionMensaje").text(respuesta.datos);
-    }
+        $("#notificacionMensaje").html(
+            exito ? mensaje || 'Operación exitosa' : `<p class="text-danger">${mensaje}</p>` || '<p class="text-danger">Ocurrió un error</p>'
+        );
 
-    const toastEl = document.getElementById('notificacionToast');
-    const toast = new bootstrap.Toast(toastEl); 
-    toast.show(); //
+        if (datos) {
+            $("#notificacionMensaje").text(datos);
+        }
 
-    // Redirigir si hay URL
-    if (respuesta.redireccion) {
-        setTimeout(() => {
-            window.location.href = respuesta.redireccion;
-        }, 2000);
+        const toast = new bootstrap.Toast(document.getElementById('notificacionToast'));
+        toast.show();
+
+        if (redireccion) {
+            setTimeout(() => window.location.href = redireccion, 2000);
+        }
+    } catch (e) {
+        console.error("No se pudo parsear la notificación:", e);
     }
 }
-
+        
 function mostrarModalGenerico(html) {
     if (html != null) {
         $("#modalGenericoCuerpo").html(html);
@@ -44,7 +46,7 @@ function mostrarModalGenerico(html) {
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)
-})
+});
 
 
 //Lenguaje de tablas
@@ -227,3 +229,4 @@ const lenguajeTablaGenerica = {
     },
     "info": "Mostrando de _START_ a _END_ de _TOTAL_ entradas"
 };
+

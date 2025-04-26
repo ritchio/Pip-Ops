@@ -21,8 +21,19 @@ body {
   margin-bottom: 60px;
 }
 
+/* tamaño de íconos*/
 .ti {
-    font-size: 1.4em; /* o 20px, 24px, etc. */
+    font-size: 1.4em; 
     padding:2px 0 0 0;
     margin:0;
+}
+
+/*select múltiple*/
+.ts-dropdown-content {
+    background: var(--tblr-body-bg); 
+    color: var(--tblr-body-color);
+}
+
+.ts-dropdown-content  .option:hover {
+    background: var(--tblr-primary);
 }

@@ -63,13 +63,13 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 #region [ Configuracion inicial ]
-//// Inicializar la base de datos y los roles
-//using (var scope = app.Services.CreateScope())
-//{
-//    var services = scope.ServiceProvider;
-//    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-//    await IdentityDataInitializer.SeedRolesAsync(roleManager);
-//}
+// Inicializar la base de datos y los roles
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    await IdentityDataInitializer.SeedRolesAsync(roleManager);
+}
 
 #endregion [ Configuracion inicial ]
 

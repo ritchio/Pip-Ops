@@ -14,7 +14,7 @@
         </div>
     </div>
     <div class="col-4 justify-content-end d-flex">
-        <button onclick="nuevoRegistro()" class="btn btn-primary"><i class="ti ti-circle-plus mr-2"></i>Nuevo usuario</button>
+        <button onclick="nuevoUsuario()" class="btn btn-primary"><i class="ti ti-circle-plus mr-2"></i>Nuevo usuario</button>
     </div>
 </div>
 
@@ -326,7 +326,7 @@
         </div>
     </div>
 
-
+<script src="~/js/CatalogoUsuarios/index.js"></script>
 
 <script>
     $(document).ready(function() {
@@ -342,7 +342,7 @@
             className: 'dtr-control',
             orderable: false,
             targets: -2
-        },
+        }],
             language: lenguajeTablaGenerica
         });
         $('#tablaAdministrador').DataTable({
