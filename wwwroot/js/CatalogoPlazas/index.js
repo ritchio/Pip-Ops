@@ -2,7 +2,7 @@
     try {
         const response = await axiosRequest({
             url: `/CatalogoPlazas/Editar/${idPlaza}`,
-            funcionCallback: mostrarModalGenerico,
+            funcionCallback: mostrarModalGenerico
         });
         return response;
     } catch (error) {
@@ -16,7 +16,7 @@ async function obtenerAreaPorId(idArea) {
     try {
         await axiosRequest({
             url: `/CatalogoAreas/Editar/${idArea}`,
-            funcionCallback: mostrarModalGenerico,
+            funcionCallback: mostrarModalGenerico
         });
         
     } catch (error) {
