@@ -8,7 +8,7 @@ namespace HelpDesk.Services.Usuario.Interfaces
     public interface IUsuarioService
     {
         Task<List<AspNetUsersViewModel>> ObtenerUsuarios();
-        Task<AspNetUsersViewModel> ObtenerUsuarioPorId(string id);
+        Task<RespuestaGenerica<AspNetUsersViewModel>> ObtenerUsuarioPorId(string id);
         Task<RespuestaGenerica<AspNetUsersViewModel>> Crear(AspNetUsersViewModel model);
         Task<AspNetUsersViewModel> Modificar(AspNetUsersViewModel model);
     }

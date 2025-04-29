@@ -34,10 +34,44 @@
         console.error("No se pudo parsear la notificación:", e);
     }
 }
-        
-function mostrarModalGenerico(html) {
+
+
+function mostrarModalGenerico(html=null,tamanio="normal") {
     if (html != null) {
-        $("#modalGenericoCuerpo").html(html);
+        //tamaño
+        if (typeof html == "object") {
+            datos = html.datos;
+            tamanio = html.tamanio;
+        } else { datos = html; }
+        switch (tamanio) {
+            case "pequeño":
+                $("#modalGenerico").removeClass("modal-lg");
+                $("#modalGenerico").removeClass("modal-xl");
+                $("#modalGenerico").addClass("modal-sm");
+                break;
+            
+            case "grande":
+                $("#modalGenerico").removeClass("modal-sm");
+                $("#modalGenerico").removeClass("modal-xl");
+                $("#modalGenerico").addClass("modal-lg");
+                break;
+
+            case "extra":
+                $("#modalGenerico").removeClass("modal-sm");
+                $("#modalGenerico").removeClass("modal-lg");
+                $("#modalGenerico").addClass("modal-xl");
+                break;
+
+            case "normal":
+            default: 
+                $("#modalGenerico").removeClass("modal-lg");
+                $("#modalGenerico").removeClass("modal-xl");
+                $("#modalGenerico").removeClass("modal-sm");
+                break;
+            
+        }
+        //contenido
+        $("#modalGenericoCuerpo").html(datos);
         $("#modalGenerico").modal("show");
     }
     
