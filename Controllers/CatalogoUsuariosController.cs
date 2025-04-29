@@ -141,25 +141,43 @@ namespace HelpDesk.Controllers
                 
         }
 
-        // GET: CatalogoUsuarios/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Editar(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var response = await _usuarioService.ObtenerUsuarioPorId(id);
+            var usuario= await _usuarioService.ObtenerUsuarioPorId(id);
             
-            return View(response);
+            
+            if(usuario.Datos == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                var plazas = await _plazaService.ObtenerPlazasAsync();
+                var areas = await _areaService.ObtenerAreasAsync();
+                usuario.Datos.Roles = await _context.Roles.ToListAsync();
+                usuario.Datos.Plazas = plazas.Where(p => p.Activo == true).ToList();    
+                usuario.Datos.Areas = areas.Where(p => p.Activo == true).ToList();
+            }
+
+            var respuesta = new RespuestaGenerica<string>
+            {
+                Datos = this.RenderizarVista("_Editar", usuario.Datos, true),
+                Exito = usuario.Exito,
+                Mensaje = usuario.Mensaje
+            };
+
+            return Ok(respuesta);
+            //return View("_Editar", usuario.Datos);
         }
 
-        // POST: CatalogoUsuarios/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,PrimerNombre,SegundoNombre,ApellidoMaterno,ApellidoPaterno,CorreoElectronico,Activo,IdPlaza")] AspNetUsersViewModel aspNetUsersViewModel)
+        public async Task<IActionResult> Editar(string id, AspNetUsersViewModel aspNetUsersViewModel)
         {
             if (id != aspNetUsersViewModel.Id)
             {
@@ -185,7 +203,7 @@ namespace HelpDesk.Controllers
                         Exito = true,
                         Mensaje = "Usuario actualizado con éxito.",
                     });
-                    return View(response);
+                    return RedirectToAction("Index");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -201,7 +219,19 @@ namespace HelpDesk.Controllers
             }
             else
             {
-                return View(aspNetUsersViewModel);
+                
+                var errores = ModelState
+               .Where(ms => ms.Value.Errors.Any())
+               .SelectMany(ms => ms.Value.Errors.Select(e => e.ErrorMessage))
+               .ToList();
+
+                var respuesta = new RespuestaGenerica<string>
+                {
+                    Datos = errores.ToString(),
+                    Exito = false,
+                    Mensaje = errores.ToString()
+                };
+                return Ok(errores);
             }
         }
 

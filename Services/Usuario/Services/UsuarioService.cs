@@ -3,6 +3,8 @@ using HelpDesk.Data;
 using HelpDesk.Models.Entities;
 using HelpDesk.Models.Utils;
 using HelpDesk.Models.ViewModels;
+using HelpDesk.Services.Area.Interfaces;
+using HelpDesk.Services.Plaza.Interfaces;
 using HelpDesk.Services.Usuario.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -33,6 +35,7 @@ namespace HelpDesk.Services.Usuario.Services
                     .Include(u => u.AreasUsuario)
                     .Select(u => new AspNetUsersViewModel
                     {
+                        Id = u.Id,
                         NumeroUsuario = u.NumeroUsuario,
                         PrimerNombre = u.PrimerNombre,
                         SegundoNombre = u.SegundoNombre,
@@ -57,16 +60,62 @@ namespace HelpDesk.Services.Usuario.Services
             }
         }
 
-        public async Task<AspNetUsersViewModel> ObtenerUsuarioPorId(string id)
+        public async Task<RespuestaGenerica<AspNetUsersViewModel>> ObtenerUsuarioPorId(string id)
         {
-            var AspNetUsers = await _context.Users.FindAsync(id);
+            var respuesta = new RespuestaGenerica<AspNetUsersViewModel>();
+            try
+            {
+                var usuario = await _context.Users
+                    .Include(u => u.RolesUsuario)
+                    .ThenInclude(ur => ur.Rol)
+                    .Include(u => u.Plaza)
+                    .Include(u => u.AreasUsuario)
+                    .Where(u => u.Id == id)
+                    .Select(u => new AspNetUsersViewModel
+                    {
+                        Id = u.Id,
+                        NumeroUsuario = u.NumeroUsuario,
+                        PrimerNombre = u.PrimerNombre,
+                        SegundoNombre = u.SegundoNombre,
+                        ApellidoPaterno = u.ApellidoPaterno,
+                        ApellidoMaterno = u.ApellidoMaterno,
+                        CorreoElectronico = u.Email ?? "",
+                        PlazaNombre = u.Plaza.Nombre,
+                        RolNombre = u.RolesUsuario.FirstOrDefault().Rol.Name ?? "Sin Rol",
+                        AreaNombre = string.Join(", ", u.AreasUsuario.Select(au => _context.Cat_Area.FirstOrDefault(a => a.IdArea == au.IdArea).Nombre)),
+                        FechaInactivacion = u.FechaInactivacion,
+                        IdRol = u.RolesUsuario.FirstOrDefault().Rol.Id,
+                        IdAreas = u.AreasUsuario.Select(au => au.IdArea).ToList(),
+                        IdPlaza = u.IdPlaza,
+                        Activo = u.Activo,
+                        FechaActivacion = u.FechaActivacion
+                    })
+                    .FirstOrDefaultAsync();
 
-            var response = _mapper.Map<AspNetUsersViewModel>(AspNetUsers);
 
-            return response;
+                respuesta.Exito = true;
+                respuesta.Datos = usuario;
+            }
+            catch
+            {
+                var usuario = new AspNetUsersViewModel
+                {
+                    CorreoElectronico = string.Empty,
+                    PrimerNombre = string.Empty,
+                    ApellidoPaterno = string.Empty,
+                    IdAreas = new List<int>(),
+                    IdRol = string.Empty
+                };
+
+                respuesta.Exito = false;
+                respuesta.Datos = usuario;
+            }
+
+            return respuesta;
         }
+
        
-public async Task<RespuestaGenerica<AspNetUsersViewModel>> Crear(AspNetUsersViewModel model)
+        public async Task<RespuestaGenerica<AspNetUsersViewModel>> Crear(AspNetUsersViewModel model)
         {
             var respuesta = new RespuestaGenerica<AspNetUsersViewModel>();
             try
@@ -97,6 +146,9 @@ public async Task<RespuestaGenerica<AspNetUsersViewModel>> Crear(AspNetUsersView
                 usuario.LockoutEnd = null;
                 usuario.ConcurrencyStamp = Guid.NewGuid().ToString();
                 usuario.IdPlaza = model.IdPlaza ?? 0;
+
+                // Generar contraseña aleatoria de 10 caracteres  
+                usuario.PasswordHash = _userManager.PasswordHasher.HashPassword(usuario, GenerarContrasenaAleatoria(10));
 
                 _context.Users.Add(usuario);
                 var nuevoUsuario = await _context.SaveChangesAsync();
@@ -136,7 +188,7 @@ public async Task<RespuestaGenerica<AspNetUsersViewModel>> Crear(AspNetUsersView
 
                     respuesta.Exito = true;
                     respuesta.Mensaje = "Usuario creado con éxito.";
-                    respuesta.Datos = await ObtenerUsuarioPorId(usuario.Id);
+
                     return respuesta;
                 }
                 else
@@ -162,9 +214,56 @@ public async Task<RespuestaGenerica<AspNetUsersViewModel>> Crear(AspNetUsersView
 
                 if (usuarioAModificar != null)
                 {
+                    //Verifica si el que se está modificando ya existe para otro usuariop activo
+                    var emailExiste = await _context.Users
+                        .FirstOrDefaultAsync(u => u.Email == model.CorreoElectronico && u.Activo == true && u.Id != model.Id);
+                    if(emailExiste != null)
+                    {
+                        throw new Exception("El correo ya existe en otro usuario activo.");
+                    }
+
                     var usuarioMapeado = _mapper.Map(model, usuarioAModificar);
+                    usuarioMapeado.UserName = usuarioMapeado.Email.ToUpper();
 
                     await _context.SaveChangesAsync();
+
+                    // quitamo la relación de áreas
+                    var existentes = _context.Rel_UsuarioArea.Where(r => r.IdUsuario == usuarioMapeado.Id);
+                    _context.Rel_UsuarioArea.RemoveRange(existentes);
+                    // agregamo nuevas relaciones
+                    var nuevasRelaciones = model.IdAreas.Select(areaId => new Rel_UsuarioArea
+                    {
+                        IdUsuario = usuarioMapeado.Id,
+                        IdArea = areaId
+                    }).ToList();
+                    await _context.Rel_UsuarioArea.AddRangeAsync(nuevasRelaciones);
+                    await _context.SaveChangesAsync();
+
+                    // guaradamo el rol
+                    var rol = await _roleManager.FindByIdAsync(model.IdRol);
+                    if (rol == null)
+                    {
+                        throw new Exception("El rol no existe.");
+                    }
+
+                    // quitamo los roles
+                    var rolesActuales = await _userManager.GetRolesAsync(usuarioMapeado);
+                    if (rolesActuales.Any())
+                    {
+                        var resultadoEliminacion = await _userManager.RemoveFromRolesAsync(usuarioMapeado, rolesActuales);
+                        if (!resultadoEliminacion.Succeeded)
+                        {
+                            throw new Exception("No se pudieron eliminar los roles anteriores del usuario.");
+                        }
+                    }
+
+                    // agregamo el nuevo rol
+                    var resultadoAsignacion = await _userManager.AddToRoleAsync(usuarioMapeado, rol.Name);
+                    if (!resultadoAsignacion.Succeeded)
+                    {
+                        throw new Exception("No se pudo asignar el rol al usuario.");
+                    }
+
                     return model;
                 }
                 else
@@ -179,6 +278,19 @@ public async Task<RespuestaGenerica<AspNetUsersViewModel>> Crear(AspNetUsersView
             
         }
 
+        //public async Task<string> CambiarEstatus()
+        //{
+
+        //}
+        #region [ Privadas ]
+        private string GenerarContrasenaAleatoria(int longitud)
+        {
+            const string caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var random = new Random();
+            return new string(Enumerable.Repeat(caracteres, longitud)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+        #endregion [ Privadas ]
 
     }
 }
