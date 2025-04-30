@@ -14,7 +14,7 @@ namespace HelpDesk.Models.Entities
         public string? ApellidoMaterno { get; set; }
 
         // Estado
-        public bool? Activo { get; set; }
+        public bool Activo { get; set; }
         public DateTime? FechaActivacion { get; set; }
         public DateTime? FechaInactivacion { get; set; }
 

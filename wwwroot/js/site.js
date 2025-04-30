@@ -20,7 +20,7 @@
             exito ? mensaje || 'Operación exitosa' : `<p class="text-danger">${mensaje}</p>` || '<p class="text-danger">Ocurrió un error</p>'
         );
 
-        if (datos) {
+        if (datos && mensaje == null) {
             $("#notificacionMensaje").text(datos);
         }
 
