@@ -48,6 +48,7 @@ namespace HelpDesk.Services.Usuario.Services
                         FechaInactivacion = u.FechaInactivacion,
                         IdRol = u.RolesUsuario.FirstOrDefault().Rol.Id,
                         IdAreas = u.AreasUsuario.Select(au => au.IdArea).ToList(),
+                        Activo = u.Activo
                         
                     })
                     .ToListAsync();
@@ -214,7 +215,7 @@ namespace HelpDesk.Services.Usuario.Services
 
                 if (usuarioAModificar != null)
                 {
-                    //Verifica si el que se está modificando ya existe para otro usuariop activo
+                    //Verifica si el correo que se está modificando ya existe para otro usuariop activo
                     var emailExiste = await _context.Users
                         .FirstOrDefaultAsync(u => u.Email == model.CorreoElectronico && u.Activo == true && u.Id != model.Id);
                     if(emailExiste != null)
@@ -278,10 +279,25 @@ namespace HelpDesk.Services.Usuario.Services
             
         }
 
-        //public async Task<string> CambiarEstatus()
-        //{
-
-        //}
+        public async Task<Dictionary<string,string>> CambiarEstado(string idUsuario)
+        {
+            var usuario = await _context.Users.FindAsync(idUsuario);
+            if (usuario!=null)
+            {
+                usuario.Activo = !usuario.Activo;
+                usuario.FechaInactivacion = usuario.Activo ? null : DateTime.Now;
+                await _context.SaveChangesAsync();
+                var respuesta = new Dictionary<string, string>();
+                respuesta.Add("fechaInactivacion", usuario.FechaInactivacion.HasValue?usuario.FechaInactivacion.Value.ToString():"");
+                respuesta.Add("estado", usuario.Activo ? "activado" : "desactivado");
+                
+                return respuesta;
+            }
+            else
+            {
+                throw new Exception("Usuario no encontrado.");
+            }
+        }
         #region [ Privadas ]
         private string GenerarContrasenaAleatoria(int longitud)
         {

@@ -61,7 +61,7 @@
                                         <th>
                                             @Html.DisplayNameFor(model => model.AreaNombre)
                                         </th>
-                                        <th class="colapsable">
+                                    <td>
                                             @Html.DisplayNameFor(model => model.FechaInactivacion)
                                         </th>
                                         <th>
@@ -92,14 +92,16 @@
                                             </td><td>
                                                 @Html.DisplayFor(modelItem => item.AreaNombre)
                                             </td>
-                                           
-                                            <td class="colapsable">
+
+                                        <td class="fechaInactivacion_@item.Id">
                                                 @Html.DisplayFor(modelItem => item.FechaInactivacion)
                                             </td>
                                             
                                             
                                             <td>
-                                                <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva al usuario"><i class="ti ti-circle-x"></i></button>
+                                            <button type="button" class="btn btn-primary estadoUsuario_@item.Id" onclick="cambiarEstadoUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva al usuario">
+                                                <i class="ti ti-circle-@(item.Activo? "x" : "check")"></i>
+                                                </button>
                                                 <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite cambiar los permisos del usuario"><i class="ti ti-circle-key"></i></button>
                                                 <button type="button" class="btn btn-primary" onclick="editarUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite modificar la información del usuario"><i class="ti ti-edit"></i></button>
                                             </td>
@@ -164,13 +166,16 @@
                                                 @Html.DisplayFor(modelItem => item.AreaNombre)
                                             </td>
 
-                                            <td>
+                                        <td class="fechaInactivacion_@item.Id">
+
                                                 @Html.DisplayFor(modelItem => item.FechaInactivacion)
                                             </td>
 
 
                                         <td>
-                                            <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva al usuario"><i class="ti ti-circle-x"></i></button>
+                                            <button type="button" class="btn btn-primary estadoUsuario_@item.Id" onclick="cambiarEstadoUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva al usuario">
+                                                <i class="ti ti-circle-@(item.Activo? "x" : "check")"></i>
+                                                </button>
                                             <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite cambiar los permisos del usuario"><i class="ti ti-circle-key"></i></button>
                                             <button type="button" class="btn btn-primary" onclick="editarUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite modificar la información del usuario"><i class="ti ti-edit"></i></button>
                                         </td>
@@ -235,13 +240,16 @@
                                                 @Html.DisplayFor(modelItem => item.AreaNombre)
                                             </td>
 
-                                            <td>
+                                        <td class="fechaInactivacion_@item.Id">
+
                                                 @Html.DisplayFor(modelItem => item.FechaInactivacion)
                                             </td>
 
 
                                         <td>
-                                            <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva al usuario"><i class="ti ti-circle-x"></i></button>
+                                            <button type="button" class="btn btn-primary estadoUsuario_@item.Id" onclick="cambiarEstadoUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva al usuario">
+                                                <i class="ti ti-circle-@(item.Activo? "x" : "check")"></i>
+                                                </button>
                                             <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite cambiar los permisos del usuario"><i class="ti ti-circle-key"></i></button>
                                             <button type="button" class="btn btn-primary" onclick="editarUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite modificar la información del usuario"><i class="ti ti-edit"></i></button>
                                         </td>
@@ -305,13 +313,15 @@
                                                 @Html.DisplayFor(modelItem => item.AreaNombre)
                                             </td>
 
-                                            <td>
+                                            <td class="fechaInactivacion_@item.Id">
                                                 @Html.DisplayFor(modelItem => item.FechaInactivacion)
                                             </td>
 
 
                                         <td>
-                                            <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva al usuario"><i class="ti ti-circle-x"></i></button>
+                                            <button type="button" class="btn btn-primary estadoUsuario_@item.Id" onclick="cambiarEstadoUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva al usuario">
+                                                <i class="ti ti-circle-@(item.Activo? "x" : "check")"></i>
+                                                </button>
                                             <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite cambiar los permisos del usuario"><i class="ti ti-circle-key"></i></button>
                                             <button type="button" class="btn btn-primary" onclick="editarUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite modificar la información del usuario"><i class="ti ti-edit"></i></button>
                                         </td>

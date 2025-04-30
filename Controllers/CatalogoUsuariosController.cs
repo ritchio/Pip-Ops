@@ -234,38 +234,30 @@ namespace HelpDesk.Controllers
                 return Ok(errores);
             }
         }
-
-        // GET: CatalogoUsuarios/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        
+        public async Task<IActionResult> CambiarEstado(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
-            var aspNetUsersViewModel = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (aspNetUsersViewModel == null)
+            var cambio = await _usuarioService.CambiarEstado(id);
+            if (cambio== null)
             {
-                return NotFound();
+                return BadRequest();
             }
-
-            return View(aspNetUsersViewModel);
-        }
-
-        // POST: CatalogoUsuarios/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            var aspNetUsersViewModel = await _context.Users.FindAsync(id);
-            if (aspNetUsersViewModel != null)
+            else
             {
-                _context.Users.Remove(aspNetUsersViewModel);
-            }
+                var respuesta = new RespuestaGenerica<Dictionary<string,string>>
+                {
+                    Exito = true,
+                    Mensaje = "Estatus cambiado con éxito.",
+                    Datos = cambio
+                };
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+                return Ok(respuesta);
+            }
+            
         }
 
         private bool AspNetUsersViewModelExists(string id)
