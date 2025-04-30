@@ -22,9 +22,9 @@ namespace HelpDesk.Models.ViewModels
         public string? NombreCompleto => $"{PrimerNombre} {SegundoNombre} {ApellidoPaterno} {ApellidoMaterno}";
 
         // Estado del usuario
-        public bool? Activo { get; set; }
+        public bool Activo { get; set; }
         [Display(Name = "Estado")]
-        public string Estado => Activo.HasValue && Activo.Value ? "Activo" : "Inactivo";
+        public string Estado => Activo? "Activo" : "Inactivo";
 
         [Display(Name = "Fecha de Activación")]
         public DateTime? FechaActivacion { get; set; }
