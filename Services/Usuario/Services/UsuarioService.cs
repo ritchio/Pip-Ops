@@ -279,23 +279,46 @@ namespace HelpDesk.Services.Usuario.Services
             
         }
 
-        public async Task<Dictionary<string,string>> CambiarEstado(string idUsuario)
+        public async Task<RespuestaGenerica<Dictionary<string, string>>> CambiarEstado(string idUsuario)
         {
+            var respuesta = new RespuestaGenerica<Dictionary<string, string>>();
             var usuario = await _context.Users.FindAsync(idUsuario);
-            if (usuario!=null)
+            if (usuario != null)
             {
+                
+                if (!usuario.Activo)
+                {
+                    // checa si existe otro usuario activo con el mismo correo electrónico  
+                    var usuarioConMismoCorreo = await _context.Users
+                        .FirstOrDefaultAsync(u => u.Email == usuario.Email && u.Activo == true && u.Id != usuario.Id);
+
+                    if (usuarioConMismoCorreo != null)
+                    {
+                        respuesta.Mensaje =  "La habilitación no es posible debido a la duplicidad de correo electrónico asignado";
+                        respuesta.Exito = false;
+                        return respuesta;
+                    }
+                }
+                
                 usuario.Activo = !usuario.Activo;
                 usuario.FechaInactivacion = usuario.Activo ? null : DateTime.Now;
                 await _context.SaveChangesAsync();
-                var respuesta = new Dictionary<string, string>();
-                respuesta.Add("fechaInactivacion", usuario.FechaInactivacion.HasValue?usuario.FechaInactivacion.Value.ToString():"");
-                respuesta.Add("estado", usuario.Activo ? "activado" : "desactivado");
+
+                var datos =  new  Dictionary<string, string>();
+                datos.Add("fechaInactivacion", usuario.FechaInactivacion.HasValue ? usuario.FechaInactivacion.Value.ToString() : "");
+                datos.Add("estado", usuario.Activo ? "activado" : "desactivado");
                 
+                respuesta.Datos = datos;
+                respuesta.Exito = true;
+                respuesta.Mensaje = $"Usuario {datos["estado"]} con éxito.";
+
                 return respuesta;
             }
             else
             {
-                throw new Exception("Usuario no encontrado.");
+                respuesta.Mensaje = "Usuario no encontrado";
+                respuesta.Exito = false;
+                return respuesta;
             }
         }
         #region [ Privadas ]
