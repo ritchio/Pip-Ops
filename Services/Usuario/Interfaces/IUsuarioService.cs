@@ -11,6 +11,6 @@ namespace HelpDesk.Services.Usuario.Interfaces
         Task<RespuestaGenerica<AspNetUsersViewModel>> ObtenerUsuarioPorId(string id);
         Task<RespuestaGenerica<AspNetUsersViewModel>> Crear(AspNetUsersViewModel model);
         Task<AspNetUsersViewModel> Modificar(AspNetUsersViewModel model);
-        Task<Dictionary<string,string>> CambiarEstado(string idUsuario);
+        Task<RespuestaGenerica<Dictionary<string, string>>> CambiarEstado(string idUsuario);
     }
 }
