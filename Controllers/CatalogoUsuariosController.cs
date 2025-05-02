@@ -242,21 +242,8 @@ namespace HelpDesk.Controllers
                 return NotFound();
             }
             var cambio = await _usuarioService.CambiarEstado(id);
-            if (cambio== null)
-            {
-                return BadRequest();
-            }
-            else
-            {
-                var respuesta = new RespuestaGenerica<Dictionary<string,string>>
-                {
-                    Exito = true,
-                    Mensaje = "Estatus cambiado con éxito.",
-                    Datos = cambio
-                };
 
-                return Ok(respuesta);
-            }
+            return Ok(cambio);
             
         }
 
