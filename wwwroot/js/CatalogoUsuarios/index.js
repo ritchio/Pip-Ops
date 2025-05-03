@@ -44,3 +44,27 @@ function mostrarCambioEstado({ datos, id }) {
     $(".estadoUsuario_" +id).html(boton);
     $(".fechaInactivacion_" + id).html(datos.fechaInactivacion);
 }
+
+async function mostrarPermisos(id) {
+    try {
+        await axiosRequest({
+            url: "/CatalogoUsuarios/ObtenerPermisosUsuario",
+            funcionCallback: mostrarModalGenerico,
+            parametrosCallback: { tamanio: "extra" },
+            parametros: { idUsuario: id }
+        });
+    } catch (error) {
+        console.error('Error al obtener el Usuario por ID:', error);
+        throw error;
+    }
+}
+
+async function asignarPermiso(permiso,idUsuario,checkbox) {
+    let seleccionado = $(checkbox).is(':checked');
+    await axiosRequest({
+        url: "/CatalogoUsuarios/AsignarPermiso",
+        funcionCallback: mostrarNotificacion,
+        parametros: { idUsuario: idUsuario, permiso: permiso, asignar: seleccionado }
+    });
+
+}
