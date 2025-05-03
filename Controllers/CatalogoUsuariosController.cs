@@ -12,43 +12,31 @@ using HelpDesk.Services.Usuario.Services;
 using HelpDesk.Models.Entities;
 using HelpDesk.Models.Utils;
 using System.Text.Json;
+using HelpDesk.Services.Plaza.Interfaces;
+using HelpDesk.Services.Area.Interfaces;
+using HelpDesk.Authorization;
 
 namespace HelpDesk.Controllers
 {
-    public class CatalogoUsuariosController : Controller
+    public class CatalogoUsuariosController(
+        ApplicationDbContext context,
+        IUsuarioService usuarioService,
+        IPlazaService plazaService,
+        IAreaService areaService
+            ) : Controller
     {
         #region [ Atributos ]
-        private readonly ApplicationDbContext _context;
-        private readonly IUsuarioService _usuarioService;
-
+        private readonly ApplicationDbContext _context = context;
+        private readonly IUsuarioService _usuarioService = usuarioService;
+        private readonly IPlazaService _plazaService = plazaService;
+        private readonly IAreaService _areaService = areaService;
         #endregion [ Atributos ]
-
-        #region [ Constructor ]
-        public CatalogoUsuariosController(
-            ApplicationDbContext context,
-            IUsuarioService usuarioService)
-        {
-            _context = context;
-            _usuarioService = usuarioService;
-
-        }
-        #endregion [ Constructor ]
 
 
         // GET: CatalogoUsuarios
         public async Task<IActionResult> Index()
         {
-            var usuarios = await _context.Users
-            .Select(u => new AspNetUsersViewModel
-            {
-                Id = u.Id,
-                PrimerNombre = u.PrimerNombre,
-                SegundoNombre = u.SegundoNombre,
-                ApellidoPaterno = u.ApellidoPaterno,
-                ApellidoMaterno = u.ApellidoMaterno,
-                CorreoElectronico = u.Email ?? ""
-            })
-            .ToListAsync();
+            var usuarios = await _usuarioService.ObtenerUsuarios();
             return View(usuarios);
         }
 
@@ -70,10 +58,29 @@ namespace HelpDesk.Controllers
             return View(aspNetUsersViewModel);
         }
 
-        // GET: CatalogoUsuarios/Create
-        public IActionResult Create()
+        // GET: CatalogoUsuarios/Create  
+        public async Task<IActionResult> Crear()
         {
-            return View();
+            var usuariomodel = new AspNetUsersViewModel
+            {
+                CorreoElectronico = "",
+                PrimerNombre = "",
+                ApellidoPaterno = "",
+                IdAreas = [],
+                IdRol = ""
+            };
+
+            usuariomodel.Roles = await _context.Roles.ToListAsync();
+            usuariomodel.Plazas = await _plazaService.ObtenerPlazasAsync();
+            usuariomodel.Areas = await _areaService.ObtenerAreasAsync();
+
+            var respuesta = new RespuestaGenerica<string>
+            {
+                Datos = this.RenderizarVista("_Crear", usuariomodel, true),
+                Exito = true
+            };
+
+            return Ok(respuesta);
         }
 
         // POST: CatalogoUsuarios/Create
@@ -81,36 +88,97 @@ namespace HelpDesk.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserName,NormalizedUserName,Email,NormalizedEmail,EmailConfirmed,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEnd,LockoutEnabled,AccessFailedCount,PrimerNombre,SegundoNombre,ApellidoPaterno,ApellidoMaterno,Activo,FechaActivacion,FechaInactivacion,IdPlaza,PlazaNombre")] AspNetUsersViewModel aspNetUsersViewModel)
+        public async Task<IActionResult> Crear(AspNetUsersViewModel aspNetUsersViewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(aspNetUsersViewModel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //_context.Add(aspNetUsersViewModel);
+                //await _context.SaveChangesAsync();
+                //return RedirectToAction(nameof(Index));
+                var usuarioCreado = await _usuarioService.Crear(aspNetUsersViewModel);
+                if(usuarioCreado.Exito)
+                {
+                    var respuesta = new RespuestaGenerica<string>
+                    {
+                        Exito = true,
+                        Mensaje = "Usuario creado con éxito.",
+
+                    };
+
+                    TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    var respuesta = new RespuestaGenerica<string>
+                    {
+                        Exito = false,
+                        Mensaje =usuarioCreado.Mensaje,
+                        
+                    };
+
+                    TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                    return RedirectToAction("Index");
+
+                }
+                
             }
-            return View(aspNetUsersViewModel);
+            else
+            {
+                var errores = ModelState
+                .Where(ms => ms.Value.Errors.Any())
+                .SelectMany(ms => ms.Value.Errors.Select(e => e.ErrorMessage))
+                .ToList();
+
+                var respuesta = new RespuestaGenerica<string>
+                {
+                    Datos = errores.ToString(),
+                    Exito = false,
+                    Mensaje = errores.ToString()
+                };
+                return Ok(errores);
+            }
+
+                
         }
 
-        // GET: CatalogoUsuarios/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Editar(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var response = await _usuarioService.ObtenerUsuarioPorId(id);
+            var usuario= await _usuarioService.ObtenerUsuarioPorId(id);
             
-            return View(response);
+            
+            if(usuario.Datos == null)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                var plazas = await _plazaService.ObtenerPlazasAsync();
+                var areas = await _areaService.ObtenerAreasAsync();
+                usuario.Datos.Roles = await _context.Roles.ToListAsync();
+                usuario.Datos.Plazas = plazas.Where(p => p.Activo == true).ToList();    
+                usuario.Datos.Areas = areas.Where(p => p.Activo == true).ToList();
+            }
+
+            var respuesta = new RespuestaGenerica<string>
+            {
+                Datos = this.RenderizarVista("_Editar", usuario.Datos, true),
+                Exito = usuario.Exito,
+                Mensaje = usuario.Mensaje
+            };
+
+            return Ok(respuesta);
+            //return View("_Editar", usuario.Datos);
         }
 
-        // POST: CatalogoUsuarios/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,PrimerNombre,SegundoNombre,ApellidoMaterno,ApellidoPaterno,CorreoElectronico,Activo,IdPlaza")] AspNetUsersViewModel aspNetUsersViewModel)
+        public async Task<IActionResult> Editar(string id, AspNetUsersViewModel aspNetUsersViewModel)
         {
             if (id != aspNetUsersViewModel.Id)
             {
@@ -136,7 +204,7 @@ namespace HelpDesk.Controllers
                         Exito = true,
                         Mensaje = "Usuario actualizado con éxito.",
                     });
-                    return View(response);
+                    return RedirectToAction("Index");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -152,46 +220,89 @@ namespace HelpDesk.Controllers
             }
             else
             {
-                return View(aspNetUsersViewModel);
+                
+                var errores = ModelState
+               .Where(ms => ms.Value.Errors.Any())
+               .SelectMany(ms => ms.Value.Errors.Select(e => e.ErrorMessage))
+               .ToList();
+
+                var respuesta = new RespuestaGenerica<string>
+                {
+                    Datos = errores.ToString(),
+                    Exito = false,
+                    Mensaje = errores.ToString()
+                };
+                return Ok(errores);
             }
         }
-
-        // GET: CatalogoUsuarios/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        
+        public async Task<IActionResult> CambiarEstado(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
+            var cambio = await _usuarioService.CambiarEstado(id);
 
-            var aspNetUsersViewModel = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (aspNetUsersViewModel == null)
+            return Ok(cambio);
+            
+        }
+
+        public async Task<IActionResult> ObtenerPermisosUsuario(string idUsuario)
+        {
+            if (idUsuario == null)
             {
                 return NotFound();
             }
+            var permisos = await _usuarioService.ObtenerPermisosDeUsuario(idUsuario);
 
-            return View(aspNetUsersViewModel);
-        }
-
-        // POST: CatalogoUsuarios/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            var aspNetUsersViewModel = await _context.Users.FindAsync(id);
-            if (aspNetUsersViewModel != null)
+            var permisosUsuario = new PermisosPorUsuarioViewModel
             {
-                _context.Users.Remove(aspNetUsersViewModel);
-            }
+                IdUsuario = idUsuario,
+                Permisos = permisos
+            };
+            var respuesta = new RespuestaGenerica<string>();
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if(permisos != null)
+            {
+                respuesta.Exito = true;
+                respuesta.Datos = this.RenderizarVista("_PermisosUsuario", permisosUsuario, true);
+            }
+            else
+            {
+                respuesta.Exito = false;
+                respuesta.Mensaje = "No se encontraron permisos para el usuario.";
+            }
+            return Ok(respuesta);
         }
 
+        public async  Task<IActionResult> AsignarPermiso(string idUsuario, string permiso, bool asignar)
+        {
+            if (idUsuario == null)
+            {
+                return Ok(new RespuestaGenerica<string> { Exito = false, Mensaje = "Usuario no encontrado." });
+            }
+            else
+            {
+                try
+                {
+                    var respuesta = await _usuarioService.ActualizarPermisoUsuario(idUsuario, permiso, asignar);
+                    return Ok(respuesta);
+                }catch(Exception ex)
+                {
+                    return Ok(new RespuestaGenerica<string> { Exito = false, Mensaje = $"Woopsie! {ex.Message}" });
+
+                }
+
+            }
+                
+        }
+
+        #region [ Privadas ]
         private bool AspNetUsersViewModelExists(string id)
         {
             return _context.Users.Any(e => e.Id == id);
         }
+        #endregion [ Privadas ]
     }
 }

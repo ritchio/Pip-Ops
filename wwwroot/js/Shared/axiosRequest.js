@@ -99,6 +99,7 @@
                     parametrosCallback['datos'] = resp.datos;
                     funcionCallback(parametrosCallback);
                 } else {
+                    //console.log(resp.datos);
                     funcionCallback(resp.datos);
                 }
             }

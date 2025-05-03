@@ -1,41 +1,77 @@
-﻿
-function mostrarNotificacion(respuesta) {
-    if (typeof respuesta === "string") {
-        try {
-            respuesta = JSON.parse(respuesta);
-        } catch (e) {
-            console.error("No se pudo parsear la notificación:", e);
-            return;
+﻿function mostrarNotificacion(respuesta) {
+    try {
+        if (typeof respuesta === "string") {
+            // Parseamos y convertimos las claves a minúsculas
+            const temp = JSON.parse(respuesta);
+            respuesta = {};
+            for (const key in temp) {
+                if (Object.hasOwn(temp, key)) {
+                    respuesta[key.toLowerCase()] = temp[key];
+                }
+            }
         }
-    }
+        console.log(respuesta);
+        const { exito, mensaje, datos, redireccion } = respuesta;
 
+        $("#notificacionTitulo").text(exito?"Notificación":"Error");
+        
 
-    if (respuesta.exito) {
-        $("#notificacionMensaje").text(respuesta.mensaje || 'Operación exitosa');
-    } else {
-        $("#notificacionMensaje").text(respuesta.mensaje || 'Ocurrió un error');
-    }
+        $("#notificacionMensaje").html(
+            exito ? mensaje || 'Operación exitosa' : `<p class="text-danger">${mensaje}</p>` || '<p class="text-danger">Ocurrió un error</p>'
+        );
 
-    // Detalles
-    if (respuesta.datos) {
-        $("#notificaionMensaje").text(respuesta.datos);
-    }
+        if (datos && mensaje == null) {
+            $("#notificacionMensaje").text(datos);
+        }
 
-    const toastEl = document.getElementById('notificacionToast');
-    const toast = new bootstrap.Toast(toastEl); 
-    toast.show(); //
+        const toast = new bootstrap.Toast(document.getElementById('notificacionToast'));
+        toast.show();
 
-    // Redirigir si hay URL
-    if (respuesta.redireccion) {
-        setTimeout(() => {
-            window.location.href = respuesta.redireccion;
-        }, 2000);
+        if (redireccion) {
+            setTimeout(() => window.location.href = redireccion, 2000);
+        }
+    } catch (e) {
+        console.error("No se pudo parsear la notificación:", e);
     }
 }
 
-function mostrarModalGenerico(html) {
+
+function mostrarModalGenerico(html=null,tamanio="normal") {
     if (html != null) {
-        $("#modalGenericoCuerpo").html(html);
+        //tamaño
+        if (typeof html == "object") {
+            datos = html.datos;
+            tamanio = html.tamanio;
+        } else { datos = html; }
+        switch (tamanio) {
+            case "pequeño":
+                $("#modalGenerico").removeClass("modal-lg");
+                $("#modalGenerico").removeClass("modal-xl");
+                $("#modalGenerico").addClass("modal-sm");
+                break;
+            
+            case "grande":
+                $("#modalGenerico").removeClass("modal-sm");
+                $("#modalGenerico").removeClass("modal-xl");
+                $("#modalGenerico").addClass("modal-lg");
+                break;
+
+            case "extra":
+                $("#modalGenerico").removeClass("modal-sm");
+                $("#modalGenerico").removeClass("modal-lg");
+                $("#modalGenerico").addClass("modal-xl");
+                break;
+
+            case "normal":
+            default: 
+                $("#modalGenerico").removeClass("modal-lg");
+                $("#modalGenerico").removeClass("modal-xl");
+                $("#modalGenerico").removeClass("modal-sm");
+                break;
+            
+        }
+        //contenido
+        $("#modalGenericoCuerpo").html(datos);
         $("#modalGenerico").modal("show");
     }
     
@@ -44,4 +80,230 @@ function mostrarModalGenerico(html) {
 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)
-})
+});
+
+
+//Lenguaje de tablas
+const lenguajeTablaGenerica = {
+    "processing": "Procesando...",
+    "lengthMenu": "Mostrar _MENU_ registros",
+    "zeroRecords": "No se encontraron resultados",
+    "emptyTable": "Ningún dato disponible en esta tabla",
+    "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+    "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+    "search": "Buscar:",
+    "infoThousands": ",",
+    "loadingRecords": "Cargando...",
+    "paginate": {
+        "first": "Primero",
+        "last": "Último",
+        "next": "Siguiente",
+        "previous": "Anterior"
+    },
+    "aria": {
+        "sortAscending": ": Activar para ordenar la columna de manera ascendente",
+        "sortDescending": ": Activar para ordenar la columna de manera descendente"
+    },
+    "buttons": {
+        "copy": "Copiar",
+        "colvis": "Visibilidad",
+        "collection": "Colección",
+        "colvisRestore": "Restaurar visibilidad",
+        "copyKeys": "Presione ctrl o u2318 + C para copiar los datos de la tabla al portapapeles del sistema. <br \/> <br \/> Para cancelar, haga clic en este mensaje o presione escape.",
+        "copySuccess": {
+            "1": "Copiada 1 fila al portapapeles",
+            "_": "Copiadas %d fila al portapapeles"
+        },
+        "copyTitle": "Copiar al portapapeles",
+        "csv": "CSV",
+        "excel": "Excel",
+        "pageLength": {
+            "-1": "Mostrar todas las filas",
+            "1": "Mostrar 1 fila",
+            "_": "Mostrar %d filas"
+        },
+        "pdf": "PDF",
+        "print": "Imprimir"
+    },
+    "autoFill": {
+        "cancel": "Cancelar",
+        "fill": "Rellene todas las celdas con <i>%d<\/i>",
+        "fillHorizontal": "Rellenar celdas horizontalmente",
+        "fillVertical": "Rellenar celdas verticalmentemente"
+    },
+    "decimal": ",",
+    "searchBuilder": {
+        "add": "Añadir condición",
+        "button": {
+            "0": "Constructor de búsqueda",
+            "_": "Constructor de búsqueda (%d)"
+        },
+        "clearAll": "Borrar todo",
+        "condition": "Condición",
+        "conditions": {
+            "date": {
+                "after": "Despues",
+                "before": "Antes",
+                "between": "Entre",
+                "empty": "Vacío",
+                "equals": "Igual a",
+                "notBetween": "No entre",
+                "notEmpty": "No Vacio",
+                "not": "Diferente de"
+            },
+            "number": {
+                "between": "Entre",
+                "empty": "Vacio",
+                "equals": "Igual a",
+                "gt": "Mayor a",
+                "gte": "Mayor o igual a",
+                "lt": "Menor que",
+                "lte": "Menor o igual que",
+                "notBetween": "No entre",
+                "notEmpty": "No vacío",
+                "not": "Diferente de"
+            },
+            "string": {
+                "contains": "Contiene",
+                "empty": "Vacío",
+                "endsWith": "Termina en",
+                "equals": "Igual a",
+                "notEmpty": "No Vacio",
+                "startsWith": "Empieza con",
+                "not": "Diferente de"
+            },
+            "array": {
+                "not": "Diferente de",
+                "equals": "Igual",
+                "empty": "Vacío",
+                "contains": "Contiene",
+                "notEmpty": "No Vacío",
+                "without": "Sin"
+            }
+        },
+        "data": "Data",
+        "deleteTitle": "Eliminar regla de filtrado",
+        "leftTitle": "Criterios anulados",
+        "logicAnd": "Y",
+        "logicOr": "O",
+        "rightTitle": "Criterios de sangría",
+        "title": {
+            "0": "Constructor de búsqueda",
+            "_": "Constructor de búsqueda (%d)"
+        },
+        "value": "Valor"
+    },
+    "searchPanes": {
+        "clearMessage": "Borrar todo",
+        "collapse": {
+            "0": "Paneles de búsqueda",
+            "_": "Paneles de búsqueda (%d)"
+        },
+        "count": "{total}",
+        "countFiltered": "{shown} ({total})",
+        "emptyPanes": "Sin paneles de búsqueda",
+        "loadMessage": "Cargando paneles de búsqueda",
+        "title": "Filtros Activos - %d"
+    },
+    "select": {
+        "1": "%d fila seleccionada",
+        "_": "%d filas seleccionadas",
+        "cells": {
+            "1": "1 celda seleccionada",
+            "_": "$d celdas seleccionadas"
+        },
+        "columns": {
+            "1": "1 columna seleccionada",
+            "_": "%d columnas seleccionadas"
+        }
+    },
+    "thousands": ".",
+    "datetime": {
+        "previous": "Anterior",
+        "next": "Proximo",
+        "hours": "Horas",
+        "minutes": "Minutos",
+        "seconds": "Segundos",
+        "unknown": "-",
+        "amPm": [
+            "am",
+            "pm"
+        ]
+    },
+    "editor": {
+        "close": "Cerrar",
+        "create": {
+            "button": "Nuevo",
+            "title": "Crear Nuevo Registro",
+            "submit": "Crear"
+        },
+        "edit": {
+            "button": "Editar",
+            "title": "Editar Registro",
+            "submit": "Actualizar"
+        },
+        "remove": {
+            "button": "Eliminar",
+            "title": "Eliminar Registro",
+            "submit": "Eliminar",
+            "confirm": {
+                "_": "¿Está seguro que desea eliminar %d filas?",
+                "1": "¿Está seguro que desea eliminar 1 fila?"
+            }
+        },
+        "error": {
+            "system": "Ha ocurrido un error en el sistema (<a target=\"\\\" rel=\"\\ nofollow\" href=\"\\\">Más información&lt;\\\/a&gt;).<\/a>"
+        },
+        "multi": {
+            "title": "Múltiples Valores",
+            "info": "Los elementos seleccionados contienen diferentes valores para este registro. Para editar y establecer todos los elementos de este registro con el mismo valor, hacer click o tap aquí, de lo contrario conservarán sus valores individuales.",
+            "restore": "Deshacer Cambios",
+            "noMulti": "Este registro puede ser editado individualmente, pero no como parte de un grupo."
+        }
+    },
+    "info": "Mostrando de _START_ a _END_ de _TOTAL_ entradas"
+};
+
+//if (Notification.permission === "default") {
+//    Notification.requestPermission().then(permission => {
+//        if (permission === "granted") {
+//            mostrarNotificacionAvanzada("Permiso concedido", {
+//                body: "Ahora recibirás notificaciones importantes"
+//            });
+//        }
+//    });
+//}
+
+
+//function crearNotificacion() {
+//    let ruta = "https://localhost:7196/CatalogoUsuarios";
+//    const timestamp = Date.now(); 
+
+//    Push.create("Notificación de prueba", {
+//        body: "Esta es una notificación de prueba con polling",
+//        timeout: 5000,
+//        onClick: function () {
+//            window.focus();
+//            this.close();
+//            //agregamos la ruta al storage pa que sea accesible desde la pestaña activa
+//            localStorage.setItem("notificacion-redireccion", JSON.stringify({
+//                url: ruta,
+//                timestamp: timestamp
+//            }));
+//            //en lugar de un eventListener  polleamos el storage después de crear la notificación
+//            //así en teoría la redirección no recae en la notificación, si no de la pestaña activa
+//            const intervalId = setInterval(() => {
+//                const data = localStorage.getItem("notificacion-redireccion");
+//                if (data) {
+//                    const parsed = JSON.parse(data);
+//                    if (parsed.timestamp === timestamp) {
+//                        clearInterval(intervalId); //pa que solo sea durante la notificación
+//                        localStorage.removeItem("notificacion-redireccion");
+//                        window.location.href = parsed.url;
+//                        //window.open(parsed.url, "_self"); //en mi navegador también funciona de esta manera
+//                    }
+//                }
+//            }, 500);
+//        }
+//    });
+//}

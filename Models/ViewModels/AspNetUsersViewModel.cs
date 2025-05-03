@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace HelpDesk.Models.ViewModels
 {
     public class AspNetUsersViewModel
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
+        public int? NumeroUsuario { get; set; }
         [Display(Name = "Correo Electrónico")]
         public required string CorreoElectronico { get; set; }
         [Display(Name = "Primer Nombre")]
@@ -20,17 +22,36 @@ namespace HelpDesk.Models.ViewModels
         public string? NombreCompleto => $"{PrimerNombre} {SegundoNombre} {ApellidoPaterno} {ApellidoMaterno}";
 
         // Estado del usuario
-        public bool? Activo { get; set; }
+        public bool Activo { get; set; }
         [Display(Name = "Estado")]
-        public string Estado => Activo.HasValue && Activo.Value ? "Activo" : "Inactivo";
+        public string Estado => Activo? "Activo" : "Inactivo";
 
         [Display(Name = "Fecha de Activación")]
         public DateTime? FechaActivacion { get; set; }
-        [Display(Name = "Fecha de Inactivación")]
+        [Display(Name = "Fecha Inactivado")]
         public DateTime? FechaInactivacion { get; set; }
 
-        // Relación con Plaza
+        // Relaciones
+        //Plazas
         public int? IdPlaza { get; set; }
-        public string? PlazaNombre { get; set; } // Campo opcional si necesitas mostrar el nombre de la plaza
+        [Display(Name = "Plaza")]
+        public string? PlazaNombre { get; set; }
+        public List<CatPlazaViewModel>? Plazas { get; set; }
+        //Áreas
+        public required List<int> IdAreas { get; set; }
+        [Display(Name = "Área")]
+        public string? AreaNombre { get; set; }
+        [Display(Name = "Área")]
+        public List<CatAreaViewModel>? Areas { get; set; }
+
+        //Roles
+        [Display(Name = "Tipo de Usuario")]
+
+        public required string IdRol { get; set; }
+        [Display(Name = "Tipo de Usuario")]
+        public string? RolNombre { get; set; }
+
+        public List<IdentityRole>? Roles { get; set; }
+        
     }
 }

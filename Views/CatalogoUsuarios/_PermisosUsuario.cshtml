@@ -1,0 +1,32 @@
+﻿@model HelpDesk.Models.ViewModels.PermisosPorUsuarioViewModel
+
+<div class="modal-header">
+	<h5 class="modal-title">Permisos</h5>
+	<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th class="text-center">Nombre</th>
+                <th class="text-center">Descripción</th>
+                <th class="text-center">Asignado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var permiso in Model.Permisos)
+            {
+                <tr>
+                    <td>@permiso.Valor</td>
+                    <td>@permiso.Descripcion</td>
+                    <td class="text-center">
+                        <input type="checkbox" class="form-check-input" id="asignado_@permiso.Valor" @(permiso.Asignado ? "checked" : "") onchange="asignarPermiso('@permiso.Valor','@Model.IdUsuario',this)"/>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+</div>

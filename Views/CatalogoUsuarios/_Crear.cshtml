@@ -1,0 +1,96 @@
+﻿@using HelpDesk.Models.ViewModels
+@model AspNetUsersViewModel
+
+@{
+    ViewData["Title"] = "Registro de usuario";
+    // Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="modal-header">
+    <h4 class="modal-title">
+        Nuevo usuario
+    </h4>
+</div>
+<div class="modal-body">
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Crear" class="row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+            <div class="form-group col-sm-6">
+                <label asp-for="PrimerNombre" class="control-label"></label>
+                <input asp-for="PrimerNombre" class="form-control" />
+                <span asp-validation-for="PrimerNombre" class="text-danger"></span>
+            </div>
+            <div class="form-group col-sm-6">
+                <label asp-for="SegundoNombre" class="control-label"></label>
+                <input asp-for="SegundoNombre" class="form-control" />
+                <span asp-validation-for="SegundoNombre" class="text-danger"></span>
+            </div>
+                <div class="form-group col-sm-6">
+                <label asp-for="ApellidoPaterno" class="control-label"></label>
+                <input asp-for="ApellidoPaterno" class="form-control" />
+                <span asp-validation-for="ApellidoPaterno" class="text-danger"></span>
+            </div>
+                <div class="form-group col-sm-6">
+                <label asp-for="ApellidoMaterno" class="control-label"></label>
+                <input asp-for="ApellidoMaterno" class="form-control" />
+                <span asp-validation-for="ApellidoMaterno" class="text-danger"></span>
+            </div>
+                <div class="form-group col-sm-6">
+                    <label asp-for="CorreoElectronico" class="control-label"></label>
+                    <input asp-for="CorreoElectronico" class="form-control" required/>
+                    <span asp-validation-for="CorreoElectronico" class="text-danger"></span>
+                </div>
+                <div class="form-group col-sm-6">
+                    <label for="IdRol" class="control-label">Tipo de usuario</label>
+                    <select asp-for="IdRol" class="form-control" asp-items="@(new SelectList(Model.Roles, "Id", "Name"))">
+                    </select>
+                    <span asp-validation-for="IdRol" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <label for="IdPlaza" class="control-label">Plaza</label>
+                    <select asp-for="IdPlaza" class="form-control" asp-items="@(new SelectList(Model.Plazas, "IdPlaza", "Nombre"))" required>
+                    </select>
+                    <span asp-validation-for="IdPlaza" class="text-danger"></span>
+                </div>
+
+                <div class="form-group col-sm-6 ">
+                        <label for="IdArea" class="control-label">Área</label>
+                        <select asp-for="IdAreas"  class="form-select tom-select" asp-items="@(new SelectList(Model.Areas, "IdArea", "Nombre"))" multiple="multiple" required>
+                        </select>
+                        <span asp-validation-for="IdAreas" class="text-danger"></span>
+                        
+                    </div>
+              
+                <div>
+
+                </div>
+            <div class="form-group mt-4">
+                <input type="submit" value="Guardar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+<div class="modal-footer">
+   <button  type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+</div>
+
+<script>
+
+    new TomSelect('select[name="IdAreas"]', {
+        plugins: ['remove_button'],
+        maxItems: null,
+        create: false,
+        persist: false,
+        allowEmptyOption: true,
+    });
+
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

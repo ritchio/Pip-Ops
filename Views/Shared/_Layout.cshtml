@@ -7,44 +7,42 @@
 
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>@ViewData["titulo"]</title>
-    <!-- BEGIN PAGE LEVEL STYLES -->
-    <link href="~/lib/jsvectormap/dist/jsvectormap.css?1744111186" rel="stylesheet" />
-    <!-- END PAGE LEVEL STYLES -->
-    <!-- BEGIN GLOBAL MANDATORY STYLES -->
-    <link href="/css/tabler.min.css?1744111186" rel="stylesheet" integrity="sha384-pAQE2kJ68M5BfDVCRPdGdaXrZagu/B50dMc4ukkjzgoAyoY+U92JUlEG9N8NsMZh" />
-    <!-- END GLOBAL MANDATORY STYLES -->
-    <!-- BEGIN PLUGINS STYLES -->
-    <link href="/css/tabler-flags.min.css?1744111186"
-          rel="stylesheet"
-          integrity="sha384-J4S9gTOgB6a60d8OIMRu7vveDJCqxLAcDfzDN24CQxXmfi1iIFoU3uelSShCMfAD" />
-    <link href="/css/tabler-socials.min.css?1744111186"
-          rel="stylesheet"
-          integrity="sha384-M/p2rVRhhVGWQaE5KAPB4+/uWqFtmb6ag3/NXG8E3SL2MAROPCfB5YJvDHmS5Rms" />
-    <link href="/css/tabler-payments.min.css?1744111186"
-          rel="stylesheet"
-          integrity="sha384-YnhOMEPyU5QfErzSK9sD18FMXdRCn/HB4a+88mFXbd45fFRNWKWeARptNw1k16+/" />
-    <link href="/css/tabler-vendors.min.css?1744111186"
-          rel="stylesheet"
-          integrity="sha384-cFz/XfWTmyCb5jkPFO3b51Vgc16vyrRzL3LLD2Ah7yFnpVjxN6nalaCc02Xg2vh4" />
-    <link href="/css/tabler-marketing.min.css?1744111186"
-          rel="stylesheet"
-          integrity="sha384-/IK/eDAkWg4gzAdp6tVmpjq6GEQGamdwbnfsuK0PNDDQPsD9ytW0gIXSK/dZWgAK" />
-    <link href="/css/tabler-themes.min.css?1744111186"
-          rel="stylesheet"
-          integrity="sha384-Bj8pP2O3iJP6JH/ZdDBnxIH/3XOJF8DSyYUUHs8wTxb0PRUe5DU01llAmog5ybpg" />
-    <!-- END PLUGINS STYLES -->
-    <!-- BEGIN DEMO STYLES -->
-    <!--link href="./preview/css/demo.min.css?1744111186" rel="stylesheet" integrity="sha384-BUDq2P684xwRBf0GDlySvob+KJg4ko8y2K7njgvYBscmEuqoVVqJ75zcTDozwkFA" />
-    <!-- END DEMO STYLES -->
-    <!-- BEGIN CUSTOM FONT -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/&#64;tabler/icons-webfont@latest/tabler-icons.min.css">
-    <link href="https://rsms.me/inter/inter.css" rel="stylesheet">
-    <!-- END CUSTOM FONT -->
+<head>  
+   <meta charset="utf-8" />  
+   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />  
+   <meta http-equiv="X-UA-Compatible" content="ie=edge" />  
+   <title>@ViewData["titulo"]</title>
+   <!-- BEGIN PAGE LEVEL STYLES -->  
+   <link href="~/lib/jsvectormap/dist/jsvectormap.css?1744111186" rel="stylesheet" />  
+   <!-- END PAGE LEVEL STYLES -->  
+   <!-- BEGIN GLOBAL MANDATORY STYLES -->  
+   <link href="/css/tabler.min.css?1744111186" rel="stylesheet" integrity="sha384-pAQE2kJ68M5BfDVCRPdGdaXrZagu/B50dMc4ukkjzgoAyoY+U92JUlEG9N8NsMZh" />  
+   <!-- END GLOBAL MANDATORY STYLES -->  
+   <!-- BEGIN PLUGINS STYLES -->  
+   <link href="/css/tabler-flags.min.css?1744111186" rel="stylesheet" integrity="sha384-J4S9gTOgB6a60d8OIMRu7vveDJCqxLAcDfzDN24CQxXmfi1iIFoU3uelSShCMfAD" />  
+   <link href="/css/tabler-socials.min.css?1744111186" rel="stylesheet" integrity="sha384-M/p2rVRhhVGWQaE5B4+/uWqFtmb6ag3/NXG8E3SL2MAROPCfB5YJvDHmS5Rms" />  
+   <link href="/css/tabler-payments.min.css?1744111186" rel="stylesheet" integrity="sha384-YnhOMEPyU5QfErzSK9sD18FMXdRCn/HB4a+88mFXbd45fFRNWKWeARptNw1k16+/" />  
+   <link href="/css/tabler-vendors.min.css?1744111186" rel="stylesheet" integrity="sha384-cFz/XfWTmyCb5jkPFO3b51Vgc16vyrRzL3LLD2Ah7yFnpVjxN6nalaCc02Xg2vh4" />  
+   <link href="/css/tabler-marketing.min.css?1744111186" rel="stylesheet" integrity="sha384-/IK/eDAkWg4gzAdp6tVmpjq6GEQGamdwbnfsuK0PNDDQPsD9ytW0gIXSK/dZWgAK" />  
+   <link href="/css/tabler-themes.min.css?1744111186" rel="stylesheet" integrity="sha384-Bj8pP2O3iJP6JH/ZdDBnxIH/3XOJF8DSyYUUHs8wTxb0PRUe5DU01llAmog5ybpg" />  
+   <!-- END PLUGINS STYLES -->  
+   <!-- BEGIN DEMO STYLES -->  
+   <!--link href="./preview/css/demo.min.css?1744111186" rel="stylesheet" integrity="sha384-BUDq2P684xwRBf0GDlySvob+KJg4ko8y2K7njgvYBscmEuqoVVqJ75zcTDozwkFA" />  
+   <!-- END DEMO STYLES -->  
+   <!-- BEGIN CUSTOM FONT -->  
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/&#64;tabler/icons-webfont@latest/tabler-icons.min.css">  
+   <link href="https://rsms.me/inter/inter.css" rel="stylesheet">  
+   <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css">  
+   <link href="~/css/site.css" rel="stylesheet">  
+   <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />  
+   <!-- END CUSTOM FONT -->  
+   <script src="~/lib/jquery/dist/jquery.min.js"></script>  
+   <script src="https://cdn.jsdelivr.net/npm/&#64;popperjs/core@2.9.2/dist/umd/popper.min.js"></script>  
+   <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>  
+   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>  
+   <script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>  
+   <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>  
+   @* <script src="https://cdnjs.cloudflare.com/ajax/libs/push.js/1.0.12/push.min.js"></script>   *@
 </head>
 <body>
         <!-- BEGIN GLOBAL THEME SCRIPT -->
@@ -80,15 +78,10 @@
             </footer>
             <!--  END FOOTER  -->
         </div>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/&#64;popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+            
     <script src="~/js/site.js" asp-append-version="true"></script>
         <script src="~/js/Shared/axiosRequest.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
-
     </div>
 
     <!-- BEGIN PAGE LIBRARIES -->
@@ -116,9 +109,9 @@
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
         <div class="toast" id="notificacionToast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">
             
-            <div class="toast-header">
+            <div class="toast-header bg-info">
                 
-                <strong class="me-auto" id="notificacionTitulo">Notificación</strong>
+                <strong class="me-auto text-light" id="notificacionTitulo">Notificación</strong>
 
                 <button type="button" class="ms-2 btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
@@ -465,5 +458,6 @@
         });
     </script>
     <!-- END PAGE SCRIPTS -->
+    @* <button type="button" class="btn btn-primary" onclick="crearNotificacion()">asd asd asd asdasd asda sasdasdas dasd asda asd asd aasdnotificar</button> *@
 </body>
 </html>
