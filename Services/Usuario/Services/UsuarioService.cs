@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HelpDesk.Authorization;
 using HelpDesk.Data;
 using HelpDesk.Models.Entities;
 using HelpDesk.Models.Utils;
@@ -9,6 +10,7 @@ using HelpDesk.Services.Usuario.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace HelpDesk.Services.Usuario.Services
 {
@@ -24,6 +26,8 @@ namespace HelpDesk.Services.Usuario.Services
         private readonly RoleManager<IdentityRole> _roleManager = roleManager;
         private readonly UserManager<Cat_Usuario> _userManager = userManager;
         #endregion [ Atributos ]
+
+        #region [ Usuario ]
         public async Task<List<AspNetUsersViewModel>> ObtenerUsuarios()
         {
             try
@@ -321,7 +325,120 @@ namespace HelpDesk.Services.Usuario.Services
                 return respuesta;
             }
         }
-        #region [ Privadas ]
+
+        #endregion [ Usuario ]
+
+        #region [ Permisos ]
+        public async Task<List<PermisoViewModel>> ObtenerPermisosDeUsuario(string idUsuario)
+        {
+            var usuario = await _userManager.FindByIdAsync(idUsuario);
+            if (usuario == null)
+            {
+                throw new Exception("Usuario no encontrado.");
+            }
+
+            var claims = await _userManager.GetClaimsAsync(usuario);
+            var permisosAsignados = claims
+                .Where(c => c.Type == "permission")
+                .Select(c => c.Value)
+                .ToHashSet();
+
+            var todosLosPermisos = ObtenerTodosLosPermisosDefinidos();
+
+            var lista = todosLosPermisos
+                .Select(p => new PermisoViewModel
+                {
+                    Valor = p.Valor,
+                    Descripcion = p.Descripcion,
+                    Asignado = permisosAsignados.Contains(p.Valor)
+                })
+                .ToList();
+
+            return lista;
+        }
+        private List<(string Valor, string Descripcion)> ObtenerTodosLosPermisosDefinidos()
+        {
+            var permisos = new List<(string, string)>();
+            var tipo = typeof(Permisos);
+
+            foreach (var categoria in tipo.GetNestedTypes())
+            {
+                foreach (var campo in categoria.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static))
+                {
+                    var valor = campo.GetValue(null)?.ToString();
+                    var descripcionAttr = campo.GetCustomAttributes(typeof(PermisoDescripcionAttribute), false)
+                        .FirstOrDefault() as PermisoDescripcionAttribute;
+                    var descripcion = descripcionAttr?.Descripcion ?? valor;
+                    permisos.Add((valor??"", descripcion??""));
+                }
+            }
+
+            return permisos;
+        }
+
+        public async Task<RespuestaGenerica<string>> ActualizarPermisoUsuario(string idUsuario, string permiso, bool asignar)
+        {
+            var respuesta = new RespuestaGenerica<string>();
+            var usuario = await _userManager.FindByIdAsync(idUsuario);
+            if (usuario == null)
+            {
+                respuesta.Exito = false;
+                respuesta.Mensaje = "Usuario no encontrado.";
+                return  respuesta;
+            }
+                
+            var claim = new Claim("permission", permiso);
+
+            if (asignar)
+            {
+                var resultado = await _userManager.AddClaimAsync(usuario, claim);
+                if (!resultado.Succeeded)
+                {
+                    respuesta.Exito = false;
+                    respuesta.Mensaje = "No se pudo asignar el permiso.";
+
+                }
+                else
+                {
+                    respuesta.Exito = true;
+                    respuesta.Mensaje = "Permiso asignado con éxito.";
+
+                }
+
+                return respuesta;
+            }
+            else
+            {
+                var claimsExistentes = await _userManager.GetClaimsAsync(usuario);
+                var claimExistente = claimsExistentes.FirstOrDefault(c => c.Type == "permission" && c.Value == permiso);
+                if (claimExistente != null)
+                {
+                    var resultado = await _userManager.RemoveClaimAsync(usuario, claimExistente);
+                    if (!resultado.Succeeded)
+                    {
+                        respuesta.Exito = false;
+                        respuesta.Mensaje = "No se pudo quitar el permiso.";
+                    }
+                    else
+                    {
+                        respuesta.Exito = true;
+                        respuesta.Mensaje = "Permiso quitado con éxito.";
+                    }
+                    return respuesta;
+                }
+                else
+                {
+                    respuesta.Exito = false;
+                    respuesta.Mensaje = "El permiso no existe.";
+                    return respuesta;
+
+                }
+            }
+        }
+
+        #endregion [ Permisos ]
+
+        #region [ Auxiliares ]
         private string GenerarContrasenaAleatoria(int longitud)
         {
             const string caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -329,7 +446,10 @@ namespace HelpDesk.Services.Usuario.Services
             return new string(Enumerable.Repeat(caracteres, longitud)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
-        #endregion [ Privadas ]
+
+        
+
+        #endregion [ Auxiliares ]
 
     }
 }
