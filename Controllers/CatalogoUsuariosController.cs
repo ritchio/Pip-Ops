@@ -14,6 +14,7 @@ using HelpDesk.Models.Utils;
 using System.Text.Json;
 using HelpDesk.Services.Plaza.Interfaces;
 using HelpDesk.Services.Area.Interfaces;
+using HelpDesk.Authorization;
 
 namespace HelpDesk.Controllers
 {
@@ -247,9 +248,61 @@ namespace HelpDesk.Controllers
             
         }
 
+        public async Task<IActionResult> ObtenerPermisosUsuario(string idUsuario)
+        {
+            if (idUsuario == null)
+            {
+                return NotFound();
+            }
+            var permisos = await _usuarioService.ObtenerPermisosDeUsuario(idUsuario);
+
+            var permisosUsuario = new PermisosPorUsuarioViewModel
+            {
+                IdUsuario = idUsuario,
+                Permisos = permisos
+            };
+            var respuesta = new RespuestaGenerica<string>();
+
+            if(permisos != null)
+            {
+                respuesta.Exito = true;
+                respuesta.Datos = this.RenderizarVista("_PermisosUsuario", permisosUsuario, true);
+            }
+            else
+            {
+                respuesta.Exito = false;
+                respuesta.Mensaje = "No se encontraron permisos para el usuario.";
+            }
+            return Ok(respuesta);
+        }
+
+        public async  Task<IActionResult> AsignarPermiso(string idUsuario, string permiso, bool asignar)
+        {
+            if (idUsuario == null)
+            {
+                return Ok(new RespuestaGenerica<string> { Exito = false, Mensaje = "Usuario no encontrado." });
+            }
+            else
+            {
+                try
+                {
+                    var respuesta = await _usuarioService.ActualizarPermisoUsuario(idUsuario, permiso, asignar);
+                    return Ok(respuesta);
+                }catch(Exception ex)
+                {
+                    return Ok(new RespuestaGenerica<string> { Exito = false, Mensaje = $"Woopsie! {ex.Message}" });
+
+                }
+
+            }
+                
+        }
+
+        #region [ Privadas ]
         private bool AspNetUsersViewModelExists(string id)
         {
             return _context.Users.Any(e => e.Id == id);
         }
+        #endregion [ Privadas ]
     }
 }

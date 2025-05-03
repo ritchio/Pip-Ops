@@ -12,5 +12,7 @@ namespace HelpDesk.Services.Usuario.Interfaces
         Task<RespuestaGenerica<AspNetUsersViewModel>> Crear(AspNetUsersViewModel model);
         Task<AspNetUsersViewModel> Modificar(AspNetUsersViewModel model);
         Task<RespuestaGenerica<Dictionary<string, string>>> CambiarEstado(string idUsuario);
+        Task<List<PermisoViewModel>> ObtenerPermisosDeUsuario(string idUsuario);
+        Task<RespuestaGenerica<string>> ActualizarPermisoUsuario(string idUsuario, string permiso, bool asignar);
     }
 }
