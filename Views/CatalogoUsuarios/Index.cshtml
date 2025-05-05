@@ -1,5 +1,5 @@
 ﻿@using HelpDesk.Models.ViewModels
-@model IEnumerable<AspNetUsersViewModel>
+@model IEnumerable<CatUsuarioViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -108,6 +108,17 @@
                                         </tr>
                                     }
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td class="text-center"></td>
+                                        <td class="text-center"></td>
+                                        <td class="text-center"></td>
+                                        <td class="text-center"></td>
+                                        <td class="text-center"></td>
+                                        <td class="text-center"></td>
+                                        <td class="text-center"></td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>
@@ -176,12 +187,23 @@
                                             <button type="button" class="btn btn-primary estadoUsuario_@item.Id" onclick="cambiarEstadoUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva al usuario">
                                                 <i class="ti ti-circle-@(item.Activo? "x" : "check")"></i>
                                                 </button>
-                                            <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite cambiar los permisos del usuario"><i class="ti ti-circle-key"></i></button>
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite cambiar los permisos del usuario" onclick="mostrarPermisos('@item.Id')"><i class="ti ti-circle-key"></i></button>
                                             <button type="button" class="btn btn-primary" onclick="editarUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite modificar la información del usuario"><i class="ti ti-edit"></i></button>
                                         </td>
                                         </tr>
                                     }
                                 </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
+                                </tr>
+                            </tfoot>
                             </table>
                         </div>
                     </div>
@@ -250,12 +272,23 @@
                                             <button type="button" class="btn btn-primary estadoUsuario_@item.Id" onclick="cambiarEstadoUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva al usuario">
                                                 <i class="ti ti-circle-@(item.Activo? "x" : "check")"></i>
                                                 </button>
-                                            <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite cambiar los permisos del usuario"><i class="ti ti-circle-key"></i></button>
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite cambiar los permisos del usuario" onclick="mostrarPermisos('@item.Id')"><i class="ti ti-circle-key"></i></button>
                                             <button type="button" class="btn btn-primary" onclick="editarUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite modificar la información del usuario"><i class="ti ti-edit"></i></button>
                                         </td>
                                         </tr>
                                     }
                                 </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
+                                </tr>
+                            </tfoot>
                             </table>
                         </div>
                     </div>
@@ -322,12 +355,23 @@
                                             <button type="button" class="btn btn-primary estadoUsuario_@item.Id" onclick="cambiarEstadoUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva al usuario">
                                                 <i class="ti ti-circle-@(item.Activo? "x" : "check")"></i>
                                                 </button>
-                                            <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite cambiar los permisos del usuario"><i class="ti ti-circle-key"></i></button>
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite cambiar los permisos del usuario" onclick="mostrarPermisos('@item.Id')"><i class="ti ti-circle-key"></i></button>
                                             <button type="button" class="btn btn-primary" onclick="editarUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite modificar la información del usuario"><i class="ti ti-edit"></i></button>
                                         </td>
                                         </tr>
                                     }
                                 </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
+                                    <td class="text-center"></td>
+                                </tr>
+                            </tfoot>
                             </table>
                         </div>
                     </div>
@@ -353,15 +397,113 @@
             orderable: false,
             targets: -2
         }],
-            language: lenguajeTablaGenerica
+            language: lenguajeTablaGenerica,
+            initComplete: function () {
+        this.api()
+            .columns()
+            .every(function () {
+                let column = this;
+                let title = column.header().textContent;
+
+                if(title.trim() != "Acciones"){
+
+                    let input = document.createElement('input');
+                    input.placeholder = title.trim();
+                    input.size=title.trim() == "#"?4 : 10;
+                    column.footer().replaceChildren(input);
+
+
+                    input.addEventListener('keyup', () => {
+                        if (column.search() !== this.value) {
+                            column.search(input.value).draw();
+                        }
+                    });
+                }
+                
+            });
+    }
         });
         $('#tablaAdministrador').DataTable({
-            language: lenguajeTablaGenerica
+            language: lenguajeTablaGenerica,
+             initComplete: function () {
+        this.api()
+            .columns()
+            .every(function () {
+                let column = this;
+                let title = column.header().textContent;
+
+                if(title.trim() != "Acciones"){
+
+                    let input = document.createElement('input');
+                    input.placeholder = title.trim();
+                    input.size=title.trim() == "#"?4 : 10;
+
+                    column.footer().replaceChildren(input);
+
+
+                    input.addEventListener('keyup', () => {
+                        if (column.search() !== this.value) {
+                            column.search(input.value).draw();
+                        }
+                    });
+                }
+
+            });
+    }
         });
         $('#tablaSoporte').DataTable({
-            language: lenguajeTablaGenerica
+            language: lenguajeTablaGenerica,
+             initComplete: function () {
+        this.api()
+            .columns()
+            .every(function () {
+                let column = this;
+                let title = column.header().textContent;
+
+                if(title.trim() != "Acciones"){
+
+                    let input = document.createElement('input');
+                    input.placeholder = title.trim();
+                    input.size=title.trim() == "#"?4 : 10;
+                    column.footer().replaceChildren(input);
+
+
+                    input.addEventListener('keyup', () => {
+                        if (column.search() !== this.value) {
+                            column.search(input.value).draw();
+                        }
+                    });
+                }
+
+            });
+    }
         });
         $('#tablaUsuario').DataTable({
-            language: lenguajeTablaGenerica
+            language: lenguajeTablaGenerica,
+             initComplete: function () {
+        this.api()
+            .columns()
+            .every(function () {
+                let column = this;
+                let title = column.header().textContent;
+
+                if(title.trim() != "Acciones"){
+
+                    let input = document.createElement('input');
+                    input.placeholder = title.trim();
+                    input.size=title.trim() == "#"?4 : 10;
+
+                    column.footer().replaceChildren(input);
+
+
+                    input.addEventListener('keyup', () => {
+                        if (column.search() !== this.value) {
+                            column.search(input.value).draw();
+                        }
+                    });
+                }
+
+            });
+    }
         });
     } );</script>

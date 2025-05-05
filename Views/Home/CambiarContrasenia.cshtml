@@ -1,0 +1,51 @@
+﻿ @{
+     Layout = "~/Views/Shared/_LayoutLimpio.cshtml";
+    ViewData["Title"] = "Cambiar Contraseña";
+    @model  HelpDesk.Models.ViewModels.CambiarContraseniaViewModel
+ }
+
+<div class="row mb-4">
+    <div class="col-8 d-flex justify-content-start">
+
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="40" height="40" stroke-width="2">
+            <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"></path>
+            <path d="M12 11m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+            <path d="M12 12l0 2.5"></path>
+        </svg>
+        <div>
+            <h2 class="page-title">Cambiar Contraseña</h2>
+            <div class="page-pretitle">Cambio de la contraseña predeterminada</div>
+        </div>
+    </div>
+</div>
+
+<div class="card col-sm-6 m-auto">
+    <div class="card-header">Hola nombrecompleto </div>
+    <div class="card-body">
+        <h5>Para poder acceder a la plataforma, debe capturar una nueva contraseña</h5>
+        <form method="post" asp-action="CambiarContrasenia">
+            <div class="mb-3">
+                <label asp-for="ContraseniaNueva" class="form-label">Contraseña Nueva</label>
+                <input asp-for="ContraseniaNueva" class="form-control" type="password" />
+                <span asp-validation-for="ContraseniaNueva" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ContraseniaConfirmada" class="form-label">Confirmar Contraseña</label>
+                <input asp-for="ContraseniaConfirmada" class="form-control" type="password" />
+                <span asp-validation-for="ContraseniaConfirmada" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                La contraseña deberá ser mínimo de 8 caracteres, y deberá contener por lo menos: un número, una mayúscula y un símbolo (#.,-_¿?¡!)
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" >Guardar Cambios</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

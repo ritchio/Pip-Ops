@@ -5,6 +5,8 @@ using HelpDesk.Models.Entities;
 using HelpDesk.Models.Utils;
 using HelpDesk.Models.ViewModels;
 using HelpDesk.Services.Area.Interfaces;
+using HelpDesk.Services.Correo.Interfaces;
+using HelpDesk.Services.Correo.Services;
 using HelpDesk.Services.Plaza.Interfaces;
 using HelpDesk.Services.Usuario.Interfaces;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -18,6 +20,7 @@ namespace HelpDesk.Services.Usuario.Services
         ApplicationDbContext context,
         RoleManager<IdentityRole> roleManager,
         UserManager<Cat_Usuario> userManager,
+        ICorreoService correoService,
         IMapper mapper) : IUsuarioService
     {
         #region [ Atributos ]
@@ -25,10 +28,22 @@ namespace HelpDesk.Services.Usuario.Services
         private readonly IMapper _mapper = mapper;
         private readonly RoleManager<IdentityRole> _roleManager = roleManager;
         private readonly UserManager<Cat_Usuario> _userManager = userManager;
+        private readonly ICorreoService _correoService = correoService;
         #endregion [ Atributos ]
 
         #region [ Usuario ]
-        public async Task<List<AspNetUsersViewModel>> ObtenerUsuarios()
+
+        public async Task<CatUsuarioViewModel> ObtenerUsuarioActual(ClaimsPrincipal claim)
+        {
+            // Obtener el usuario actual de la sesión
+            var usuarioActual = await _userManager.GetUserAsync(claim);
+            if (usuarioActual == null)
+            {
+                throw new Exception("Usuario no encontrado.");
+            }
+            return _mapper.Map<CatUsuarioViewModel>(usuarioActual);
+        }
+        public async Task<List<CatUsuarioViewModel>> ObtenerUsuarios()
         {
             try
             {
@@ -37,7 +52,7 @@ namespace HelpDesk.Services.Usuario.Services
                     .ThenInclude(ur => ur.Rol)
                     .Include(u => u.Plaza)
                     .Include(u => u.AreasUsuario)
-                    .Select(u => new AspNetUsersViewModel
+                    .Select(u => new CatUsuarioViewModel
                     {
                         Id = u.Id,
                         NumeroUsuario = u.NumeroUsuario,
@@ -65,9 +80,9 @@ namespace HelpDesk.Services.Usuario.Services
             }
         }
 
-        public async Task<RespuestaGenerica<AspNetUsersViewModel>> ObtenerUsuarioPorId(string id)
+        public async Task<RespuestaGenerica<CatUsuarioViewModel>> ObtenerUsuarioPorId(string id)
         {
-            var respuesta = new RespuestaGenerica<AspNetUsersViewModel>();
+            var respuesta = new RespuestaGenerica<CatUsuarioViewModel>();
             try
             {
                 var usuario = await _context.Users
@@ -76,7 +91,7 @@ namespace HelpDesk.Services.Usuario.Services
                     .Include(u => u.Plaza)
                     .Include(u => u.AreasUsuario)
                     .Where(u => u.Id == id)
-                    .Select(u => new AspNetUsersViewModel
+                    .Select(u => new CatUsuarioViewModel
                     {
                         Id = u.Id,
                         NumeroUsuario = u.NumeroUsuario,
@@ -103,7 +118,7 @@ namespace HelpDesk.Services.Usuario.Services
             }
             catch
             {
-                var usuario = new AspNetUsersViewModel
+                var usuario = new CatUsuarioViewModel
                 {
                     CorreoElectronico = string.Empty,
                     PrimerNombre = string.Empty,
@@ -120,14 +135,14 @@ namespace HelpDesk.Services.Usuario.Services
         }
 
        
-        public async Task<RespuestaGenerica<AspNetUsersViewModel>> Crear(AspNetUsersViewModel model)
+        public async Task<RespuestaGenerica<CatUsuarioViewModel>> Crear(CatUsuarioViewModel model)
         {
-            var respuesta = new RespuestaGenerica<AspNetUsersViewModel>();
+            var respuesta = new RespuestaGenerica<CatUsuarioViewModel>();
             try
             {
                 // Verificar si el correo electrónico ya existe y está activo  
                 var usuarioExistente = await _context.Users
-                    .FirstOrDefaultAsync(u => u.Email == model.CorreoElectronico && u.Activo == true);
+                    .FirstOrDefaultAsync(u => u.NormalizedEmail == model.CorreoElectronico.ToUpper() && u.Activo == true);
 
                 if (usuarioExistente != null)
                 {
@@ -136,7 +151,7 @@ namespace HelpDesk.Services.Usuario.Services
                     return respuesta;
                 }
 
-                var usuario = _mapper.Map<AspNetUsersViewModel, Cat_Usuario>(model);
+                var usuario = _mapper.Map<CatUsuarioViewModel, Cat_Usuario>(model);
 
                 usuario.Id = Guid.NewGuid().ToString();
                 usuario.Activo = true;
@@ -152,8 +167,9 @@ namespace HelpDesk.Services.Usuario.Services
                 usuario.ConcurrencyStamp = Guid.NewGuid().ToString();
                 usuario.IdPlaza = model.IdPlaza ?? 0;
 
+                var contrasenia = GenerarContrasenaAleatoria(10);
                 // Generar contraseña aleatoria de 10 caracteres  
-                usuario.PasswordHash = _userManager.PasswordHasher.HashPassword(usuario, GenerarContrasenaAleatoria(10));
+                usuario.PasswordHash = _userManager.PasswordHasher.HashPassword(usuario, contrasenia);
 
                 _context.Users.Add(usuario);
                 var nuevoUsuario = await _context.SaveChangesAsync();
@@ -191,8 +207,17 @@ namespace HelpDesk.Services.Usuario.Services
                     await _context.Rel_UsuarioArea.AddRangeAsync(nuevasRelaciones);
                     await _context.SaveChangesAsync();
 
+                    //mandamos correo con la contraseña
+                    var asunto = "Bienvenido a HelpDesk";
+                    var cuerpo = $"<p>Hola {usuario.PrimerNombre} {usuario.ApellidoPaterno},</p>" +
+                                 $"<p>Tu cuenta ha sido creada con éxito. Tu contraseña es: <strong>{contrasenia}</strong></p>" +
+                                 "<p>Por favor, cámbiala al iniciar sesión.</p>";
+                    
+                    var correoEnviado = await _correoService.EnviarCorreoAsync(usuario.Email, asunto, cuerpo, true);
+
                     respuesta.Exito = true;
                     respuesta.Mensaje = "Usuario creado con éxito.";
+                    respuesta.Mensaje += correoEnviado ? "<br>Correo enviado con éxito." : "<br>Error al enviar correo.";
 
                     return respuesta;
                 }
@@ -211,7 +236,7 @@ namespace HelpDesk.Services.Usuario.Services
             }
         }
 
-        public async Task<AspNetUsersViewModel> Modificar(AspNetUsersViewModel model)
+        public async Task<CatUsuarioViewModel> Modificar(CatUsuarioViewModel model)
         {
             try
             {
@@ -294,7 +319,7 @@ namespace HelpDesk.Services.Usuario.Services
                 {
                     // checa si existe otro usuario activo con el mismo correo electrónico  
                     var usuarioConMismoCorreo = await _context.Users
-                        .FirstOrDefaultAsync(u => u.Email == usuario.Email && u.Activo == true && u.Id != usuario.Id);
+                        .FirstOrDefaultAsync(u => u.NormalizedEmail == usuario.Email && u.Activo == true && u.Id != usuario.Id);
 
                     if (usuarioConMismoCorreo != null)
                     {
@@ -306,6 +331,13 @@ namespace HelpDesk.Services.Usuario.Services
                 
                 usuario.Activo = !usuario.Activo;
                 usuario.FechaInactivacion = usuario.Activo ? null : DateTime.Now;
+
+                string correo = (usuario.Activo)?usuario.NormalizedEmail.Replace($"{usuario.Id}#", ""):usuario.Id+"#"+usuario.NormalizedEmail;
+
+               //usuario.Email = correo.ToLower();
+                usuario.NormalizedEmail = correo;
+                usuario.UserName = correo.ToLower();
+                usuario.NormalizedUserName = usuario.NormalizedEmail;
                 await _context.SaveChangesAsync();
 
                 var datos =  new  Dictionary<string, string>();
@@ -327,6 +359,54 @@ namespace HelpDesk.Services.Usuario.Services
         }
 
         #endregion [ Usuario ]
+
+        #region [ Contraseña ]
+        public async Task<RespuestaGenerica<string>> CambiarContrasenia(ClaimsPrincipal claim,string nuevaContrasenia)
+        {
+            var respuesta = new RespuestaGenerica<string>();
+            try
+            {
+                var usuario = await _userManager.GetUserAsync(claim);
+                if(usuario == null)
+                {
+                    respuesta.Exito = false;
+                    respuesta.Mensaje = "Usuario no encontrado.";
+                    return respuesta;
+                }
+                //token para poder resetear sin la contraseña actual
+                var token = await _userManager.GeneratePasswordResetTokenAsync(usuario);
+
+                var resultado = await _userManager.ResetPasswordAsync(usuario, token, nuevaContrasenia);
+
+
+                if (resultado.Succeeded)
+                {
+                    // Actualizar el campo CambiarContrasenia a false
+                    usuario.CambiarContrasenia = false;
+                    _context.Users.Update(usuario);
+                    await _context.SaveChangesAsync();
+
+                    respuesta.Exito = true;
+                    respuesta.Mensaje = "Contraseña cambiada con éxito.";
+
+                }
+                else
+                {
+                    respuesta.Exito = false;
+                    respuesta.Mensaje = "No se pudo cambiar la contraseña. " + string.Join(", ", resultado.Errors.Select(e => e.Description));
+                }
+            }
+            catch(Exception ex)
+            {
+                respuesta.Exito = false;
+                respuesta.Mensaje = "No se pudo cambiar la contraseña. " + ex.Message;
+            }
+            
+            
+            return respuesta;
+        
+        }
+        #endregion [ Contraseña ]
 
         #region [ Permisos ]
         public async Task<List<PermisoViewModel>> ObtenerPermisosDeUsuario(string idUsuario)

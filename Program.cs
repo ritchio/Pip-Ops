@@ -9,6 +9,8 @@ using HelpDesk.Services.Plaza.Services;
 using HelpDesk.Services.Plaza.Interfaces;
 using HelpDesk.Services.Area.Interfaces;
 using HelpDesk.Services.Area.Services;
+using HelpDesk.Services.Correo.Services;
+using HelpDesk.Services.Correo.Interfaces;
 #endregion [ Usings ]
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,17 +21,31 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString)
     .LogTo(Console.WriteLine, LogLevel.Information)
     );
+
+//builder.Services.AddDefaultIdentity<Cat_Usuario>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<Cat_Usuario>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddControllersWithViews();
+builder.Services.AddIdentity<Cat_Usuario, IdentityRole>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = true;
+    // Puedes agregar m�s configuraci�n aqu� si lo necesitas
+})
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Identity/Account/Login";
+    options.AccessDeniedPath = "/AccessDenied"; // Puedes cambiarlo si tienes otra vista para acceso denegado
+});
 
 #region [ Servicios ]
+builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IPlazaService, PlazaService>();
 builder.Services.AddScoped<IAreaService, AreaService>();
+builder.Services.AddScoped<ICorreoService, CorreoService>();
 #endregion [ Servicios ]
 
 
@@ -61,6 +77,12 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+app.MapGet("/Login", context =>
+{
+    context.Response.Redirect("/Identity/Account/Login");
+    return Task.CompletedTask;
+});
 
 #region [ Configuracion inicial ]
 // Inicializar la base de datos y los roles

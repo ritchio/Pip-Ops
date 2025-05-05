@@ -10,10 +10,20 @@
                 }
             }
         }
-        console.log(respuesta);
+       
         const { exito, mensaje, datos, redireccion } = respuesta;
 
-        $("#notificacionTitulo").text(exito?"Notificación":"Error");
+        if (exito) {
+            $("#notificacionTitulo").text("Notificación");
+            $("#notificacionCabecera").removeClass("bg-danger");
+            $("#notificacionCabecera").addClass("bg-info");
+           
+        } else {
+            $("#notificacionTitulo").text("Error");
+            $("#notificacionCabecera").removeClass("bg-info");
+            $("#notificacionCabecera").addClass("bg-danger");
+        }
+        
         
 
         $("#notificacionMensaje").html(

@@ -12,6 +12,7 @@ namespace HelpDesk.Models.Entities
         public string? SegundoNombre { get; set; }
         public required string ApellidoPaterno { get; set; }
         public string? ApellidoMaterno { get; set; }
+        public bool CambiarContrasenia { get; set; }
 
         // Estado
         public bool Activo { get; set; }
