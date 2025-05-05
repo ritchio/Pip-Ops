@@ -1,6 +1,7 @@
-﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
+﻿@using HelpDesk.Models.Entities
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<Cat_Usuario> SignInManager
+@inject UserManager<Cat_Usuario> UserManager
 
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))

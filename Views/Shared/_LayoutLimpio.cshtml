@@ -4,12 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>@ViewBag.titulo</title>
+    <title>HelpDesk</title>
     <!-- BEGIN PAGE LEVEL STYLES -->
     <link href="~/lib/jsvectormap/dist/jsvectormap.css?1744111186" rel="stylesheet" />
     <!-- END PAGE LEVEL STYLES -->
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
-    <link href="/css/tabler.min.css?1744111186" rel="stylesheet" integrity="sha384-pAQE2kJ68M5BfDVCRPdGdaXrZagu/B50dMc4ukkjzgoAyoY+U92JUlEG9N8NsMZh" />
+    <link href="/css/tabler.min.css?1744111186" rel="stylesheet" />
     <!-- END GLOBAL MANDATORY STYLES -->
     <!-- BEGIN PLUGINS STYLES -->
     <link href="/css/tabler-flags.min.css?1744111186"
@@ -66,24 +66,29 @@
             <!--  END FOOTER  -->
         </div>
 
-        @* <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
- *@
-        @*     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - HelpDesk - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer> *@
         <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
+
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
         @await RenderSectionAsync("Scripts", required: false)
 
     </div>
+    <!-- inicio notificacion-->
+    <script>
 
+        @if (TempData["Notificacion"] != null)
+        {
+            var json = System.Text.Json.JsonSerializer.Serialize(TempData["Notificacion"]);
+            <text>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            mostrarNotificacion(@Html.Raw(json))
+                        });
+            </text>
+        }
+    </script>
+    <!-- fin notificacion -->
     <!-- BEGIN PAGE LIBRARIES -->
     <script src="~/lib/apexcharts/dist/apexcharts.min.js?1744111186" defer></script>
     <script src="~/lib/jsvectormap/dist/jsvectormap.min.js?1744111186" defer></script>
@@ -91,7 +96,7 @@
     <script src="~/lib/jsvectormap/dist/maps/world-merc.js?1744111186" defer></script>
     <!-- END PAGE LIBRARIES -->
     <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
-    <script src="~/dist/js/tabler.min.js?1744111186" defer integrity="sha384-uSpys8fjyVTPrXxPMi+NhnEMIp1YSGFZSCDrRHjYIUVdInIvlHft8JHLm6Oiw3vA"></script>
+    <script src="~/js/tabler.min.js?1744111186" defer integrity="sha384-uSpys8fjyVTPrXxPMi+NhnEMIp1YSGFZSCDrRHjYIUVdInIvlHft8JHLm6Oiw3vA"></script>
     <!-- END GLOBAL MANDATORY SCRIPTS -->
 </body>
 </html>

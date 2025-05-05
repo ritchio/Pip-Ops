@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HelpDesk.Models.ViewModels
 {
-    public class AspNetUsersViewModel
+    public class CatUsuarioViewModel
     {
         public string? Id { get; set; }
         public int? NumeroUsuario { get; set; }
@@ -20,6 +20,8 @@ namespace HelpDesk.Models.ViewModels
 
         [Display(Name = "Nombre Completo")]
         public string? NombreCompleto => $"{PrimerNombre} {SegundoNombre} {ApellidoPaterno} {ApellidoMaterno}";
+
+        public bool CambiarContrasenia { get; set; }
 
         // Estado del usuario
         public bool Activo { get; set; }
