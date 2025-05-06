@@ -26,7 +26,7 @@ namespace HelpDesk.Authorization
             }
 
             var VerificaPermiso = usuario.Claims.Any(c =>
-                c.Type == ClaimTypes.AuthorizationDecision && c.Value == _permiso);
+                c.Type == "permission" && c.Value == _permiso);
 
             if (!VerificaPermiso)
             {
