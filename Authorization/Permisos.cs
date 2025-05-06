@@ -10,11 +10,14 @@
             [PermisoDescripcion("Crear nuevo usuario")]
             public const string Crear = "Usuario.Crear";
 
-            [PermisoDescripcion("Editar usuario existente")]
+            [PermisoDescripcion("Editar la información de usuario existente")]
             public const string Editar = "Usuario.Editar";
 
-            [PermisoDescripcion("Eliminar usuario")]
-            public const string Eliminar = "Usuario.Eliminar";
+            [PermisoDescripcion("Activar o desactivar usuarios")]
+            public const string Desactivar = "Usuario.Desactivar";
+
+            [PermisoDescripcion("Agregar o quitar permisos de usuarios")]
+            public const string Permisos = "Usuario.Permisos";
         }
 
         public static class Ticket

@@ -35,7 +35,7 @@ namespace HelpDesk.Controllers
         #endregion [ Atributos ]
 
 
-        // GET: CatalogoUsuarios
+        [VerificaPermiso("Usuario.Ver")]
         public async Task<IActionResult> Index()
         {
             var usuarios = await _usuarioService.ObtenerUsuarios();
@@ -60,7 +60,7 @@ namespace HelpDesk.Controllers
             return View(CatUsuarioViewModel);
         }
 
-        // GET: CatalogoUsuarios/Create  
+        [VerificaPermiso("Usuario.Crear")]  
         public async Task<IActionResult> Crear()
         {
             var usuariomodel = new CatUsuarioViewModel
@@ -144,6 +144,7 @@ namespace HelpDesk.Controllers
                 
         }
 
+        [VerificaPermiso("Usuario.Editar")]
         public async Task<IActionResult> Editar(string id)
         {
             if (id == null)
@@ -237,7 +238,8 @@ namespace HelpDesk.Controllers
                 return Ok(errores);
             }
         }
-        
+
+        [VerificaPermiso("Usuario.Desactivar")]
         public async Task<IActionResult> CambiarEstado(string id)
         {
             if (id == null)
@@ -250,6 +252,7 @@ namespace HelpDesk.Controllers
             
         }
 
+        [VerificaPermiso("Usuario.Permisos")]
         public async Task<IActionResult> ObtenerPermisosUsuario(string idUsuario)
         {
             if (idUsuario == null)
