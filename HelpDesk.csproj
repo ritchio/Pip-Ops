@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <Folder Include="Models\Identity\" />
+    <Folder Include="Services\Identity\Interfaces\" />
   </ItemGroup>
 
 </Project>

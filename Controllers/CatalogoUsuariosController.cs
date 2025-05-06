@@ -253,6 +253,7 @@ namespace HelpDesk.Controllers
         }
 
         [VerificaPermiso("Usuario.Permisos")]
+       
         public async Task<IActionResult> ObtenerPermisosUsuario(string idUsuario)
         {
             if (idUsuario == null)
