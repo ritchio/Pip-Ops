@@ -13,6 +13,13 @@ namespace HelpDesk.Models.Entities
         public required string ApellidoPaterno { get; set; }
         public string? ApellidoMaterno { get; set; }
         public bool CambiarContrasenia { get; set; }
+        public string? NombreCompleto
+        {
+            get
+            {
+                return $"{PrimerNombre} {SegundoNombre} {ApellidoPaterno} {ApellidoMaterno}";
+            }
+        }
 
         // Estado
         public bool Activo { get; set; }

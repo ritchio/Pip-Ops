@@ -11,6 +11,7 @@ using HelpDesk.Services.Area.Interfaces;
 using HelpDesk.Services.Area.Services;
 using HelpDesk.Services.Correo.Services;
 using HelpDesk.Services.Correo.Interfaces;
+using HelpDesk.Services.Identity.Services;
 #endregion [ Usings ]
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,6 +43,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 #region [ Servicios ]
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddScoped<IUserClaimsPrincipalFactory<Cat_Usuario>, ApplicationUserClaimsPrincipalFactory>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IPlazaService, PlazaService>();
 builder.Services.AddScoped<IAreaService, AreaService>();
