@@ -1,4 +1,5 @@
-﻿@*
+﻿@using System.Security.Claims
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
@@ -205,17 +206,9 @@
             <div class="nav-item dropdown">
                 <a href="#" class="nav-link d-flex lh-1 p-0 px-2" data-bs-toggle="dropdown" aria-label="Open user menu">
                     <span class="avatar avatar-sm" style="background-image: url(./static/avatars/000m.jpg)"> </span>
-                    <div class="d-none d-xl-block ps-2">
-                        <div>@User.FindFirst("NombreCompleto")?.Value</div>
-                        <div class="mt-1 small text-secondary">UI Designer</div>
-                    </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                    <a href="#" class="dropdown-item">Estado</a>
-                    <a href="./profile.html" class="dropdown-item">Perfil</a>
-                    <div class="dropdown-divider"></div>
-                    <a href="./settings.html" class="dropdown-item">Preferencias</a>
-                    <a href="./Identity/Account/Logout" class="dropdown-item">Cerrar sesión</a>
+                    @await Component.InvokeAsync("PerfilUsuario")
                 </div>
             </div>
         </div>
