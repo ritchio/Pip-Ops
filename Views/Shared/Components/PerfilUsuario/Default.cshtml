@@ -1,0 +1,13 @@
+﻿@model dynamic
+
+<div class="dropdown-item fw-bold">@Model.NombreCompleto</div>
+<div class="dropdown-item">@Model.Email</div>
+<div class="dropdown-item">Plaza: @Model.Plaza</div>
+<div class="dropdown-item">Áreas: @Model.Areas</div>
+<div class="dropdown-divider"></div>
+
+<a href="?theme=dark" class="dropdown-item hide-theme-dark p-2"><i class="ti ti-moon"></i> &nbsp;Modo oscuro</a>
+<a href="?theme=light" class="dropdown-item hide-theme-light"><i class="ti ti-sun"></i> &nbsp;Modo claro</a>
+              
+<a href="#" class="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings">Preferencias del tema</a>
+<a href="/Identity/Account/Logout" class="dropdown-item">Cerrar sesión</a>
