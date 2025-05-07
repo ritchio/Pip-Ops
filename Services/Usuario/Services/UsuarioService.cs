@@ -167,7 +167,7 @@ namespace HelpDesk.Services.Usuario.Services
                 usuario.ConcurrencyStamp = Guid.NewGuid().ToString();
                 usuario.IdPlaza = model.IdPlaza ?? 0;
 
-                var contrasenia = GenerarContrasenaAleatoria(10);
+                var contrasenia = GenerarContraseniaAleatoria(10);
                 // Generar contraseña aleatoria de 10 caracteres  
                 usuario.PasswordHash = _userManager.PasswordHasher.HashPassword(usuario, contrasenia);
 
@@ -519,15 +519,35 @@ namespace HelpDesk.Services.Usuario.Services
         #endregion [ Permisos ]
 
         #region [ Auxiliares ]
-        private string GenerarContrasenaAleatoria(int longitud)
+        public string GenerarContraseniaAleatoria(int longitud)
         {
-            const string caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            var random = new Random();
-            return new string(Enumerable.Repeat(caracteres, longitud)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
-        }
+            if (longitud < 4)
+                throw new ArgumentException("La longitud mínima es 4 para cumplir con el requisito.");
 
-        
+            const string mayusculas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const string minusculas = "abcdefghijklmnopqrstuvwxyz";
+            const string numeros = "0123456789";
+            const string simbolos = "#.,?¡¿!-_";
+            string todos = mayusculas + minusculas + numeros + simbolos;
+
+            var random = new Random();
+            var contraseña = new List<char>
+            {
+                mayusculas[random.Next(mayusculas.Length)],
+                minusculas[random.Next(minusculas.Length)],
+                numeros[random.Next(numeros.Length)],
+                simbolos[random.Next(simbolos.Length)]
+            };
+
+            // el resto de caracteres son de cualquiera
+            for (int i = contraseña.Count; i < longitud; i++)
+            {
+                contraseña.Add(todos[random.Next(todos.Length)]);
+            }
+
+            // mezclamo para que no estén al inicio
+            return new string(contraseña.OrderBy(c => random.Next()).ToArray());
+        }
 
         #endregion [ Auxiliares ]
 
