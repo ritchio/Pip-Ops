@@ -30,14 +30,14 @@
             exito ? mensaje || 'Operación exitosa' : `<p class="text-danger">${mensaje}</p>` || '<p class="text-danger">Ocurrió un error</p>'
         );
 
-        if (datos && mensaje == null) {
+        if (datos != null && mensaje == null) {
             $("#notificacionMensaje").text(datos);
         }
 
-        const toast = new bootstrap.Toast(document.getElementById('notificacionToast'));
+        const toast = new bootstrap.Toast(document.getElementById('notificacionToast')); 
         toast.show();
 
-        if (redireccion) {
+        if (redireccion != null) {
             setTimeout(() => window.location.href = redireccion, 2000);
         }
     } catch (e) {

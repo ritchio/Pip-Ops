@@ -17,5 +17,6 @@ namespace HelpDesk.Services.Usuario.Interfaces
         Task<List<PermisoViewModel>> ObtenerPermisosDeUsuario(string idUsuario);
         Task<RespuestaGenerica<string>> ActualizarPermisoUsuario(string idUsuario, string permiso, bool asignar);
         Task<RespuestaGenerica<string>> CambiarContrasenia(ClaimsPrincipal claim, string nuevaContrasena);
+        string GenerarContraseniaAleatoria(int longitud);
     }
 }

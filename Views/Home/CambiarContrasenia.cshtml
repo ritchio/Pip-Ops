@@ -20,7 +20,7 @@
 </div>
 
 <div class="card col-sm-6 m-auto">
-    <div class="card-header">Hola nombrecompleto </div>
+    <div class="card-header">Hola @User.FindFirst("NombreCompleto")?.Value</div>
     <div class="card-body">
         <h5>Para poder acceder a la plataforma, debe capturar una nueva contraseña</h5>
         <form method="post" asp-action="CambiarContrasenia">
