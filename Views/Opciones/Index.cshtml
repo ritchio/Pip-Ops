@@ -1,0 +1,63 @@
+﻿
+
+<div class="row mb-4">
+    <div class="col-8 d-flex justify-content-start">
+        <i class="ti ti-adjustments" style="font-size:3em"></i>
+        <div>
+            <h2 class="page-title">Opciones</h2>
+            <div class="page-pretitle">Modificación de mensaje del día, cambio de fondo de pantalla de acceso.</div>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="card">
+        <div class="card-header">
+            Mensaje del día
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Mensaje</h5>
+                    <textarea name="mensajeDia" id="mensajeDia" class="form-control" rows="10"></textarea>
+                </div>
+                <div class="col-md-6">
+                    <h5>Posición en pantalla</h5>
+                    <div class="position-relative h-100">
+                    <input type="radio" name="posicion" id="mensajePosicion1" class="btn-check" />
+                    <label for="mensajePosicion1" class="btn btn-outline-primary position-absolute top-0 start-0 p-4"></label>
+                    <input type="radio" name="posicion" id="mensajePosicion2" class="btn-check" />
+                    <label for="mensajePosicion2" class="btn btn-outline-primary position-absolute top-0 end-0 p-4"></label>
+                    <input type="radio" name="posicion" id="mensajePosicion3" class="btn-check" />
+                        <label for="mensajePosicion3" class="btn btn-outline-primary position-absolute bottom-0 start-0 translate-middle-y p-4"></label>
+
+                        <input type="radio" name="posicion" id="mensajePosicion4" class="btn-check" checked />
+                        <label for="mensajePosicion4" class="btn btn-outline-primary position-absolute bottom-0 end-0 translate-middle-y p-4" ></label>
+                    </div>
+                </div>
+                <div class="form-group d-flex mt-4 justify-content-end">
+                    <button type="submit" value="Actualizar" class="btn btn-primary">Actualizar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="card">
+        <div class="card-header">
+            Fondo de pantalla de acceso
+        </div>
+        <div class="card-body">
+            <form method="post" asp-action="SubirFondo" enctype="multipart/form-data">
+                <div class="form-group">
+                    <input type="file" name="fondo" class="form-control"/>
+                </div>
+                    <div class="form-group d-flex mt-4 justify-content-end">
+                    <button type="submit" value="Actualizar" class="btn btn-primary">Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+ 
