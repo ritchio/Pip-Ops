@@ -1,5 +1,7 @@
 ﻿using HelpDesk.Authorization;
+using HelpDesk.Models.Utils;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace HelpDesk.Controllers
 {
@@ -15,9 +17,12 @@ namespace HelpDesk.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SubirFondo(IFormFile fondo)
         {
+            var respuesta = new RespuestaGenerica<string>();
             if (fondo == null || fondo.Length == 0 || !fondo.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase))
             {
-                TempData["Error"] = "Por favor, suba un archivo válido en formato JPG.";
+                respuesta.Exito = false;
+                respuesta.Mensaje = "La imagen debe ser en formato jpg.";
+                TempData["Notification"] = JsonSerializer.Serialize(respuesta);
                 return RedirectToAction("Index");
             }
 
@@ -30,11 +35,15 @@ namespace HelpDesk.Controllers
                     await fondo.CopyToAsync(stream);
                 }
 
-                TempData["Exito"] = "El fondo se ha actualizado correctamente.";
+                respuesta.Exito = true;
+                respuesta.Mensaje = "El fondo se ha actualizado con éxito.";
+                TempData["Notification"] = JsonSerializer.Serialize(respuesta);
             }
             catch (Exception ex)
             {
-                TempData["Error"] = $"Ocurrió un error al subir el archivo: {ex.Message}";
+                respuesta.Exito = false;
+                respuesta.Mensaje = ex.Message;
+                TempData["Notification"] = JsonSerializer.Serialize(respuesta);
             }
 
             return RedirectToAction("Index");

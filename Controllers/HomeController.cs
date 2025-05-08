@@ -63,7 +63,7 @@ public class HomeController(
         }
         catch (Exception ex)
         {
-            ModelState.AddModelError("", "Ocurrió un error al cambiar la contraseña");
+            ModelState.AddModelError("", "Ocurrió un error al cambiar la contraseña."+ex.Message);
             return View(model);
         }
     }

@@ -17,7 +17,7 @@
     </div>
     <div class="col-4 justify-content-end d-flex">
         @{
-            if (Html.TieneAcceso("Usuario.Crear"))
+            if (Html.TieneAcceso(roles: new[] { "Administrador","Administrador Supervisor", "Soporte" }))
             {
                 <button onclick="nuevoUsuario()" class="btn btn-primary"><i class="ti ti-circle-plus mr-2"></i>Nuevo usuario</button>
             }
@@ -107,18 +107,12 @@
 
                                         <td>
                                             @{
-                                                if (Html.TieneAcceso("Usuario.Desactivar"))
+                                                if (Html.TieneAcceso(roles: new[] { "Administrador", "Administrador Supervisor", "Soporte" }))
                                                 {
                                                     <button type="button" class="btn btn-primary estadoUsuario_@item.Id" onclick="cambiarEstadoUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva al usuario">
                                                         <i class="ti ti-circle-@(item.Activo? "x" : "check")"></i>
                                                     </button>
-                                                }
-                                                if (Html.TieneAcceso("Usuario.Permisos"))
-                                                {
                                                     <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite cambiar los permisos del usuario" onclick="mostrarPermisos('@item.Id')"><i class="ti ti-circle-key"></i></button>
-                                                }
-                                                if (Html.TieneAcceso("Usuario.Editar"))
-                                                {
                                                     <button type="button" class="btn btn-primary" onclick="editarUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite modificar la información del usuario"><i class="ti ti-edit"></i></button>
                                                 }
                                             }
@@ -193,18 +187,12 @@
 
                                         <td>
                                             @{
-                                                if (Html.TieneAcceso("Usuario.Desactivar"))
+                                                if (Html.TieneAcceso(roles: new[] { "Administrador", "Administrador Supervisor", "Soporte" }))
                                                 {
                                                     <button type="button" class="btn btn-primary estadoUsuario_@item.Id" onclick="cambiarEstadoUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva al usuario">
                                                         <i class="ti ti-circle-@(item.Activo? "x" : "check")"></i>
                                                     </button>
-                                                }
-                                                if (Html.TieneAcceso("Usuario.Permisos"))
-                                                {
                                                     <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite cambiar los permisos del usuario" onclick="mostrarPermisos('@item.Id')"><i class="ti ti-circle-key"></i></button>
-                                                }
-                                                if (Html.TieneAcceso("Usuario.Editar"))
-                                                {
                                                     <button type="button" class="btn btn-primary" onclick="editarUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite modificar la información del usuario"><i class="ti ti-edit"></i></button>
                                                 }
                                             }
@@ -276,22 +264,16 @@
 
 
                                         <td>
-                                            @{
-                                                if (Html.TieneAcceso("Usuario.Desactivar"))
-                                                {
-                                                    <button type="button" class="btn btn-primary estadoUsuario_@item.Id" onclick="cambiarEstadoUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva al usuario">
-                                                        <i class="ti ti-circle-@(item.Activo? "x" : "check")"></i>
-                                                    </button>
-                                                }
-                                                if (Html.TieneAcceso("Usuario.Permisos"))
-                                                {
-                                                    <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite cambiar los permisos del usuario" onclick="mostrarPermisos('@item.Id')"><i class="ti ti-circle-key"></i></button>
-                                                }
-                                                if (Html.TieneAcceso("Usuario.Editar"))
-                                                {
-                                                    <button type="button" class="btn btn-primary" onclick="editarUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite modificar la información del usuario"><i class="ti ti-edit"></i></button>
-                                                }
+                                        @{
+                                            if (Html.TieneAcceso(roles: new[] { "Administrador", "Administrador Supervisor", "Soporte" }))
+                                            {
+                                                <button type="button" class="btn btn-primary estadoUsuario_@item.Id" onclick="cambiarEstadoUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva al usuario">
+                                                    <i class="ti ti-circle-@(item.Activo? "x" : "check")"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite cambiar los permisos del usuario" onclick="mostrarPermisos('@item.Id')"><i class="ti ti-circle-key"></i></button>
+                                                <button type="button" class="btn btn-primary" onclick="editarUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite modificar la información del usuario"><i class="ti ti-edit"></i></button>
                                             }
+                                        }
                                         </td>
                                         </tr>
                                     }
@@ -361,18 +343,12 @@
 
                                         <td>
                                             @{
-                                                if (Html.TieneAcceso("Usuario.Desactivar"))
+                                                if (Html.TieneAcceso(roles: new[] { "Administrador", "Administrador Supervisor", "Soporte" }))
                                                 {
                                                     <button type="button" class="btn btn-primary estadoUsuario_@item.Id" onclick="cambiarEstadoUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva al usuario">
                                                         <i class="ti ti-circle-@(item.Activo? "x" : "check")"></i>
                                                     </button>
-                                                }
-                                                if (Html.TieneAcceso("Usuario.Permisos"))
-                                                {
                                                     <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite cambiar los permisos del usuario" onclick="mostrarPermisos('@item.Id')"><i class="ti ti-circle-key"></i></button>
-                                                }
-                                                if (Html.TieneAcceso("Usuario.Editar"))
-                                                {
                                                     <button type="button" class="btn btn-primary" onclick="editarUsuario('@item.Id')" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite modificar la información del usuario"><i class="ti ti-edit"></i></button>
                                                 }
                                             }
