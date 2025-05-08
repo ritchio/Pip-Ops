@@ -16,6 +16,7 @@
             Mensaje del día
         </div>
         <div class="card-body">
+            <form>
             <div class="row">
                 <div class="col-md-6">
                     <h5>Mensaje</h5>
@@ -39,6 +40,7 @@
                     <button type="submit" value="Actualizar" class="btn btn-primary">Actualizar</button>
                 </div>
             </div>
+            </form>
         </div>
     </div>
 </div>
@@ -49,6 +51,9 @@
             Fondo de pantalla de acceso
         </div>
         <div class="card-body">
+            <div class="col-12 mb-4 text-center">
+                <img src="/img/fondo.jpg?@DateTime.Now.Ticks" style="height:200px" />
+            </div>
             <form method="post" asp-action="SubirFondo" enctype="multipart/form-data">
                 <div class="form-group">
                     <input type="file" name="fondo" class="form-control"/>

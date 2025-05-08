@@ -24,8 +24,7 @@ namespace HelpDesk.Helpers
             if (!user.Identity?.IsAuthenticated ?? false)
                 return false;
 
-            bool tienePermiso = string.IsNullOrEmpty(permiso) ||
-                                user.HasClaim("permission", permiso);
+            bool tienePermiso = !string.IsNullOrEmpty(permiso) && user.HasClaim("permission", permiso);
 
             bool tieneRol = roles == null || roles.Length == 0 ||
                             roles.Any(rol => user.IsInRole(rol));
