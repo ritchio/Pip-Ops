@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using HelpDesk.Models.Entities;
+using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 
 public static class IdentityDataInitializer
 {
     public static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
     {
+        //roles
         string[] roleNames = { "Administrador","Administrador Supervisor", "Soporte", "Usuario" };
 
         foreach (var roleName in roleNames)

@@ -1,0 +1,11 @@
+﻿@model HelpDesk.Models.ViewModels.OpcionesMensajeDelDiaViewModel
+
+<div class="col-3 px-0 card card-info position-absolute @Model.Posicion">
+    <div class="card-header "><h4 class="w-100 text-center">Mensaje del día</h4></div>
+    <div class="card-body">
+        @Model.MensajeDelDia
+    </div>
+    <div class="card-footer">
+        Última actualización @Model.FechaModificacion
+    </div>
+</div>
