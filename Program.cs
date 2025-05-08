@@ -12,6 +12,9 @@ using HelpDesk.Services.Area.Services;
 using HelpDesk.Services.Correo.Services;
 using HelpDesk.Services.Correo.Interfaces;
 using HelpDesk.Services.Identity.Services;
+using HelpDesk.Services.Opciones.Interfaces;
+using HelpDesk.Services.Opciones.Services;
+
 #endregion [ Usings ]
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,6 +51,7 @@ builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IPlazaService, PlazaService>();
 builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<ICorreoService, CorreoService>();
+builder.Services.AddScoped<IOpcionesService,OpcionesService>();
 #endregion [ Servicios ]
 
 
