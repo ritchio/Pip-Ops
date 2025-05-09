@@ -1,0 +1,90 @@
+﻿@model HelpDesk.Models.ViewModels.HistorialViewModel
+
+<div class="row">
+    <div class="col-8 d-flex justify-content-start">
+        <i class="ti ti-book mr-3" style="font-size:3em"></i>
+        <div>
+            <h2 class="page-title">Historial de Accesos</h2>
+            <div class="page-pretitle">Registro de sesiones y registro de actividades</div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs nav-fill" data-bs-toggle="tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a href="#registroSesiones" class="nav-link active" data-bs-toggle="tab" aria-selected="true" role="tab">Registro de Sesiones</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a href="#registroActividades" class="nav-link" data-bs-toggle="tab" aria-selected="false" tabindex="-1" role="tab">Registro de Actividades</a>
+                </li>
+               
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content">
+                <div class="tab-pane active show" id="registroSesiones" role="tabpanel">
+                    <div class="col-12" id="botonesAcceso"></div>
+                    <table id="tablaAccesos" class="display table-responsive table-striped" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Acción</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Usuario</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                foreach (var item in Model.Accesos)
+                                {
+                                    <tr>
+                                        <td>@item.Accion</td>
+                                        <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
+                                        <td>@item.Fecha.ToString("t")</td>
+                                        <td>@item.NombreUsuario</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane" id="registroActividades" role="tabpanel">
+                    <div class="col-12" id="botonesAcceso"></div>
+
+                    <table id="tablaTicketsActividades" class="display table-responsive table-striped" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Acción</th>
+                                <th>Número de Ticket</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Usuario</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                foreach (var item in Model.TicketsActividades)
+                                {
+                                    <tr>
+                                        <td>@item.Accion</td>
+                                        <td>@item.NumeroTicket</td>
+                                        <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
+                                        <td>@item.Fecha.ToString("t")</td>
+                                        <td>@item.NombreUsuario</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+           </div>
+
+        </div><!--card body-->
+    </div><!-- card-->
+</div>
+
+<script src="/js/Historial/index.js"></script>

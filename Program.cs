@@ -15,6 +15,8 @@ using HelpDesk.Services.Identity.Services;
 using HelpDesk.Services.Opcion.Interfaces;
 using HelpDesk.Services.Opcion.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using HelpDesk.Services.Historial.Interfaces;
+using HelpDesk.Services.Historial.Services;
 
 #endregion [ Usings ]
 
@@ -96,6 +98,7 @@ builder.Services.AddScoped<IPlazaService, PlazaService>();
 builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<ICorreoService, CorreoService>();
 builder.Services.AddScoped<IOpcionService,OpcionService>();
+builder.Services.AddScoped<IHistorialService, HistorialService>();
 #endregion [ Servicios ]
 
 builder.Services.AddAutoMapper(typeof(Program)); 
