@@ -1,19 +1,19 @@
 ﻿using HelpDesk.Constants;
 using HelpDesk.Data;
 using HelpDesk.Models.ViewModels;
-using HelpDesk.Services.Opciones.Interfaces;
+using HelpDesk.Services.Opcion.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HelpDesk.ViewComponents
 {
     public class MensajeDelDiaViewComponent(
         ApplicationDbContext context,
-        IOpcionesService opcionesService) : ViewComponent
+        IOpcionService opcionesService) : ViewComponent
     {
         private readonly ApplicationDbContext _context = context;
-        private readonly IOpcionesService _opcionesService = opcionesService;
+        private readonly IOpcionService _opcionesService = opcionesService;
 
-        public async Task<IViewComponentResult> InvokeAsync()
+        public async Task<IViewComponentResult> InvokeAsync(bool login = false)
         {
             var mensaje = await _opcionesService.ObtenerOpcionAsync(ConfiguracionOpciones.MensajeDelDia.Mensaje);
             var posicion = await _opcionesService.ObtenerOpcionAsync(ConfiguracionOpciones.MensajeDelDia.Posicion);
@@ -22,7 +22,8 @@ namespace HelpDesk.ViewComponents
             {
                 MensajeDelDia = mensaje?.Valor,
                 Posicion = posicion?.Valor,
-                FechaModificacion = mensaje?.FechaModificacion
+                FechaModificacion = mensaje?.FechaModificacion,
+                EsLogin = login
             };
 
             return View(opciones);

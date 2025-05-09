@@ -1,12 +1,12 @@
 ﻿using HelpDesk.Constants;
-using HelpDesk.Services.Opciones.Interfaces;
+using HelpDesk.Services.Opcion.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HelpDesk.ViewComponents
 {
-    public class FondoImagenViewComponent(IOpcionesService opcionesService) : ViewComponent
+    public class FondoImagenViewComponent(IOpcionService opcionesService) : ViewComponent
     {
-        private readonly IOpcionesService _opcionesService = opcionesService;
+        private readonly IOpcionService _opcionesService = opcionesService;
 
         public async Task<IViewComponentResult> InvokeAsync()
         {

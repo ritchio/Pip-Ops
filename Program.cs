@@ -12,8 +12,8 @@ using HelpDesk.Services.Area.Services;
 using HelpDesk.Services.Correo.Services;
 using HelpDesk.Services.Correo.Interfaces;
 using HelpDesk.Services.Identity.Services;
-using HelpDesk.Services.Opciones.Interfaces;
-using HelpDesk.Services.Opciones.Services;
+using HelpDesk.Services.Opcion.Interfaces;
+using HelpDesk.Services.Opcion.Services;
 
 #endregion [ Usings ]
 
@@ -51,7 +51,7 @@ builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IPlazaService, PlazaService>();
 builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<ICorreoService, CorreoService>();
-builder.Services.AddScoped<IOpcionesService,OpcionesService>();
+builder.Services.AddScoped<IOpcionService,OpcionService>();
 #endregion [ Servicios ]
 
 
