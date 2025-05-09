@@ -18,10 +18,10 @@ public class ApplicationDbContext
     #region [ Entidades ]
     public DbSet<Cat_Plaza> Cat_Plaza { get; set; }
     public DbSet<Cat_Area> Cat_Area { get; set; } = default!;
-    public DbSet<Rel_UsuarioArea> Rel_UsuarioArea { get; set; }
-
     public DbSet<Cfg_Opcion> Cfg_Opcion { get; set; }
-
+    public DbSet<Log_Acceso> Log_Acceso { get; set; }
+    public DbSet<Rel_UsuarioArea> Rel_UsuarioArea { get; set; }
+    
     #endregion [ Entidades ]
     protected override void OnModelCreating(ModelBuilder builder)
     {
