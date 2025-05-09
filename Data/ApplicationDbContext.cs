@@ -20,7 +20,7 @@ public class ApplicationDbContext
     public DbSet<Cat_Area> Cat_Area { get; set; } = default!;
     public DbSet<Rel_UsuarioArea> Rel_UsuarioArea { get; set; }
 
-    public DbSet<Cfg_Opciones> Cfg_Opciones { get; set; }
+    public DbSet<Cfg_Opcion> Cfg_Opcion { get; set; }
 
     #endregion [ Entidades ]
     protected override void OnModelCreating(ModelBuilder builder)

@@ -2,7 +2,7 @@
 
 namespace HelpDesk.Models.ViewModels
 {
-    public class CfgOpcionesViewModel
+    public class CfgOpcionViewModel
     {
         public int Id { get; set; }
         [Required(ErrorMessage = "El campo {0} es requerido.")]

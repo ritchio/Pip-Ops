@@ -2,7 +2,7 @@
 
 namespace HelpDesk.Models.Entities
 {
-    public class Cfg_Opciones
+    public class Cfg_Opcion
     {
         public int Id { get; set; }
 

@@ -3,7 +3,7 @@ using HelpDesk.Constants;
 using HelpDesk.Models.Entities;
 using HelpDesk.Models.Utils;
 using HelpDesk.Models.ViewModels;
-using HelpDesk.Services.Opciones.Interfaces;
+using HelpDesk.Services.Opcion.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 namespace HelpDesk.Controllers
 {
     public class OpcionesController(
-        IOpcionesService opcionesService
+        IOpcionService opcionesService
         ) : Controller
     {
-        private readonly IOpcionesService _opcionesService = opcionesService;
+        private readonly IOpcionService _opcionesService = opcionesService;
 
         [VerificaPermiso(roles: ["Administrador"])]
         public async Task<IActionResult> Index()
