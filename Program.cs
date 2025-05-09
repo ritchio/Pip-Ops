@@ -14,6 +14,7 @@ using HelpDesk.Services.Correo.Interfaces;
 using HelpDesk.Services.Identity.Services;
 using HelpDesk.Services.Opcion.Interfaces;
 using HelpDesk.Services.Opcion.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 #endregion [ Usings ]
 
@@ -40,7 +41,50 @@ builder.Services.AddIdentity<Cat_Usuario, IdentityRole>(options =>
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Login";
-    options.AccessDeniedPath = "/"; // Puedes cambiarlo si tienes otra vista para acceso denegado
+    options.AccessDeniedPath = "/";
+    //guardamos el log de inicios para no molestar al ide
+    options.Events = new CookieAuthenticationEvents
+    {
+        OnSignedIn = async context =>
+        {
+            var serviceProvider = context.HttpContext.RequestServices;
+            var userManager = serviceProvider.GetRequiredService<UserManager<Cat_Usuario>>();
+            var db = serviceProvider.GetRequiredService<ApplicationDbContext>();
+            var user = await userManager.GetUserAsync(context.Principal);
+
+            if (user != null)
+            {
+                db.Log_Acceso.Add(new Log_Acceso
+                {
+                    IdUsuario = user.Id,
+                    Accion = "Inicio de sesión",
+                    Fecha = DateTime.Now
+                });
+
+                await db.SaveChangesAsync();
+            }
+        },
+        OnSigningOut = async context =>
+        {
+            var serviceProvider = context.HttpContext.RequestServices;
+            var userManager = serviceProvider.GetRequiredService<UserManager<Cat_Usuario>>();
+            var db = serviceProvider.GetRequiredService<ApplicationDbContext>();
+            var user = await userManager.GetUserAsync(context.HttpContext.User);
+
+            if (user != null)
+            {
+                db.Log_Acceso.Add(new Log_Acceso
+                {
+                    IdUsuario = user.Id,
+                    Accion = "Cierre de sesión",
+                    Fecha = DateTime.Now
+                });
+
+                await db.SaveChangesAsync();
+            }
+        }
+    };
+    
 });
 
 #region [ Servicios ]
@@ -53,7 +97,6 @@ builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<ICorreoService, CorreoService>();
 builder.Services.AddScoped<IOpcionService,OpcionService>();
 #endregion [ Servicios ]
-
 
 builder.Services.AddAutoMapper(typeof(Program)); 
 
