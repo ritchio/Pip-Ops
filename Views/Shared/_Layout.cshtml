@@ -41,8 +41,16 @@
    <script src="https://cdn.jsdelivr.net/npm/&#64;popperjs/core@2.9.2/dist/umd/popper.min.js"></script>  
    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>  
    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>  
-   <script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>  
-   <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>  
+   @* <script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>   *@
+    
+   <!--inicio datatables-->
+    <link href="https://cdn.datatables.net/v/bs5/jszip-3.10.1/dt-2.3.0/b-3.2.3/b-colvis-3.2.3/b-html5-3.2.3/b-print-3.2.3/date-1.5.5/r-3.0.4/sp-2.3.3/sl-3.0.0/datatables.min.css" rel="stylesheet" integrity="sha384-GPtfEeSXux2EEsr5CodqtVXoso18ArMUKnJEhF+wSHn/tjljAFtyVRNqrdFmNjoh" crossorigin="anonymous">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js" integrity="sha384-VFQrHzqBh5qiJIU0uGU5CIW3+OWpdGGJM9LBnGbuIH2mkICcFZ7lPd/AAtI7SNf7" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js" integrity="sha384-/RlQG9uf0M2vcTw3CX7fbqgbj/h8wKxw7C3zu9/GxcBPRKOEcESxaxufwRXqzq6n" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/v/bs5/jszip-3.10.1/dt-2.3.0/b-3.2.3/b-colvis-3.2.3/b-html5-3.2.3/b-print-3.2.3/date-1.5.5/r-3.0.4/sp-2.3.3/sl-3.0.0/datatables.min.js" integrity="sha384-3w/TKhaHJjmxK5/x/H5mOJL1LX9OVI1WbatvtLhHVPtr2BFMDz2pvXoGdyZ9KBWU" crossorigin="anonymous"></script>
+   <!-- fin datatables-->
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>  
    @* <script src="https://cdnjs.cloudflare.com/ajax/libs/push.js/1.0.12/push.min.js"></script>   *@
 </head>
 <body>
@@ -79,9 +87,11 @@
             </footer>
             <!--  END FOOTER  -->
         </div>
-            
+    <!-- inicio script personalizados-->        
     <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/js/Shared/fechaUtils.js"></script>
         <script src="~/js/Shared/axiosRequest.js"></script>
+    <!-- fin script personalizados-->
     @await RenderSectionAsync("Scripts", required: false)
     </div>
 

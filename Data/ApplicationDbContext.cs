@@ -18,8 +18,10 @@ public class ApplicationDbContext
     #region [ Entidades ]
     public DbSet<Cat_Plaza> Cat_Plaza { get; set; }
     public DbSet<Cat_Area> Cat_Area { get; set; } = default!;
+    public DbSet<Cat_Usuario> Cat_usuario { get; set; } = default!;
     public DbSet<Cfg_Opcion> Cfg_Opcion { get; set; }
     public DbSet<Log_Acceso> Log_Acceso { get; set; }
+    public DbSet<Log_TicketActividad> Log_TicketActividad { get; set; }
     public DbSet<Rel_UsuarioArea> Rel_UsuarioArea { get; set; }
     
     #endregion [ Entidades ]

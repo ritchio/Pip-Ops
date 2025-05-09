@@ -296,6 +296,13 @@
                                         Opciones
                                     </a>
                                 }
+                                @if (Html.TieneAcceso(roles:new [] { "Administrador"}))
+                                                    {
+                                    <a class="dropdown-item" asp-controller="Historial" asp-action="Index">
+                                        <i class="ti ti-book"></i>
+                                        Historial de Accesos
+                                    </a>
+                                }
                             </div>
 
                        </div>
