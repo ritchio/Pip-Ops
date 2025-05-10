@@ -1,0 +1,78 @@
+﻿@model List<HelpDesk.Models.ViewModels.CatModuloClasificacionViewModel>
+
+<div class="row">
+    <div class="col-8 d-flex justify-content-start">
+        <i class="ti ti-sort-ascending-shapes mr-3" style="font-size:3em"></i>
+        <div>
+            <h2 class="page-title">Módulos / Clasificaciones</h2>
+            <div class="page-pretitle">Creación y gestión de los módulos / clasificaciones de tickets</div>
+        </div>
+    </div>
+    <div class="col-4 d-flex justify-content-end">
+        <button class="btn btn-primary" id="btnCrearClasificacion" data-bs-toggle="modal" data-bs-target="#modalCrearClasificacion" onclick="muestraCrearModulo()">
+            <i class="ti ti-circle-plus"></i> Nuevo módulo / clasificación</button>
+    </div>
+</div>
+
+<div class="col-12">
+    <div class="card">
+        <div class="card-header">Catálogo de módulos / clasificaciones</div>
+        <div class="card-body">
+            <table class="display table-responsive table-striped" style="width:100%" id="tablaModulosClasificacion">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Tipo de Soporte</th>
+                        <th>Áreas</th>
+                        <th>Módulo/Clasificacion</th>
+                        <th>Estatus</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach(var item in Model)
+                        {
+                            <tr>
+                                <td>@item.IdModuloClasificacion</td>
+                                <td>@item.NombreTipoSoporte</td>
+                                <td><ul>@foreach (var area in item.Areas)
+                                        {
+                                            <li>@area.Nombre</li>
+                                        }
+                                    </ul>
+                                </td>
+                                <td>@item.Nombre</td>
+                                <td id="moduloEstado_@item.IdModuloClasificacion">@item.Estado</td>
+
+                                <td>
+                                    <button type="button" class="btn btn-primary" onclick="cambiarEstadoModulo(@item.IdModuloClasificacion)" id="botonModuloEstado_@item.IdModuloClasificacion">
+                                        <i class="ti ti-circle-@(item.Activo? "x" : "check")"></i>
+                                        
+                                    </button>
+                                    <button type="button" class="btn btn-primary" onclick="mostrarEditarModulo(@item.IdModuloClasificacion)" id="botonModuloEstado_@item.IdModuloClasificacion">
+                                        <i class="ti ti-edit"></i>
+
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+        </div>
+        
+    </div>
+</div>
+<script>
+   $(function(){
+    $("#tablaModulosClasificacion").DataTable({
+         language: lenguajeTablaGenerica
+     });
+   });
+    
+
+</script>
+
+<script src="/js/CatalogoModulos/index.js"></script>
