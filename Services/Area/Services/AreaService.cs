@@ -29,7 +29,7 @@ namespace HelpDesk.Services.Area.Services
                     Activo = p.Activo,
                     Estado = p.Activo? "Activo" : "Inactivo",
                     IdPlaza = p.IdPlaza,
-                    NombrePlaza = p.Plaza.Nombre
+                    NombrePlaza = p.Plaza?.Nombre
                 }).ToList();
             }
             catch (Exception ex)
@@ -37,6 +37,7 @@ namespace HelpDesk.Services.Area.Services
                 throw new Exception("Error al obtener las Areas", ex);
             }
         }
+
 
         public async Task<CatAreaViewModel> ObtenerAreaPorIdAsync(int id)
         {

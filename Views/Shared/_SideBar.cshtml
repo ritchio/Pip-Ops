@@ -280,22 +280,36 @@
                         <div class="dropdown-menu-columns">
 
                             <div class="dropdown-menu-column">
+                                @if (Html.TieneAcceso(roles: new[] { "Administrador", "Administrador Supervisor", "Soporte" }))
+                                {
+                                    <a class="dropdown-item" asp-controller="CatalogoUsuarios" asp-action="Index">
+                                        <i class="ti ti-users-group"></i>
+                                        Catálogo de usuarios
+                                    </a>
+                                }
 
-                                <a class="dropdown-item" asp-controller="CatalogoUsuarios" asp-action="Index">
-                                    <i class="ti ti-users-group"></i>
-                                    Catálogo de usuarios
-                                </a>
+                                @if (Html.TieneAcceso(roles: new[] { "Administrador" }))
+                                {
+                                    <a class="dropdown-item" asp-controller="CatalogoPlazas" asp-action="Index">
+                                        <i class="ti ti-building"></i>
+                                        Catálogo de plazas / <wbr />áreas
+                                    </a>
+                                }
+                                @if (Html.TieneAcceso(roles: new[] { "Administrador" }))
+                                {
+                                    <a class="dropdown-item" asp-controller="CatalogoModulos" asp-action="Index">
+                                        <i class="ti ti-sort-ascending-shapes"></i>
+                                        Catálogo de módulos / <wbr />clasificaciones
+                                    </a>
+                                }
 
-                                <a class="dropdown-item" asp-controller="CatalogoPlazas" asp-action="Index">
-                                    <i class="ti ti-building"></i>
-                                    Catálogo de plazas / <wbr />áreas
-                                </a>
-                                @if(Html.TieneAcceso("CatalogoOpciones.Ver","Administrador")){
+                                @if(Html.TieneAcceso(roles: new[] { "Administrador" })){
                                     <a class="dropdown-item" asp-controller="Opciones" asp-action="Index">
                                         <i class="ti ti-adjustments"></i>
                                         Opciones
                                     </a>
                                 }
+
                                 @if (Html.TieneAcceso(roles:new [] { "Administrador"}))
                                                     {
                                     <a class="dropdown-item" asp-controller="Historial" asp-action="Index">
@@ -303,6 +317,8 @@
                                         Historial de Accesos
                                     </a>
                                 }
+
+                               
                             </div>
 
                        </div>

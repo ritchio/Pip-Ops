@@ -17,6 +17,8 @@ using HelpDesk.Services.Opcion.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using HelpDesk.Services.Historial.Interfaces;
 using HelpDesk.Services.Historial.Services;
+using HelpDesk.Services.ModuloClasificacion.Services;
+using HelpDesk.Services.ModuloClasificacion.Interfaces;
 
 #endregion [ Usings ]
 
@@ -99,6 +101,7 @@ builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<ICorreoService, CorreoService>();
 builder.Services.AddScoped<IOpcionService,OpcionService>();
 builder.Services.AddScoped<IHistorialService, HistorialService>();
+builder.Services.AddScoped<IModuloClasificacionService, ModuloClasificacionService>();
 #endregion [ Servicios ]
 
 builder.Services.AddAutoMapper(typeof(Program)); 

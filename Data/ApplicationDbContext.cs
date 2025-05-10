@@ -18,10 +18,13 @@ public class ApplicationDbContext
     #region [ Entidades ]
     public DbSet<Cat_Plaza> Cat_Plaza { get; set; }
     public DbSet<Cat_Area> Cat_Area { get; set; } = default!;
-    public DbSet<Cat_Usuario> Cat_usuario { get; set; } = default!;
+    public DbSet<Cat_ModuloClasificacion> Cat_ModuloClasificacion { get; set; } = default!;
+    public DbSet<Cat_TipoSoporte> Cat_TipoSoporte { get; set; } = default!;
+    public DbSet<Cat_Usuario> Cat_Usuario { get; set; } = default!;
     public DbSet<Cfg_Opcion> Cfg_Opcion { get; set; }
     public DbSet<Log_Acceso> Log_Acceso { get; set; }
     public DbSet<Log_TicketActividad> Log_TicketActividad { get; set; }
+    public DbSet<Rel_ModuloClasificacion_Area> Rel_ModuloClasificacion_Area { get; set; }
     public DbSet<Rel_UsuarioArea> Rel_UsuarioArea { get; set; }
     
     #endregion [ Entidades ]
@@ -51,7 +54,31 @@ public class ApplicationDbContext
 
         builder.Entity<Rel_UsuarioArea>()
             .HasKey(rua => new { rua.IdUsuario, rua.IdArea });
-       
+        
+        // modulo clasificacion
+        
+        builder.Entity<Cat_ModuloClasificacion>()
+            .HasOne(mc => mc.TipoSoporte)
+            .WithMany(ts => ts.ModulosClasificacion)
+            .HasForeignKey(mc => mc.IdTipoSoporte)
+            .OnDelete(DeleteBehavior.Restrict); 
+
+        builder.Entity<Rel_ModuloClasificacion_Area>()
+            .HasKey(r => new { r.IdModuloClasificacion, r.IdArea });
+
+        builder.Entity<Rel_ModuloClasificacion_Area>()
+            .HasOne(r => r.ModuloClasificacion)
+            .WithMany(mc => mc.RelacionAreas)
+            .HasForeignKey(r => r.IdModuloClasificacion)
+            .OnDelete(DeleteBehavior.Cascade); 
+
+        builder.Entity<Rel_ModuloClasificacion_Area>()
+            .HasOne(r => r.Area)
+            .WithMany(a => a.ModuloClasificacionAreas)
+            .HasForeignKey(r => r.IdArea)
+            .OnDelete(DeleteBehavior.Cascade);
+
+
     }
 
 

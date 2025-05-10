@@ -19,6 +19,7 @@ namespace HelpDesk.Models.Entities
         public virtual Cat_Plaza? Plaza { get; set; }
 
         //public virtual ICollection<Rel_UsuarioArea>? UsuarioAreas { get; set; }  
+        public virtual ICollection<Rel_ModuloClasificacion_Area>? ModuloClasificacionAreas { get; set; }
     }
 
 }

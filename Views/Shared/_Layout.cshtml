@@ -87,11 +87,7 @@
             </footer>
             <!--  END FOOTER  -->
         </div>
-    <!-- inicio script personalizados-->        
-    <script src="~/js/site.js" asp-append-version="true"></script>
-        <script src="~/js/Shared/fechaUtils.js"></script>
-        <script src="~/js/Shared/axiosRequest.js"></script>
-    <!-- fin script personalizados-->
+    
     @await RenderSectionAsync("Scripts", required: false)
     </div>
 
@@ -151,4 +147,9 @@
    <partial name="_ConfiguracionTema" />
     @* <button type="button" class="btn btn-primary" onclick="crearNotificacion()">asd asd asd asdasd asda sasdasdas dasd asda asd asd aasdnotificar</button> *@
 </body>
+<!-- inicio script personalizados-->
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script src="~/js/Shared/fechaUtils.js"></script>
+<script src="~/js/Shared/axiosRequest.js"></script>
+<!-- fin script personalizados-->
 </html>
