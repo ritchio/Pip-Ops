@@ -1,13 +1,17 @@
-﻿using HelpDesk.Models.Utils;
+﻿using HelpDesk.Authorization;
+using HelpDesk.Models.Utils;
 using HelpDesk.Models.ViewModels;
 using HelpDesk.Services.Area.Interfaces;
 using HelpDesk.Services.ModuloClasificacion.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 
 namespace HelpDesk.Controllers
 {
+    [Authorize]
+    [VerificaPermiso(roles: new [] {Roles.Administrador, Roles.AdministradorSupervisor})]
     public class CatalogoModulosController(
         IModuloClasificacionService moduloClasificacionService,
         IAreaService areaService

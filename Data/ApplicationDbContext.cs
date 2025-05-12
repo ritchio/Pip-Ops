@@ -18,12 +18,14 @@ public class ApplicationDbContext
     #region [ Entidades ]
     public DbSet<Cat_Plaza> Cat_Plaza { get; set; }
     public DbSet<Cat_Area> Cat_Area { get; set; } = default!;
+    public DbSet<Cat_Autorizacion> Cat_Autorizacion { get; set; } = default!;
     public DbSet<Cat_ModuloClasificacion> Cat_ModuloClasificacion { get; set; } = default!;
     public DbSet<Cat_TipoSoporte> Cat_TipoSoporte { get; set; } = default!;
     public DbSet<Cat_Usuario> Cat_Usuario { get; set; } = default!;
     public DbSet<Cfg_Opcion> Cfg_Opcion { get; set; }
     public DbSet<Log_Acceso> Log_Acceso { get; set; }
     public DbSet<Log_TicketActividad> Log_TicketActividad { get; set; }
+    public DbSet<Rel_Autorizacion_AreaAutoriza> Rel_Autorizacion_AreaAutoriza { get; set; }
     public DbSet<Rel_ModuloClasificacion_Area> Rel_ModuloClasificacion_Area { get; set; }
     public DbSet<Rel_UsuarioArea> Rel_UsuarioArea { get; set; }
     
@@ -31,6 +33,8 @@ public class ApplicationDbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        builder.Entity<Cat_Area>()
+            .HasKey(ca => ca.IdArea);
 
         builder.Entity<Cat_Usuario>()
             .HasKey(cu => cu.Id );
@@ -75,6 +79,35 @@ public class ApplicationDbContext
         builder.Entity<Rel_ModuloClasificacion_Area>()
             .HasOne(r => r.Area)
             .WithMany(a => a.ModuloClasificacionAreas)
+            .HasForeignKey(r => r.IdArea)
+            .OnDelete(DeleteBehavior.Cascade); 
+        
+        // autorizacion
+        
+        builder.Entity<Cat_Autorizacion>()
+            .HasOne(au => au.AreaPertenece)
+            .WithMany(aa => aa.Autorizaciones)
+            .HasForeignKey(au => au.IdArea)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Cat_Autorizacion>()
+            .HasOne(au => au.ModuloClasificacion)
+            .WithMany(aa => aa.Autorizaciones)
+            .HasForeignKey(au => au.IdModuloClasificacion)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Rel_Autorizacion_AreaAutoriza>()
+            .HasKey(r => new { r.IdAutorizacion,r.IdArea });
+
+        builder.Entity<Rel_Autorizacion_AreaAutoriza>()
+            .HasOne(r => r.Autorizacion)
+            .WithMany(mc => mc.RelacionAreasAutorizan)
+            .HasForeignKey(r => r.IdAutorizacion)
+            .OnDelete(DeleteBehavior.Cascade); 
+
+        builder.Entity<Rel_Autorizacion_AreaAutoriza>()
+            .HasOne(r => r.Area)
+            .WithMany(a => a.AutorizacionAreas)
             .HasForeignKey(r => r.IdArea)
             .OnDelete(DeleteBehavior.Cascade);
 

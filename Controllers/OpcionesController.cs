@@ -4,12 +4,14 @@ using HelpDesk.Models.Entities;
 using HelpDesk.Models.Utils;
 using HelpDesk.Models.ViewModels;
 using HelpDesk.Services.Opcion.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace HelpDesk.Controllers
 {
+    [Authorize]
     public class OpcionesController(
         IOpcionService opcionesService
         ) : Controller

@@ -2,10 +2,12 @@
 using HelpDesk.Data;
 using HelpDesk.Models.ViewModels;
 using HelpDesk.Services.Historial.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HelpDesk.Controllers
 {
+    [Authorize]
     [VerificaPermiso(roles: ["Administrador"])]
     public class HistorialController(
         IHistorialService historialService
