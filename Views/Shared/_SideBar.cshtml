@@ -1,4 +1,5 @@
-﻿@*
+﻿@using HelpDesk.Authorization
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
@@ -280,7 +281,7 @@
                         <div class="dropdown-menu-columns">
 
                             <div class="dropdown-menu-column">
-                                @if (Html.TieneAcceso(roles: new[] { "Administrador", "Administrador Supervisor", "Soporte" }))
+                                @if (Html.TieneAcceso(roles: new[] { Roles.Administrador, Roles.AdministradorSupervisor, Roles.Soporte }))
                                 {
                                     <a class="dropdown-item" asp-controller="CatalogoUsuarios" asp-action="Index">
                                         <i class="ti ti-users-group"></i>
@@ -288,29 +289,37 @@
                                     </a>
                                 }
 
-                                @if (Html.TieneAcceso(roles: new[] { "Administrador" }))
+                                @if (Html.TieneAcceso(roles: new[] { Roles.Administrador, Roles.AdministradorSupervisor}))
                                 {
                                     <a class="dropdown-item" asp-controller="CatalogoPlazas" asp-action="Index">
                                         <i class="ti ti-building"></i>
                                         Catálogo de plazas / <wbr />áreas
                                     </a>
                                 }
-                                @if (Html.TieneAcceso(roles: new[] { "Administrador" }))
+                                @if (Html.TieneAcceso(roles: new[] { Roles.Administrador, Roles.AdministradorSupervisor }))
                                 {
                                     <a class="dropdown-item" asp-controller="CatalogoModulos" asp-action="Index">
                                         <i class="ti ti-sort-ascending-shapes"></i>
                                         Catálogo de módulos / <wbr />clasificaciones
                                     </a>
                                 }
+                                @if (Html.TieneAcceso(roles: new[] { Roles.Administrador, Roles.AdministradorSupervisor }))
+                                {
+                                    <a class="dropdown-item" asp-controller="CatalogoAutorizaciones" asp-action="Index">
+                                        <i class="ti ti-lock-check"></i>
+                                        Catálogo de <wbr />Autorizaciones
+                                    </a>
+                                })
 
-                                @if(Html.TieneAcceso(roles: new[] { "Administrador" })){
+                                @if (Html.TieneAcceso(roles: new[] { Roles.Administrador }))
+                                {
                                     <a class="dropdown-item" asp-controller="Opciones" asp-action="Index">
                                         <i class="ti ti-adjustments"></i>
                                         Opciones
                                     </a>
                                 }
 
-                                @if (Html.TieneAcceso(roles:new [] { "Administrador"}))
+                                @if (Html.TieneAcceso(roles: new[] { Roles.Administrador }))
                                                     {
                                     <a class="dropdown-item" asp-controller="Historial" asp-action="Index">
                                         <i class="ti ti-book"></i>
@@ -318,6 +327,7 @@
                                     </a>
                                 }
 
+                                
                                
                             </div>
 

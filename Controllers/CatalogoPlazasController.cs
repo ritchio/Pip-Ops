@@ -11,9 +11,11 @@ using HelpDesk.Models.ViewModels;
 using HelpDesk.Services.Plaza.Interfaces;
 using HelpDesk.Services.Area.Interfaces;
 using HelpDesk.Models.Utils;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HelpDesk.Controllers
 {
+    [Authorize]
     public class CatalogoPlazasController : Controller
     {
         #region [ Atributos ]

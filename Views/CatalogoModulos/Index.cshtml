@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="col-4 d-flex justify-content-end">
-        <button class="btn btn-primary" id="btnCrearClasificacion" data-bs-toggle="modal" data-bs-target="#modalCrearClasificacion" onclick="muestraCrearModulo()">
+        <button class="btn btn-primary" id="btnCrearClasificacion" onclick="muestraCrearModulo()">
             <i class="ti ti-circle-plus"></i> Nuevo módulo / clasificación</button>
     </div>
 </div>
@@ -46,13 +46,12 @@
                                 <td id="moduloEstado_@item.IdModuloClasificacion">@item.Estado</td>
 
                                 <td>
-                                    <button type="button" class="btn btn-primary" onclick="cambiarEstadoModulo(@item.IdModuloClasificacion)" id="botonModuloEstado_@item.IdModuloClasificacion">
+                                    <button type="button" class="btn btn-primary" onclick="cambiarEstadoModulo(@item.IdModuloClasificacion)" id="botonModuloEstado_@item.IdModuloClasificacion" data-bs-toggle="tooltip" data-bs-placement="top" title="Activa o desactiva el módulo">
                                         <i class="ti ti-circle-@(item.Activo? "x" : "check")"></i>
                                         
                                     </button>
-                                    <button type="button" class="btn btn-primary" onclick="mostrarEditarModulo(@item.IdModuloClasificacion)" id="botonModuloEstado_@item.IdModuloClasificacion">
+                                    <button type="button" class="btn btn-primary" onclick="mostrarEditarModulo(@item.IdModuloClasificacion)" id="botonModuloEstado_@item.IdModuloClasificacion" data-bs-toggle="tooltip" data-bs-placement="top" title="Permite editar la información del módulo">
                                         <i class="ti ti-edit"></i>
-
                                     </button>
                                 </td>
                             </tr>

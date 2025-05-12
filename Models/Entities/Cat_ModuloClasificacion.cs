@@ -22,5 +22,6 @@ namespace HelpDesk.Models.Entities
         public Cat_TipoSoporte TipoSoporte { get; set; }
 
         public ICollection<Rel_ModuloClasificacion_Area> RelacionAreas { get; set; }
+        public ICollection<Cat_Autorizacion> Autorizaciones { get; set; }
     }
 }
