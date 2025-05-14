@@ -21,6 +21,10 @@ using HelpDesk.Services.ModuloClasificacion.Services;
 using HelpDesk.Services.ModuloClasificacion.Interfaces;
 using HelpDesk.Services.Autorizacion.Interfaces;
 using HelpDesk.Services.Autorizacion.Services;
+using HelpDesk.Services.Ticket.Interfaces;
+using HelpDesk.Services.Ticket.Services;
+using HelpDesk.Services.TipoSoporte.Interfaces;
+using HelpDesk.Services.TipoSoporte.Services;
 
 #endregion [ Usings ]
 
@@ -103,8 +107,11 @@ builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<ICorreoService, CorreoService>();
 builder.Services.AddScoped<IOpcionService,OpcionService>();
 builder.Services.AddScoped<IHistorialService, HistorialService>();
+builder.Services.AddScoped<ITipoSoporteService, TipoSoporteService>();
 builder.Services.AddScoped<IModuloClasificacionService, ModuloClasificacionService>();
 builder.Services.AddScoped<IAutorizacionService, AutorizacionService>();
+builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<ITicketAdjuntoService, TicketAdjuntoService>();
 #endregion [ Servicios ]
 
 builder.Services.AddAutoMapper(typeof(Program)); 

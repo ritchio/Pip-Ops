@@ -22,6 +22,9 @@
 
         public static class Ticket
         {
+            [PermisoDescripcion("Crear tickets")]
+            public const string Crear = "Ticket.Crear";
+
             [PermisoDescripcion("Ver tickets")]
             public const string Ver = "Ticket.Ver";
 

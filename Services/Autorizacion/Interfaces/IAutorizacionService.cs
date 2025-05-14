@@ -6,6 +6,7 @@ namespace HelpDesk.Services.Autorizacion.Interfaces
     {
         Task<List<CatAutorizacionViewModel>> ObtenerAutorizacionesAsync();
         Task<CatAutorizacionViewModel> ObtenerAutorizacionPorIdAsync(int idAutorizacion);
+        Task<CatAutorizacionViewModel> ObtenerAutorizacionPorModuloAsync(int idModulo);
         Task<bool> CrearAutorizacionAsync(CatAutorizacionViewModel autorizacion);
         Task<bool> ActualizarAutorizacionAsync(CatAutorizacionViewModel autorizacion);
         //Task<List<CatModuloClasificacionViewModel>> ObtenerModulosClasificacionAsync();

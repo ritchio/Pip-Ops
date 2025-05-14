@@ -168,5 +168,23 @@ namespace HelpDesk.Controllers
             }
         }
         
+        public async Task<IActionResult> ObtenerPorModulo(int idModulo)
+        {
+            var respuesta = new RespuestaGenerica<CatAutorizacionViewModel>();
+            var autorizacion = await _autorizacionService.ObtenerAutorizacionPorModuloAsync(idModulo);
+            
+            if(autorizacion != null)
+            {
+                respuesta.Exito = true;
+                respuesta.Datos = autorizacion;
+            }
+            else
+            {
+                respuesta.Exito = false;
+                respuesta.Mensaje = "No se encontró la autorización relacionada al módulo";
+            }
+
+            return Ok(respuesta);
+        }
     }
 }

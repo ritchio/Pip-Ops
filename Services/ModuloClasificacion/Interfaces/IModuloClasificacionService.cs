@@ -8,6 +8,7 @@ namespace HelpDesk.Services.ModuloClasificacion.Interfaces
     {
         Task<List<CatModuloClasificacionViewModel>> ObtenerModulosClasificacionesAsync();
         Task<CatModuloClasificacionViewModel> ObtenerModuloClasificacionPorIdAsync(int idModulo);
+        Task<List<CatModuloClasificacionViewModel>> ObtenerModulosClasificacionesPorTipoSoporteAsync(int idTipoSoporte);
         Task<List<CatTipoSoporteViewModel>> ObtenerTiposSoporteAsync();
         Task<bool> CrearModuloClasificacionAsync(CatModuloClasificacionViewModel moduloClasificacion);
         RespuestaGenerica<CatModuloClasificacionViewModel> CambiarEstado(int idModulo);

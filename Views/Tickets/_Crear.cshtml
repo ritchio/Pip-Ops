@@ -1,0 +1,87 @@
+﻿@model HelpDesk.Models.ViewModels.TicketViewModel  
+
+<div class="modal-header">  
+   <h4 class="modal-title">Nuevo Ticket</h4>  
+</div>  
+<div class="modal-body">  
+   <form asp-action="Crear" method="post" class="row" enctype="multipart/form-data">  
+       <div asp-validation-summary="ModelOnly" class="text-danger"></div>  
+
+       <div class="form-group col-sm-6">  
+           <label asp-for="IdTipoSoporte" class="control-label">Tipo de Soporte</label>  
+           <select asp-for="IdTipoSoporte" class="form-control" asp-items="@(new SelectList(Model.TiposSoporte, "IdTipoSoporte", "Nombre"))" onchange="obtenerModulosClasificaciones(this.value)"></select>  
+           <span asp-validation-for="IdTipoSoporte" class="text-danger"></span>  
+       </div>  
+
+       <div class="form-group col-sm-6">  
+           <label asp-for="IdModuloClasificacion" class="control-label">Módulo Clasificación</label>  
+           <select asp-for="IdModuloClasificacion" class="form-control" asp-items="@(new SelectList(Model.ModulosClasificaciones, "IdModuloClasificacion", "Nombre"))" onchange="obtenerAutorizacion(this.value)"></select>  
+           <span asp-validation-for="IdModuloClasificacion" class="text-danger"></span>  
+       </div>  
+
+       <div class="form-group col-sm-6">  
+           <label asp-for="CorreoElectronico" class="control-label">Correo Electrónico</label>  
+           <input asp-for="CorreoElectronico" class="form-control" />  
+           <span asp-validation-for="CorreoElectronico" class="text-danger"></span>  
+       </div>  
+
+       <div class="form-group col-sm-6">  
+           <label asp-for="Telefono" class="control-label">Teléfono</label>  
+           <input asp-for="Telefono" class="form-control" />  
+           <span asp-validation-for="Telefono" class="text-danger"></span>  
+       </div>  
+
+       <div class="form-group col-sm-12">  
+           <label for="requisitos" class="control-label">Requisitos</label>  
+           <textarea id="requisitos" name="requisitos" class="form-control" disabled></textarea>  
+       </div>  
+
+       <div class="form-group col-sm-12">  
+           <label asp-for="Asunto" class="control-label">Asunto</label>  
+           <input asp-for="Asunto" class="form-control" />  
+           <span asp-validation-for="Asunto" class="text-danger"></span>  
+       </div>  
+
+       <div class="form-group col-sm-12">  
+           <label asp-for="Cuerpo" class="control-label">Descripción</label>  
+           <textarea asp-for="Cuerpo" class="form-control"></textarea>  
+           <span asp-validation-for="Cuerpo" class="text-danger"></span>  
+       </div>  
+
+       <div class="form-group col-sm-12">  
+           <label for="ArchivoAdjunto" class="control-label">Subir Archivo</label>
+           <i class="blockquote-footer">Máximo 1 MB</i>
+           <input tupe="file" name="ArchivoAdjunto" id="ArchivoAdjunto" type="file" class="form-control" accept=".jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx,.pdf"/>    
+       </div>  
+
+       <div class="form-group mt-4">  
+           <input type="submit" value="Guardar" class="btn btn-primary" />  
+       </div>  
+   </form>  
+</div>  
+<div class="modal-footer">  
+   <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>  
+</div>  
+
+<script>  
+   $(function(){  
+       obtenerAutorizacion($("#IdModulolCasificacion").val());  
+   });  
+
+   $("#ArchivoAdjunto").on("change",function(e){
+         if(this.files[0].size > 1048576) {
+            mostrarNotificacion({
+                datos :null,
+                mensaje: "El archivo es demasiado grande. <br/>Solo tiene un límite de 1MB por archivo.",
+                exito: false
+            });
+        this.value = "";
+     }
+   });
+</script>  
+
+@section Scripts {  
+   @{  
+       await Html.RenderPartialAsync("_ValidationScriptsPartial");  
+   }  
+}

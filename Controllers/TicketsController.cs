@@ -1,0 +1,104 @@
+﻿using HelpDesk.Authorization;
+using HelpDesk.Models.Utils;
+using HelpDesk.Models.ViewModels;
+using HelpDesk.Services.Autorizacion.Interfaces;
+using HelpDesk.Services.ModuloClasificacion.Interfaces;
+using HelpDesk.Services.Ticket.Interfaces;
+using HelpDesk.Services.TipoSoporte.Interfaces;
+using HelpDesk.Services.Usuario.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Framework;
+using System.Text.Json;
+
+namespace HelpDesk.Controllers
+{
+    [Authorize]
+    public class TicketsController(
+        IModuloClasificacionService moduloClasificacionService,
+        IAutorizacionService autorizacionService,
+        ITipoSoporteService tipoSoporte,
+        ITicketService ticketService,
+        IUsuarioService usuarioService
+        ) : Controller
+    {
+        #region [ Atributos ]
+        private readonly IModuloClasificacionService _moduloClasificacionService = moduloClasificacionService;
+        private readonly IAutorizacionService _autorizacionService = autorizacionService;
+        private readonly ITipoSoporteService _tipoSoporteService = tipoSoporte;
+        private readonly ITicketService _ticketService = ticketService;
+        private readonly IUsuarioService _usuarioService = usuarioService;
+        #endregion [ Atributos ]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [VerificaPermiso(Permisos.Ticket.Crear)]
+        public async Task<IActionResult> Crear()
+        {
+            var modelo = new TicketViewModel();
+
+            modelo.TiposSoporte = await _tipoSoporteService.ObtenerTiposSoporteAsync();
+            var tipoSoporte = modelo.TiposSoporte.FirstOrDefault();
+            modelo.ModulosClasificaciones = await _moduloClasificacionService.ObtenerModulosClasificacionesPorTipoSoporteAsync(tipoSoporte.IdTipoSoporte);
+            
+
+            var respuesta = new RespuestaGenerica<string>
+            {
+                Exito = true,
+                Datos = this.RenderizarVista("_Crear", modelo, true)
+            };
+
+            return Ok(respuesta);
+        }
+
+        [VerificaPermiso(Permisos.Ticket.Crear)]
+        [HttpPost]
+        public async Task<IActionResult> Crear(TicketViewModel ticketModel)
+        {
+            
+
+            if (ModelState.IsValid)
+            {
+                var usuario = await _usuarioService.ObtenerUsuarioActual(User);
+                ticketModel.IdUsuario = usuario.Id;
+
+                var success = await _ticketService.GuardarTicket(ticketModel);
+                if (success)
+                {
+                    var respuesta = new RespuestaGenerica<string>
+                    {
+                        Exito = true,
+                        Mensaje = "Ticket creado exitosamente."
+                    };
+                    TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                    return RedirectToAction("Index", "Tickets");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Error al crear el ticket.");
+                    var respuesta = new RespuestaGenerica<string>
+                    {
+                        Exito = false,
+                        Mensaje = "Error al crear el ticket."
+                    };
+                    TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                    return RedirectToAction("Index", "Tickets");
+
+                }
+            }
+            else
+            {
+                var respuesta = new RespuestaGenerica<string>
+                {
+                    Exito = false,
+                    Mensaje = "Error al crear el ticket."
+                };
+                TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+
+                return RedirectToAction("Index", "Tickets");
+            }
+        }
+    }
+}
