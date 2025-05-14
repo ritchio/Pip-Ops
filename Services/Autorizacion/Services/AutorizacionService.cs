@@ -90,6 +90,60 @@ namespace HelpDesk.Services.Autorizacion.Services
             }
         }
 
+        public async Task<CatAutorizacionViewModel> ObtenerAutorizacionPorModuloAsync(int idModulo)
+        {
+            try
+            {
+                //var autorizacion = await _context.Cat_Autorizacion
+                //    .Include(a => a.AreaPertenece)
+                //    .Include(a => a.ModuloClasificacion)
+                //    .Include(a => a.RelacionAreasAutorizan)
+                //        .ThenInclude(r => r.Area)
+                //    .FirstOrDefaultAsync(a => a.IdModuloClasificacion == idModulo);
+                //if (autorizacion == null)
+                //{
+                //    throw new Exception("No se encontró la autorización");
+                //}
+                //return new CatAutorizacionViewModel
+                //{
+                //    IdAutorizacion = autorizacion.IdAutorizacion,
+                //    IdArea = autorizacion.IdArea,
+                //    NombreAreaPertenece = autorizacion.AreaPertenece.Nombre,
+                //    NombreModuloClasificacion = autorizacion.ModuloClasificacion.Nombre,
+                //    IdModuloClasificacion = autorizacion.IdModuloClasificacion,
+                //    Requisitos = autorizacion.Requisitos,
+                //    IdAreasAutorizan = autorizacion.RelacionAreasAutorizan.Select(r => r.IdArea).ToList(),
+                //    AreasAutorizan = autorizacion.RelacionAreasAutorizan.Select(r => new CatAreaViewModel
+                //    {
+                //        IdPlaza = 0,
+                //        IdArea = r.Area.IdArea,
+                //        Nombre = r.Area.Nombre
+                //    }).ToList()
+                //};
+
+                //de momento sin detalles
+                var autorizacion = await _context.Cat_Autorizacion.FirstOrDefaultAsync(a => a.IdModuloClasificacion == idModulo);
+
+                if (autorizacion != null)
+                {
+                    return new CatAutorizacionViewModel
+                    {
+                        IdAutorizacion = autorizacion.IdAutorizacion,
+                        IdModuloClasificacion = autorizacion.IdModuloClasificacion,
+                        Requisitos = autorizacion.Requisitos
+                    };
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener la autorización", ex);
+            }
+        }
+
         public async Task<bool> CrearAutorizacionAsync(CatAutorizacionViewModel autorizacion)
         {
             try

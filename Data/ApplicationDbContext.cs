@@ -23,21 +23,25 @@ public class ApplicationDbContext
     public DbSet<Cat_TipoSoporte> Cat_TipoSoporte { get; set; } = default!;
     public DbSet<Cat_Usuario> Cat_Usuario { get; set; } = default!;
     public DbSet<Cfg_Opcion> Cfg_Opcion { get; set; }
+    public DbSet<Doc_Ticket> Doc_Ticket { get; set; }
+    public DbSet<Doc_TicketAdjunto> Doc_TicketAdjunto { get; set; }
     public DbSet<Log_Acceso> Log_Acceso { get; set; }
     public DbSet<Log_TicketActividad> Log_TicketActividad { get; set; }
     public DbSet<Rel_Autorizacion_AreaAutoriza> Rel_Autorizacion_AreaAutoriza { get; set; }
     public DbSet<Rel_ModuloClasificacion_Area> Rel_ModuloClasificacion_Area { get; set; }
     public DbSet<Rel_UsuarioArea> Rel_UsuarioArea { get; set; }
-    
+
     #endregion [ Entidades ]
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        #region [ Identity ]
+
         base.OnModelCreating(builder);
         builder.Entity<Cat_Area>()
             .HasKey(ca => ca.IdArea);
 
         builder.Entity<Cat_Usuario>()
-            .HasKey(cu => cu.Id );
+            .HasKey(cu => cu.Id);
 
         builder.Entity<Cat_Usuario>()
         .Property(u => u.NumeroUsuario)
@@ -58,14 +62,16 @@ public class ApplicationDbContext
 
         builder.Entity<Rel_UsuarioArea>()
             .HasKey(rua => new { rua.IdUsuario, rua.IdArea });
-        
-        // modulo clasificacion
-        
+
+        #endregion [ Identity ]
+
+        #region [ Modulo/Clasificaciones ]
+
         builder.Entity<Cat_ModuloClasificacion>()
             .HasOne(mc => mc.TipoSoporte)
             .WithMany(ts => ts.ModulosClasificacion)
             .HasForeignKey(mc => mc.IdTipoSoporte)
-            .OnDelete(DeleteBehavior.Restrict); 
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<Rel_ModuloClasificacion_Area>()
             .HasKey(r => new { r.IdModuloClasificacion, r.IdArea });
@@ -74,16 +80,18 @@ public class ApplicationDbContext
             .HasOne(r => r.ModuloClasificacion)
             .WithMany(mc => mc.RelacionAreas)
             .HasForeignKey(r => r.IdModuloClasificacion)
-            .OnDelete(DeleteBehavior.Cascade); 
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<Rel_ModuloClasificacion_Area>()
             .HasOne(r => r.Area)
             .WithMany(a => a.ModuloClasificacionAreas)
             .HasForeignKey(r => r.IdArea)
-            .OnDelete(DeleteBehavior.Cascade); 
-        
-        // autorizacion
-        
+            .OnDelete(DeleteBehavior.Cascade);
+
+        #endregion [ Modulo/Clasificaciones ]
+
+        #region [ Autorizaciones ]
+
         builder.Entity<Cat_Autorizacion>()
             .HasOne(au => au.AreaPertenece)
             .WithMany(aa => aa.Autorizaciones)
@@ -97,13 +105,13 @@ public class ApplicationDbContext
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Entity<Rel_Autorizacion_AreaAutoriza>()
-            .HasKey(r => new { r.IdAutorizacion,r.IdArea });
+            .HasKey(r => new { r.IdAutorizacion, r.IdArea });
 
         builder.Entity<Rel_Autorizacion_AreaAutoriza>()
             .HasOne(r => r.Autorizacion)
             .WithMany(mc => mc.RelacionAreasAutorizan)
             .HasForeignKey(r => r.IdAutorizacion)
-            .OnDelete(DeleteBehavior.Cascade); 
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<Rel_Autorizacion_AreaAutoriza>()
             .HasOne(r => r.Area)
@@ -111,6 +119,39 @@ public class ApplicationDbContext
             .HasForeignKey(r => r.IdArea)
             .OnDelete(DeleteBehavior.Cascade);
 
+        #endregion [ Autorizaciones ]
+
+        #region [ Tickets ]
+        builder.Entity<Doc_Ticket>()
+            .HasOne(mc => mc.ModuloClasificacion)
+            .WithMany(ti => ti.Tickets)
+            .HasForeignKey(mc => mc.IdModuloClasificacion)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Doc_Ticket>()
+            .HasOne(ts => ts.TipoSoporte)
+            .WithMany(ti => ti.Tickets)
+            .HasForeignKey(ts => ts.IdTipoSoporte)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Doc_Ticket>()
+            .HasOne(ti => ti.Usuario)
+            .WithMany(cu => cu.Tickets)
+            .HasForeignKey(ti => ti.IdUsuario)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Doc_TicketAdjunto>()
+            .HasOne(ta => ta.Ticket)
+            .WithMany(ti => ti.Adjuntos)
+            .HasForeignKey(ta => ta.IdTicket)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Doc_TicketAdjunto>()
+            .HasOne(ta => ta.Usuario)
+            .WithMany(cu => cu.TicketAdjuntos)
+            .HasForeignKey(ta => ta.IdUsuario);
+
+        #endregion [ Tickets ]
 
     }
 

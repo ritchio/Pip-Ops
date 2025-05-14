@@ -48,6 +48,41 @@ namespace HelpDesk.Services.ModuloClasificacion.Services
                 throw new Exception("Error al obtener los Modulos Clasificaciones", ex);
             }
         }
+        
+public async Task<List<CatModuloClasificacionViewModel>> ObtenerModulosClasificacionesPorTipoSoporteAsync(int idTipoSoporte)
+        {
+            try
+            {
+                var modulos = await _context.Cat_ModuloClasificacion
+                    .Include(p => p.RelacionAreas)
+                    .ThenInclude(ra => ra.Area)
+                    .Include(p => p.TipoSoporte)
+                    .Where(ts => ts.IdTipoSoporte == idTipoSoporte) 
+                    .Select(p => new CatModuloClasificacionViewModel
+                    {
+                        IdModuloClasificacion = p.IdModuloClasificacion,
+                        Nombre = p.Nombre,
+                        Activo = p.Activo,
+                        IdAreas = p.RelacionAreas.Select(a => a.IdArea).ToList(),
+                        Areas = p.RelacionAreas.Select(a => new CatAreaViewModel
+                        {
+                            IdArea = a.Area.IdArea,
+                            Nombre = a.Area.Nombre,
+                            Activo = a.Area.Activo,
+                            IdPlaza = a.Area.IdPlaza,
+                        }).ToList(),
+                        IdTipoSoporte = p.IdTipoSoporte,
+                        NombreTipoSoporte = p.TipoSoporte.Nombre,
+                        
+                    })
+                    .ToListAsync();
+                return modulos;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener los Modulos Clasificaciones", ex);
+            }
+        }
         public async Task<List<CatTipoSoporteViewModel>> ObtenerTiposSoporteAsync()
         {
             try

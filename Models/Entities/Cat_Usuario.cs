@@ -39,7 +39,10 @@ namespace HelpDesk.Models.Entities
 
         //Areas
         public virtual ICollection<Rel_UsuarioArea> AreasUsuario { get; set; } = new List<Rel_UsuarioArea>();
-
+        
+        //tickets
+        public  ICollection<Doc_Ticket> Tickets { get; set; }
+        public  ICollection<Doc_TicketAdjunto> TicketAdjuntos { get; set; }
     }
 
 }

@@ -26,8 +26,14 @@ namespace HelpDesk.Helpers
 
             bool tienePermiso = !string.IsNullOrEmpty(permiso) && user.HasClaim("permission", permiso);
 
-            bool tieneRol = roles == null || roles.Length == 0 ||
-                            roles.Any(rol => user.IsInRole(rol));
+            bool tieneRol = false;
+
+           if(roles.Length > 0)
+            {
+                tieneRol = roles.Any(rol => user.IsInRole(rol));
+
+            }
+                            
 
             return tienePermiso || tieneRol;
         }

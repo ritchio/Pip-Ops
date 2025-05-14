@@ -15,5 +15,7 @@ namespace HelpDesk.Models.Entities
 
         // Navegación
         public ICollection<Cat_ModuloClasificacion> ModulosClasificacion { get; set; }
+        public ICollection<Doc_Ticket> Tickets { get; set; }
+
     }
 }

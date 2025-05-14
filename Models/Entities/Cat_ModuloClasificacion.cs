@@ -23,5 +23,6 @@ namespace HelpDesk.Models.Entities
 
         public ICollection<Rel_ModuloClasificacion_Area> RelacionAreas { get; set; }
         public ICollection<Cat_Autorizacion> Autorizaciones { get; set; }
+        public ICollection<Doc_Ticket> Tickets { get; set; }
     }
 }

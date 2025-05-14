@@ -38,3 +38,6 @@ body {
     background: var(--tblr-primary);
 }
 
+label{
+    padding:0.6rem 0 0.6rem 0;
+}

@@ -174,5 +174,44 @@ namespace HelpDesk.Controllers
                 return RedirectToAction("Index", "CatalogoModulos");
             }
         }
+
+        #region [ Parciales ]
+        public async Task<IActionResult> Obtener(int idTipoSoporte = 0,bool activo = true)
+        {
+            var respuesta  = new RespuestaGenerica<List<CatModuloClasificacionViewModel>>();
+            if(idTipoSoporte == 0)
+            {
+                var result = await _moduloClasificacionService.ObtenerModulosClasificacionesAsync();
+                
+                if(result != null)
+                {
+                    respuesta.Datos = result;
+                    respuesta.Exito = true;
+                }
+                else
+                {
+                    respuesta.Exito = false;
+                    respuesta.Mensaje = "No se encontraron modulos de clasificacion";
+                }
+            }
+            else
+            {
+                var result = await _moduloClasificacionService.ObtenerModulosClasificacionesPorTipoSoporteAsync(idTipoSoporte);
+                if (result != null)
+                {
+                    respuesta.Datos = result;
+                    respuesta.Exito = true;
+                }
+                else
+                {
+                    respuesta.Exito = false;
+                    respuesta.Mensaje = "No se encontraron modulos de clasificacion";
+                }
+
+            }
+
+            return Ok(respuesta);
+        }
+        #endregion [ Parciales ]
     }
 }
