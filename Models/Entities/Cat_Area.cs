@@ -24,6 +24,7 @@ namespace HelpDesk.Models.Entities
         public virtual ICollection<Cat_Autorizacion>? Autorizaciones { get; set; }
         public virtual ICollection<Rel_ModuloClasificacion_Area>? ModuloClasificacionAreas { get; set; }
         public virtual ICollection<Rel_Autorizacion_AreaAutoriza>? AutorizacionAreas { get; set; }
+        public virtual ICollection<Doc_TicketAutorizacion>? TicketAutorizacion { get; set; } 
     }
 
 }

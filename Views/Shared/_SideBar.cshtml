@@ -266,85 +266,212 @@
             <!-- BEGIN NAVBAR MENU -->
             <ul class="navbar-nav pt-lg-2">
                 @if (Html.TieneAcceso(Permisos.Ticket.Crear))
-                    {
-                        <li class="nav-item">
-                            <a onclick="muestraCrearTicket()" class="btn btn-primary">
-                                <i class="ti ti-circle-plus"></i> &nbsp;Crear Ticket
-                            </a>
-                        </li>
-                    }
-                
-               
-                <!-- inicia  opciones / catalogos-->
-                <li class="nav-item">
-                    <a class="nav-link dropdown-toggle" href="#navbar-base"
-                    data-bs-toggle="dropdown"
-                    data-bs-auto-close="false"
-                    role="button"
-                    aria-expanded="false">
-                        <span class="nav-link-icon d-md-none d-lg-inline-block">
-                            <i class="ti ti-adjustments-cog"></i>
-                        </span>
-                        <span class="nav-link-title">OPCIONES /<wbr /> CATÁLOGOS</span>
-                    </a>
-                    <div class="dropdown-menu">
-                        <div class="dropdown-menu-columns">
-
-                            <div class="dropdown-menu-column">
-                                @if (Html.TieneAcceso(roles: new[] { Roles.Administrador, Roles.AdministradorSupervisor, Roles.Soporte }))
-                                {
-                                    <a class="dropdown-item" asp-controller="CatalogoUsuarios" asp-action="Index">
-                                        <i class="ti ti-users-group"></i>
-                                        Catálogo de usuarios
-                                    </a>
-                                }
-
-                                @if (Html.TieneAcceso(roles: new[] { Roles.Administrador, Roles.AdministradorSupervisor}))
-                                {
-                                    <a class="dropdown-item" asp-controller="CatalogoPlazas" asp-action="Index">
-                                        <i class="ti ti-building"></i>
-                                        Catálogo de plazas / <wbr />áreas
-                                    </a>
-                                }
-                                @if (Html.TieneAcceso(roles: new[] { Roles.Administrador, Roles.AdministradorSupervisor }))
-                                {
-                                    <a class="dropdown-item" asp-controller="CatalogoModulos" asp-action="Index">
-                                        <i class="ti ti-sort-ascending-shapes"></i>
-                                        Catálogo de módulos / <wbr />clasificaciones
-                                    </a>
-                                }
-                                @if (Html.TieneAcceso(roles: new[] { Roles.Administrador, Roles.AdministradorSupervisor }))
-                                {
-                                    <a class="dropdown-item" asp-controller="CatalogoAutorizaciones" asp-action="Index">
-                                        <i class="ti ti-lock-check"></i>
-                                        Catálogo de <wbr />Autorizaciones
-                                    </a>
-                                }
-
-                                @if (Html.TieneAcceso(roles: new[] { Roles.Administrador }))
-                                {
+                {
+                    <li class="nav-item">
+                        <a onclick="muestraCrearTicket()" class="btn btn-primary">
+                            <i class="ti ti-circle-plus"></i> &nbsp;Crear Ticket
+                        </a>
+                    </li>
+                }
+                <!-- inicio mis tickets-->
+                @if(Html.TieneAcceso(roles: new[] { Roles.Usuario, Roles.Soporte, Roles.Administrador }))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link dropdown-toggle" href="#navbar-base"
+                        data-bs-toggle="dropdown"
+                        data-bs-auto-close="false"
+                        role="button"
+                        aria-expanded="false">
+                            <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                <i class="ti ti-ticket"></i>
+                            </span>
+                            <span class="nav-link-title">MIS TICKETS</span>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-menu-columns">
+                                <div class="dropdown-menu-column">
                                     <a class="dropdown-item" asp-controller="Opciones" asp-action="Index">
-                                        <i class="ti ti-adjustments"></i>
-                                        Opciones
+                                        <i class="ti ti-arrow-badge-right"></i>
+                                        Tickets nuevos
                                     </a>
-                                }
-
-                                @if (Html.TieneAcceso(roles: new[] { Roles.Administrador }))
-                                                    {
-                                    <a class="dropdown-item" asp-controller="Historial" asp-action="Index">
-                                        <i class="ti ti-book"></i>
-                                        Historial de Accesos
+                                    <a class="dropdown-item" asp-controller="Opciones" asp-action="Index">
+                                        <i class="ti ti-arrow-badge-right"></i>
+                                        Tickets abiertos
                                     </a>
-                                }
-
-                                
-                               
+                                    <a class="dropdown-item" asp-controller="Opciones" asp-action="Index">
+                                        <i class="ti ti-arrow-badge-right"></i>
+                                        Tickets pendientes
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="Opciones" asp-action="Index">
+                                        <i class="ti ti-arrow-badge-right"></i>
+                                        Tickets cerrados
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="Opciones" asp-action="Index">
+                                        <i class="ti ti-arrow-badge-right"></i>
+                                        Tickets validados
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="Opciones" asp-action="Index">
+                                        <i class="ti ti-arrow-badge-right"></i>
+                                        Tickets respuesta
+                                    </a>
+                                </div>
                             </div>
+                        </div>
+                    </li>
+                }
+                <!-- fin mis tickets -->
+                <!-- inicio vista general-->
+                @if(Html.TieneAcceso(roles: new[] { Roles.Administrador, Roles.AdministradorSupervisor }))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link dropdown-toggle" href="#navbar-base"
+                        data-bs-toggle="dropdown"
+                        data-bs-auto-close="false"
+                        role="button"
+                        aria-expanded="false">
+                            <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                <i class="ti ti-ticket"></i>
+                            </span>
+                            <span class="nav-link-title">VISTA GENERAL<wbr /> DE TICKETS</span>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-menu-columns">
 
-                       </div>
-                   </div>
-                </li>
+                                <div class="dropdown-menu-column">
+
+                                    <a class="dropdown-item" asp-controller="Opciones" asp-action="Index">
+                                        <i class="ti ti-arrow-badge-right"></i>
+                                        Tickets nuevos
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="Opciones" asp-action="Index">
+                                        <i class="ti ti-arrow-badge-right"></i>
+                                        Tickets abiertos
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="Opciones" asp-action="Index">
+                                        <i class="ti ti-arrow-badge-right"></i>
+                                        Tickets pendientes
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="Opciones" asp-action="Index">
+                                        <i class="ti ti-arrow-badge-right"></i>
+                                        Tickets cerrados
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="Opciones" asp-action="Index">
+                                        <i class="ti ti-arrow-badge-right"></i>
+                                        Tickets validados
+                                    </a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                }
+
+                <!-- fin vista general -->
+                @if (Html.TieneAcceso(roles: new[] { Roles.Administrador, Roles.AdministradorSupervisor, Roles.Soporte }))
+                {
+                    <!-- inicia  opciones / catalogos-->
+                    <li class="nav-item">
+                        <a class="nav-link dropdown-toggle" href="#navbar-base"
+                        data-bs-toggle="dropdown"
+                        data-bs-auto-close="false"
+                        role="button"
+                        aria-expanded="false">
+                            <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                <i class="ti ti-adjustments-cog"></i>
+                            </span>
+                            <span class="nav-link-title">OPCIONES /<wbr /> CATÁLOGOS</span>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-menu-columns">
+
+                                <div class="dropdown-menu-column">
+                                    @if (Html.TieneAcceso(roles: new[] { Roles.Administrador, Roles.AdministradorSupervisor, Roles.Soporte }))
+                                    {
+                                        <a class="dropdown-item" asp-controller="CatalogoUsuarios" asp-action="Index">
+                                            <i class="ti ti-users-group"></i>
+                                            Catálogo de usuarios
+                                        </a>
+                                    }
+
+                                    @if (Html.TieneAcceso(roles: new[] { Roles.Administrador, Roles.AdministradorSupervisor }))
+                                    {
+                                        <a class="dropdown-item" asp-controller="CatalogoPlazas" asp-action="Index">
+                                            <i class="ti ti-building"></i>
+                                            Catálogo de plazas / <wbr />áreas
+                                        </a>
+                                    }
+                                    @if (Html.TieneAcceso(roles: new[] { Roles.Administrador, Roles.AdministradorSupervisor }))
+                                    {
+                                        <a class="dropdown-item" asp-controller="CatalogoModulos" asp-action="Index">
+                                            <i class="ti ti-sort-ascending-shapes"></i>
+                                            Catálogo de módulos / <wbr />clasificaciones
+                                        </a>
+                                    }
+                                    @if (Html.TieneAcceso(roles: new[] { Roles.Administrador, Roles.AdministradorSupervisor }))
+                                    {
+                                        <a class="dropdown-item" asp-controller="CatalogoAutorizaciones" asp-action="Index">
+                                            <i class="ti ti-lock-check"></i>
+                                            Catálogo de <wbr />Autorizaciones
+                                        </a>
+                                    }
+
+                                    @if (Html.TieneAcceso(roles: new[] { Roles.Administrador }))
+                                    {
+                                        <a class="dropdown-item" asp-controller="Opciones" asp-action="Index">
+                                            <i class="ti ti-adjustments"></i>
+                                            Opciones
+                                        </a>
+                                    }
+
+                                    @if (Html.TieneAcceso(roles: new[] { Roles.Administrador }))
+                                    {
+                                        <a class="dropdown-item" asp-controller="Historial" asp-action="Index">
+                                            <i class="ti ti-book"></i>
+                                            Historial de Accesos
+                                        </a>
+                                    }
+
+
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </li>
+                }
                 <!--fin opciones / catalogos -->
+                @if (Html.TieneAcceso(roles: new[] { Roles.Administrador, Roles.AdministradorSupervisor}))
+                {
+                    <!-- inicio reportes-->
+                    <li class="nav-item">
+                        <a class="nav-link dropdown-toggle" href="#navbar-base"
+                        data-bs-toggle="dropdown"
+                        data-bs-auto-close="false"
+                        role="button"
+                        aria-expanded="false">
+                            <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                <i class="ti ti-graph"></i>
+                            </span>
+                            <span class="nav-link-title">REPORTES</span>
+                        </a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-menu-columns">
+
+                                <div class="dropdown-menu-column">
+
+                                    <a class="dropdown-item" asp-controller="CatalogoUsuarios" asp-action="Index">
+                                        <i class="ti ti-graph"></i>
+                                        Reportes
+                                    </a>
+                                    
+                                </div>
+
+                            </div>
+                        </div>
+                    </li>
+                    <!-- fin reportes-->
+                }
+                
 
             </ul>
             <!-- END NAVBAR MENU -->
