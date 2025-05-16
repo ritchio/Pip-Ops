@@ -43,6 +43,8 @@ namespace HelpDesk.Models.Entities
         //tickets
         public  ICollection<Doc_Ticket> Tickets { get; set; }
         public  ICollection<Doc_TicketAdjunto> TicketAdjuntos { get; set; }
+        public  ICollection<Doc_TicketAsignacion> TicketAsignacion { get; set; }
+        public  ICollection<Doc_TicketRespuesta> TicketRespuesta { get; set; }
     }
 
 }

@@ -19,12 +19,18 @@ public class ApplicationDbContext
     public DbSet<Cat_Plaza> Cat_Plaza { get; set; }
     public DbSet<Cat_Area> Cat_Area { get; set; } = default!;
     public DbSet<Cat_Autorizacion> Cat_Autorizacion { get; set; } = default!;
+    public DbSet<Cat_EstadoAutorizacion> Cat_EstadoAutorizacion { get; set; } = default!;
+    public DbSet<Cat_EstadoTicket> Cat_EstadoTicket { get; set; } = default!;
     public DbSet<Cat_ModuloClasificacion> Cat_ModuloClasificacion { get; set; } = default!;
     public DbSet<Cat_TipoSoporte> Cat_TipoSoporte { get; set; } = default!;
     public DbSet<Cat_Usuario> Cat_Usuario { get; set; } = default!;
     public DbSet<Cfg_Opcion> Cfg_Opcion { get; set; }
     public DbSet<Doc_Ticket> Doc_Ticket { get; set; }
     public DbSet<Doc_TicketAdjunto> Doc_TicketAdjunto { get; set; }
+    public DbSet<Doc_TicketAsignacion> Doc_TicketAsignacion { get; set; }
+    public DbSet<Doc_TicketAutorizacion> Doc_TicketAutorizacion { get; set; }
+    public DbSet<Doc_TicketRespuesta> Doc_TicketRespuesta { get; set; }
+    public DbSet<Doc_TicketRespuestaAdjunto> Doc_TicketRespuestaAdjunto { get; set; }
     public DbSet<Log_Acceso> Log_Acceso { get; set; }
     public DbSet<Log_TicketActividad> Log_TicketActividad { get; set; }
     public DbSet<Rel_Autorizacion_AreaAutoriza> Rel_Autorizacion_AreaAutoriza { get; set; }
@@ -123,6 +129,12 @@ public class ApplicationDbContext
 
         #region [ Tickets ]
         builder.Entity<Doc_Ticket>()
+            .HasOne(ti => ti.EstadoTicket)
+            .WithMany(et => et.Tickets)
+            .HasForeignKey(ti => ti.IdEstadoTicket)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Doc_Ticket>()
             .HasOne(mc => mc.ModuloClasificacion)
             .WithMany(ti => ti.Tickets)
             .HasForeignKey(mc => mc.IdModuloClasificacion)
@@ -140,6 +152,7 @@ public class ApplicationDbContext
             .HasForeignKey(ti => ti.IdUsuario)
             .OnDelete(DeleteBehavior.Cascade);
 
+        //ticket adjunto
         builder.Entity<Doc_TicketAdjunto>()
             .HasOne(ta => ta.Ticket)
             .WithMany(ti => ti.Adjuntos)
@@ -150,6 +163,56 @@ public class ApplicationDbContext
             .HasOne(ta => ta.Usuario)
             .WithMany(cu => cu.TicketAdjuntos)
             .HasForeignKey(ta => ta.IdUsuario);
+
+        //ticket autorizacion
+        builder.Entity<Doc_TicketAutorizacion>()
+            .HasOne(ta => ta.Ticket)
+            .WithMany(ti => ti.Autorizacion)
+            .HasForeignKey(ta => ta.IdTicket)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Doc_TicketAutorizacion>()
+            .HasOne(te=>te.EstadoAutorizacion)
+            .WithMany(ea => ea.TicketAutorizacion)
+            .HasForeignKey(te => te.IdEstadoAutorizacion)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Doc_TicketAutorizacion>()
+            .HasOne(a => a.Area)
+            .WithMany(aa => aa.TicketAutorizacion)
+            .HasForeignKey(a => a.IdArea)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        //ticket asignacion
+        builder.Entity<Doc_TicketAsignacion>()
+            .HasOne(ta => ta.Ticket)
+            .WithMany(ti => ti.Asignacion)
+            .HasForeignKey(ta => ta.IdTicket)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Doc_TicketAsignacion>()
+            .HasOne(ta => ta.Usuario)
+            .WithMany(cu => cu.TicketAsignacion)
+            .HasForeignKey(ta => ta.IdUsuario);
+
+        //ticket respuesta
+        builder.Entity<Doc_TicketRespuesta>()
+            .HasOne(ta => ta.Ticket)
+            .WithMany(ti => ti.Respuesta)
+            .HasForeignKey(ta => ta.IdTicket)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Doc_TicketRespuesta>()
+            .HasOne(ta => ta.Usuario)
+            .WithMany(cu => cu.TicketRespuesta)
+            .HasForeignKey(ta => ta.IdUsuario);
+
+        //ticket respuesta adjunto
+        builder.Entity<Doc_TicketRespuestaAdjunto>()
+            .HasOne(ta => ta.TicketRespuesta)
+            .WithMany(ti => ti.Adjuntos)
+            .HasForeignKey(ta => ta.IdTicketRespuesta)
+            .OnDelete(DeleteBehavior.Cascade);
 
         #endregion [ Tickets ]
 

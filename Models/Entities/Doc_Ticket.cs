@@ -14,6 +14,7 @@ namespace HelpDesk.Models.Entities
         public int? IdTipoSoporte { get; set; }
 
         public int? IdModuloClasificacion { get; set; }
+        public int IdEstadoTicket{ get; set; }
 
         [Required]
         [StringLength(450)]
@@ -38,8 +39,16 @@ namespace HelpDesk.Models.Entities
         [ForeignKey(nameof(IdModuloClasificacion))]
         public virtual Cat_ModuloClasificacion? ModuloClasificacion { get; set; }
 
+        [ForeignKey(nameof(IdEstadoTicket))]
+        public virtual Cat_EstadoTicket? EstadoTicket { get; set; }
+
+       
         public virtual ICollection<Doc_TicketAdjunto> Adjuntos { get; set; } = new List<Doc_TicketAdjunto>();
-        
+        public virtual ICollection<Doc_TicketAutorizacion>? Autorizacion { get; set; }
+        public virtual ICollection<Doc_TicketAsignacion>? Asignacion { get; set; }
+        public virtual ICollection<Doc_TicketRespuesta>? Respuesta { get; set; }
+
+
         [ForeignKey(nameof(IdUsuario))]
         public virtual Cat_Usuario? Usuario { get; set; }
     }
