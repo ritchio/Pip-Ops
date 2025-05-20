@@ -26,3 +26,11 @@ async function obtenerAutorizacion(idModulo) {
         keyCache: "autorizacion_"+idModulo
     })
 }
+
+async function mostrarDetallesTicket(idTicket) {
+    await axiosRequest({
+        url: "/Tickets/Detalles/" + idTicket,
+        funcionCallback: mostrarModalGenerico,
+        parametrosCallback: {tamanio:"extra"}
+    });
+}

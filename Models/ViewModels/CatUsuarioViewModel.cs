@@ -8,13 +8,13 @@ namespace HelpDesk.Models.ViewModels
         public string? Id { get; set; }
         public int? NumeroUsuario { get; set; }
         [Display(Name = "Correo Electrónico")]
-        public required string CorreoElectronico { get; set; }
+        public required string CorreoElectronico { get; set; } = string.Empty;
         [Display(Name = "Primer Nombre")]
-        public required string PrimerNombre { get; set; }
+        public required string PrimerNombre { get; set; } = string.Empty;
         [Display(Name = "Segundo Nombre")]
         public string? SegundoNombre { get; set; }
         [Display(Name = "Apellido Paterno")]
-        public required string ApellidoPaterno { get; set; }
+        public required string ApellidoPaterno { get; set; } = string.Empty;
         [Display(Name = "Apellido Materno")]
         public string? ApellidoMaterno { get; set; }
 
@@ -40,7 +40,7 @@ namespace HelpDesk.Models.ViewModels
         public string? PlazaNombre { get; set; }
         public List<CatPlazaViewModel>? Plazas { get; set; }
         //Áreas
-        public required List<int> IdAreas { get; set; }
+        public required List<int> IdAreas { get; set; } = [];
         [Display(Name = "Área")]
         public string? AreaNombre { get; set; }
         [Display(Name = "Área")]
@@ -49,7 +49,7 @@ namespace HelpDesk.Models.ViewModels
         //Roles
         [Display(Name = "Tipo de Usuario")]
 
-        public required string IdRol { get; set; }
+        public required string IdRol { get; set; } = string.Empty;
         [Display(Name = "Tipo de Usuario")]
         public string? RolNombre { get; set; }
 

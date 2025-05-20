@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using HelpDesk.Models.Entities;
 using Microsoft.AspNetCore.Identity;
+using HelpDesk.Services.Ticket.Services;
+using HelpDesk.Models.ViewModels;
 
 namespace HelpDesk.Data;
 
@@ -16,6 +18,7 @@ public class ApplicationDbContext
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
     #region [ Entidades ]
+    //Catalogos
     public DbSet<Cat_Plaza> Cat_Plaza { get; set; }
     public DbSet<Cat_Area> Cat_Area { get; set; } = default!;
     public DbSet<Cat_Autorizacion> Cat_Autorizacion { get; set; } = default!;
@@ -24,18 +27,27 @@ public class ApplicationDbContext
     public DbSet<Cat_ModuloClasificacion> Cat_ModuloClasificacion { get; set; } = default!;
     public DbSet<Cat_TipoSoporte> Cat_TipoSoporte { get; set; } = default!;
     public DbSet<Cat_Usuario> Cat_Usuario { get; set; } = default!;
+    //Configuración
     public DbSet<Cfg_Opcion> Cfg_Opcion { get; set; }
+    //Datos
     public DbSet<Doc_Ticket> Doc_Ticket { get; set; }
     public DbSet<Doc_TicketAdjunto> Doc_TicketAdjunto { get; set; }
     public DbSet<Doc_TicketAsignacion> Doc_TicketAsignacion { get; set; }
     public DbSet<Doc_TicketAutorizacion> Doc_TicketAutorizacion { get; set; }
     public DbSet<Doc_TicketRespuesta> Doc_TicketRespuesta { get; set; }
     public DbSet<Doc_TicketRespuestaAdjunto> Doc_TicketRespuestaAdjunto { get; set; }
+    //Logs
     public DbSet<Log_Acceso> Log_Acceso { get; set; }
     public DbSet<Log_TicketActividad> Log_TicketActividad { get; set; }
+    //Relaciones
     public DbSet<Rel_Autorizacion_AreaAutoriza> Rel_Autorizacion_AreaAutoriza { get; set; }
     public DbSet<Rel_ModuloClasificacion_Area> Rel_ModuloClasificacion_Area { get; set; }
     public DbSet<Rel_UsuarioArea> Rel_UsuarioArea { get; set; }
+
+    //Vistas
+    public DbSet<Vis_TicketsNuevos> Vis_TicketsNuevos { get; set; }
+    public DbSet<Vis_TicketsPorAutorizar> Vis_TicketsPorAutorizar { get; set; }
+    public DbSet<Vis_TicketsRechazados> Vis_TicketsRechazados{ get; set; }
 
     #endregion [ Entidades ]
     protected override void OnModelCreating(ModelBuilder builder)
@@ -213,6 +225,19 @@ public class ApplicationDbContext
             .WithMany(ti => ti.Adjuntos)
             .HasForeignKey(ta => ta.IdTicketRespuesta)
             .OnDelete(DeleteBehavior.Cascade);
+
+        //vistas
+        builder.Entity<Vis_TicketsNuevos>()
+            .HasNoKey()
+            .ToView("Vis_TicketsNuevos");
+        
+        builder.Entity<Vis_TicketsPorAutorizar>()
+            .HasNoKey()
+            .ToView("Vis_TicketsPorAutorizar");
+
+        builder.Entity<Vis_TicketsRechazados>()
+            .HasNoKey()
+            .ToView("Vis_TicketsRechazados");
 
         #endregion [ Tickets ]
 

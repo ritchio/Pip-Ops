@@ -36,12 +36,43 @@ namespace HelpDesk.Services.Usuario.Services
         public async Task<CatUsuarioViewModel> ObtenerUsuarioActual(ClaimsPrincipal claim)
         {
             // Obtener el usuario actual de la sesión
+
             var usuarioActual = await _userManager.GetUserAsync(claim);
+            
+
+            
             if (usuarioActual == null)
             {
                 throw new Exception("Usuario no encontrado.");
             }
-            return _mapper.Map<CatUsuarioViewModel>(usuarioActual);
+            var usuario = await _context.Users
+                   .Include(u => u.RolesUsuario)
+                   .ThenInclude(ur => ur.Rol)
+                   .Include(u => u.Plaza)
+                   .Include(u => u.AreasUsuario)
+                   .Where(u => u.Id == usuarioActual.Id)
+                   .Select(u => new CatUsuarioViewModel
+                   {
+                       Id = u.Id,
+                       NumeroUsuario = u.NumeroUsuario,
+                       PrimerNombre = u.PrimerNombre,
+                       SegundoNombre = u.SegundoNombre,
+                       ApellidoPaterno = u.ApellidoPaterno,
+                       ApellidoMaterno = u.ApellidoMaterno,
+                       CorreoElectronico = u.Email ?? "",
+                       PlazaNombre = u.Plaza.Nombre,
+                       RolNombre = u.RolesUsuario.FirstOrDefault().Rol.Name ?? "Sin Rol",
+                       AreaNombre = string.Join(", ", u.AreasUsuario.Select(au => _context.Cat_Area.FirstOrDefault(a => a.IdArea == au.IdArea).Nombre)),
+                       FechaInactivacion = u.FechaInactivacion,
+                       IdRol = u.RolesUsuario.FirstOrDefault().Rol.Id,
+                       IdAreas = u.AreasUsuario.Select(au => au.IdArea).ToList(),
+                       IdPlaza = u.IdPlaza,
+                       Activo = u.Activo,
+                       FechaActivacion = u.FechaActivacion
+                   })
+                   .FirstOrDefaultAsync();
+
+            return usuario;
         }
         public async Task<List<CatUsuarioViewModel>> ObtenerUsuarios()
         {

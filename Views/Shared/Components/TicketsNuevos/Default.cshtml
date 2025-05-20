@@ -1,0 +1,56 @@
+﻿@using HelpDesk.Models.ViewModels
+@model List<TicketsNuevosViewModel>
+
+            <table class="display table table-responsive table-striped" id="tablaTicketsNuevos">
+                <thead>
+                    <tr>
+                        <th>Turno</th>
+                        <th>#</th>
+                        <th>Solicitante</th>
+                        <th>Plaza</th>
+                        <th>Área</th>
+                        <th>Asunto</th>
+                        <th>Tipo de Soporte</th>
+                        <th>Fecha de Solicitud</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var ticket in Model)
+                        {
+                            <tr>
+                                <td>@(ticket.Turno?.ToString("D4") ?? "")</td>
+                                <td>@(ticket.IdTicket?.ToString("D3") ?? "")</td>
+                                <td>@ticket.Solicitante</td>
+                                <td>@ticket.Plaza</td>
+                                <td>@ticket.Area</td>
+                                <td>@ticket.Asunto</td>
+                                <td>@ticket.TipoSoporte</td>
+                                <td>@ticket.FechaSolicitud</td>
+                                <td class="text-center"><button type="button" class="btn btn-primary" onclick="mostrarDetallesTicket(@ticket.IdTicket)"><i class="ti ti-eye"></i></button></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+
+            </table>
+
+
+<script>
+    $(function(){
+    $("#tablaTicketsNuevos").DataTable({
+        responsive: true,
+        columnDefs:[
+            {
+                responsivePriority:1,
+                targets:-1
+            }
+        ],
+        language:lenguajeTablaGenerica
+    });
+    $("#numeroTicketsNuevos").text('@Model.Count()')
+
+    });
+
+</script>

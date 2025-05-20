@@ -1,0 +1,65 @@
+﻿@using HelpDesk.Models.ViewModels
+@model List<TicketsNuevosViewModel>
+<div class="row">
+    <div class="col-12 d-flex justify-content-start">
+        <i class="ti ti-ticket title-icon"></i>
+        <div>
+            <h2 class="page-title">Tickets Nuevos</h2>
+            <div class="page-pretitle">Tickets en espera de resolucion</div>
+        </div>
+    </div>
+</div>
+<div class="col-12">
+    <div class="card">
+        <div class="card-header"></div>
+        <div class="card-body">
+
+            <table class="display table table-responsive table-striped" id="tablaTicketsNuevosSoporte">
+                <thead>
+                    <tr>
+                        <th>Turno</th>
+                        <th>#</th>
+                        <th>Solicitante</th>
+                        <th>Plaza</th>
+                        <th>Área</th>
+                        <th>Asunto</th>
+                        <th>Tipo de Soporte</th>
+                        <th>Fecha de Solicitud</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach(var ticket in Model)
+                        {
+                            <tr>
+                                <td>@(ticket.Turno?.ToString("D4") ?? "")</td>
+                                <td>@(ticket.IdTicket?.ToString("D3") ?? "")</td>
+                                <td>@ticket.Solicitante</td>
+                                <td>@ticket.Plaza</td>
+                                <td>@ticket.Area</td>
+                                <td>@ticket.Asunto</td>
+                                <td>@ticket.TipoSoporte</td>
+                                <td>@ticket.FechaSolicitud</td>
+                                <td><button type="button">kk</button></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+        <div class="card-footer"></div>
+    </div>
+</div>
+
+<script>
+    $(function(){
+    $("#tablaTicketsNuevosSoporte").DataTable({
+        responsive: true,
+        language:lenguajeTablaGenerica
+    });
+    });
+
+</script>
