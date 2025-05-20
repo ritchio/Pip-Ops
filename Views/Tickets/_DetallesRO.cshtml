@@ -1,0 +1,72 @@
+﻿@model HelpDesk.Models.ViewModels.TicketViewModel
+
+
+<div class="card-header">
+    Ticket # @Model.IdTicket
+</div>
+<div class="card-body">
+
+    <div class="row">
+        <div class="col-5">
+            <div class="col-sm-12">@Model.NombreTipoSoporte</div>
+            <div class="col-sm-12">Correo: @Model.CorreoElectronico</div>
+        </div>
+        <div class="col-5">
+            <div class="col-sm-12">@Model.NombreModuloClasificacion</div>
+            <div class="col-sm-12">Número de contacto: <span class="form-control">@Model.Telefono</span></div>
+        </div>
+        <div class="col-2">
+            <p>Autorizaciones pendientes</p>
+            <ul>
+                <li>aut 1</li>
+                <li>aut 2</li>
+            </ul>
+        </div>
+
+        <div class="col-sm-12">
+            <label>Requisitos</label>
+            <div class="form-control">@Model.Requisitos</div>
+        </div>
+
+        <div class="col-sm-12">
+            <label>Asunto</label>
+            <div class="form-control">@Model.Asunto</div>
+        </div>
+        <div class="col-12 d-flex justify-content-start">
+            <i class="ti ti-User title-icon"></i>
+            <div>
+                <div>@Model.NombreUsuario</div>
+                <div>@Model.FechaCreacion - @Model.Usuario.PlazaNombre</div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <label>Mensaje / Incidencia</label>
+            <div class="form-control">@Model.Cuerpo</div>
+        </div>
+        <div class="col-sm-12">
+            <label>Ver archivo</label>
+            <div class="form-control">
+                <ul>
+                    @foreach(var archivo in Model.Adjuntos)
+                    {
+                        <li>@archivo.Nombre</li>
+                    }
+                </ul>
+
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <label>Respuesta</label>
+            <div class="form-control">
+                @foreach(var autorizacion in Model.Autorizaciones)
+                {
+                    <p>@autorizacion.NombreArea</p>
+                    <p>@autorizacion.FechaModificacion</p>
+                    <p>@autorizacion.Observacion</p>
+                    <hr />
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card-footer"></div>

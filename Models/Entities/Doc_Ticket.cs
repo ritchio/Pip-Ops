@@ -32,6 +32,8 @@ namespace HelpDesk.Models.Entities
         [StringLength(1000)]
         public string? Cuerpo { get; set; }
 
+        public DateTime? FechaCreacion { get; set; }
+
         // Relaciones de navegación
         [ForeignKey(nameof(IdTipoSoporte))]
         public virtual Cat_TipoSoporte? TipoSoporte { get; set; }

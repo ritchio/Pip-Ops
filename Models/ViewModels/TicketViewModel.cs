@@ -30,13 +30,15 @@ namespace HelpDesk.Models.ViewModels
         [MaxLength(1000)]
         public string Cuerpo { get; set; } = string.Empty;
 
+        public DateTime FechaCreacion { get; set; }
+
         public IFormFile? ArchivoAdjunto { get; set; }
 
         // para mostrar
         public string NombreTipoSoporte { get; set; } = string.Empty;
         public string NombreModuloClasificacion { get; set; } = string.Empty;
         public string NombreUsuario { get; set; } = string.Empty;
-
+        public CatUsuarioViewModel? Usuario { get; set; } 
         public string Requisitos { get; set; } = string.Empty; //este viene de autorizaciones
 
         
@@ -45,5 +47,10 @@ namespace HelpDesk.Models.ViewModels
         public List<CatTipoSoporteViewModel> TiposSoporte { get; set; } = [];
         public List<CatModuloClasificacionViewModel> ModulosClasificaciones { get; set; } = [];
         public List<TicketAdjuntoViewModel> Adjuntos { get; set; } = [];
+        public List<TicketRespuestaViewModel> Respuestas { get; set; } = [];
+        public List<TicketAutorizacionViewModel> Autorizaciones { get; set; } = [];
+
+        //misc
+        public bool Editable { get; set; } = false;
     }
 }

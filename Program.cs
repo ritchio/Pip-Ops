@@ -100,18 +100,22 @@ builder.Services.ConfigureApplicationCookie(options =>
 #region [ Servicios ]
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-builder.Services.AddScoped<IUserClaimsPrincipalFactory<Cat_Usuario>, ApplicationUserClaimsPrincipalFactory>();
-builder.Services.AddScoped<IUsuarioService, UsuarioService>();
-builder.Services.AddScoped<IPlazaService, PlazaService>();
 builder.Services.AddScoped<IAreaService, AreaService>();
-builder.Services.AddScoped<ICorreoService, CorreoService>();
-builder.Services.AddScoped<IOpcionService,OpcionService>();
-builder.Services.AddScoped<IHistorialService, HistorialService>();
-builder.Services.AddScoped<ITipoSoporteService, TipoSoporteService>();
-builder.Services.AddScoped<IModuloClasificacionService, ModuloClasificacionService>();
 builder.Services.AddScoped<IAutorizacionService, AutorizacionService>();
+builder.Services.AddScoped<ICorreoService, CorreoService>();
+builder.Services.AddScoped<IHistorialService, HistorialService>();
+builder.Services.AddScoped<IModuloClasificacionService, ModuloClasificacionService>();
+builder.Services.AddScoped<IOpcionService, OpcionService>();
+builder.Services.AddScoped<IPlazaService, PlazaService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<ITicketAdjuntoService, TicketAdjuntoService>();
+builder.Services.AddScoped<ITicketAdministradorService, TicketAdministradorService>();
+builder.Services.AddScoped<ITicketSoporteService, TicketSoporteService>();
+builder.Services.AddScoped<ITicketUsuarioService, TicketUsuarioService>();
+builder.Services.AddScoped<ITipoSoporteService, TipoSoporteService>();
+builder.Services.AddScoped<IUserClaimsPrincipalFactory<Cat_Usuario>, ApplicationUserClaimsPrincipalFactory>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+
 #endregion [ Servicios ]
 
 builder.Services.AddAutoMapper(typeof(Program)); 

@@ -23,11 +23,15 @@ body {
 
 /* tamaño de íconos*/
 .ti {
-    font-size: 1.4em; 
+    font-size: 1.4rem; 
     padding:2px 0 0 0;
     margin:0;
 }
-
+.title-icon {
+    font-size: 3rem;
+    padding:0;
+    margin-right: 0.4rem;
+}
 /*select múltiple*/
 .ts-dropdown-content {
     background: var(--tblr-body-bg); 

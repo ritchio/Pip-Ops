@@ -34,6 +34,35 @@ namespace HelpDesk.Controllers
             return View();
         }
 
+        [HttpGet("/Tickets/Detalles/{idTicket}")]
+        public async Task<IActionResult> Detalles(int idTicket)
+        {
+            var ticket = await _ticketService.ObtenerPorId(idTicket);
+
+            //datos relacionados
+            var usuario = await _usuarioService.ObtenerUsuarioPorId(ticket.IdUsuario);
+
+            //catalogos
+            ticket.TiposSoporte = await _tipoSoporteService.ObtenerTiposSoporteAsync();
+            var tipoSoporte = ticket.TiposSoporte.FirstOrDefault();
+            ticket.ModulosClasificaciones = await _moduloClasificacionService.ObtenerModulosClasificacionesPorTipoSoporteAsync(tipoSoporte.IdTipoSoporte);
+
+            if (usuario != null)
+            {
+                ticket.Usuario = usuario.Datos;
+            }
+            ticket.Editable = false;
+
+            var respuesta = new RespuestaGenerica<string>
+            {
+                Exito = true,
+                Datos = this.RenderizarVista("_Editar", ticket, true)
+            };
+
+            return Ok(respuesta);
+
+        }
+
         [VerificaPermiso(Permisos.Ticket.Crear)]
         public async Task<IActionResult> Crear()
         {
