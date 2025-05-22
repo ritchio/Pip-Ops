@@ -34,3 +34,13 @@ async function mostrarDetallesTicket(idTicket) {
         parametrosCallback: {tamanio:"extra"}
     });
 }
+
+async function validarTicket(idTicket) {
+    if (confirm("¿En realidad desea validar la solución de este ticket?")) {
+        await axiosRequest({
+            url: "/Tickets/Validar/" + idTicket,
+            funcionCallback: function () { setTimeout(location.reload(), 1000); }
+        });
+    }
+    
+}

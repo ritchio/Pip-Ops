@@ -10,7 +10,8 @@ namespace HelpDesk.Models.Entities
     {
         [Key]
         public int IdTicket { get; set; }
-
+        public int? Turno { get; set; }
+        public int? Numero { get; set; }
         public int? IdTipoSoporte { get; set; }
 
         public int? IdModuloClasificacion { get; set; }
@@ -45,7 +46,7 @@ namespace HelpDesk.Models.Entities
         public virtual Cat_EstadoTicket? EstadoTicket { get; set; }
 
        
-        public virtual ICollection<Doc_TicketAdjunto> Adjuntos { get; set; } = new List<Doc_TicketAdjunto>();
+        public virtual ICollection<Doc_TicketAdjunto>? Adjuntos { get; set; } = new List<Doc_TicketAdjunto>();
         public virtual ICollection<Doc_TicketAutorizacion>? Autorizacion { get; set; }
         public virtual ICollection<Doc_TicketAsignacion>? Asignacion { get; set; }
         public virtual ICollection<Doc_TicketRespuesta>? Respuesta { get; set; }

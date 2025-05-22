@@ -15,7 +15,7 @@
             foreach (var ticket in Model)
             {
                 <tr>
-                    <td>@(ticket.IdTicket?.ToString("D3") ?? "")</td>
+                    <td>@(ticket.Numero?.ToString("D3") ?? "")</td>
                     <td>@ticket.Asunto</td>
                     <td>@ticket.FechaSolicitud</td>
                     <td class="text-center"><button type="button" class="btn btn-primary" onclick="mostrarDetallesTicket(@ticket.IdTicket)"><i class="ti ti-eye"></i></button></td>

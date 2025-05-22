@@ -12,14 +12,14 @@ namespace HelpDesk.Models.Entities
         public int IdTicket { get; set; }
 
         [Required]
-        public int IdArea { get; set; }
+        public int? IdArea { get; set; }
 
         [Required]
-        public int IdEstadoAutorizacion { get; set; }
+        public int? IdEstadoAutorizacion { get; set; }
 
         public string? Observacion { get; set; }
 
-        public DateTime FechaModificacion { get; set; } = DateTime.Now;
+        public DateTime? FechaModificacion { get; set; } = DateTime.Now;
 
         // Relaciones de navegación
         [ForeignKey(nameof(IdTicket))]
