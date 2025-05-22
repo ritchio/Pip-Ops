@@ -8,5 +8,10 @@ namespace HelpDesk.Services.Ticket.Interfaces
         List<TicketsNuevosViewModel> ObtenerNuevos();
         List<TicketsPorAutorizarViewModel> ObtenerPorAutorizar();
         List<TicketsRechazadosViewModel> ObtenerRechazados();
+        List<TicketsAbiertosViewModel> ObtenerAbiertos();
+        List<TicketsPendientesViewModel> ObtenerPendientes();
+        List<TicketsCerradosViewModel> ObtenerCerrados();
+        List<TicketsValidadosViewModel> ObtenerValidados();
+        List<TicketsRespuestaViewModel> ObtenerRespuesta();
     }
 }

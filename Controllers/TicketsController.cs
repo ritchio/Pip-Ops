@@ -129,5 +129,34 @@ namespace HelpDesk.Controllers
                 return RedirectToAction("Index", "Tickets");
             }
         }
+
+        [HttpGet("/Tickets/Validar/{idTicket}")]
+        public async Task<IActionResult> Validar(int idTicket)
+        {
+            var usuario = await _usuarioService.ObtenerUsuarioActual(User);
+            var valida = await _ticketService.Validar(idTicket, usuario.Id);
+            if (valida)
+            {
+                var respuesta = new RespuestaGenerica<string>
+                {
+                    Exito = true,
+                    Mensaje = "Ticket validado exitosamente."
+                };
+
+                return Ok(respuesta);
+
+            }
+            else
+            {
+                var respuesta = new RespuestaGenerica<string>
+                {
+                    Exito = false,
+                    Mensaje = "Error al validar el ticket."
+                };
+
+                return Ok(respuesta);
+               
+            }
+        }
     }
 }

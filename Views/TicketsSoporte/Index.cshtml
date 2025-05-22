@@ -41,7 +41,7 @@
                                 <td>@ticket.Asunto</td>
                                 <td>@ticket.TipoSoporte</td>
                                 <td>@ticket.FechaSolicitud</td>
-                                <td><button type="button">kk</button></td>
+                                <td class="text-center"><button type="button" class="btn btn-primary" onclick="mostrarDetallesTicket(@ticket.IdTicket)"><i class="ti ti-eye"></i></button></td>
                             </tr>
                         }
                     }
@@ -58,6 +58,12 @@
     $(function(){
     $("#tablaTicketsNuevosSoporte").DataTable({
         responsive: true,
+         columnDefs:[
+            {
+                responsivePriority:1,
+                targets:-1
+            }
+        ],
         language:lenguajeTablaGenerica
     });
     });

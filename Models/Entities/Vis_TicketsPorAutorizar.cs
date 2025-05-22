@@ -7,6 +7,7 @@ namespace HelpDesk.Models.Entities
     {
         public int? IdTicket { get; set; }
         public int? Turno { get; set; }
+        public int? Numero { get; set; }
         public string? Solicitante { get; set; } = string.Empty;
 
         public string? Plaza { get; set; } = string.Empty;
@@ -22,6 +23,7 @@ namespace HelpDesk.Models.Entities
         public DateTime? FechaSolicitud { get; set; }
 
         public string? IdUsuario { get; set; }
+
     }
 
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HelpDesk.Constants;
 using HelpDesk.Data;
 using HelpDesk.Models.Entities;
 using HelpDesk.Models.ViewModels;
@@ -37,6 +38,10 @@ namespace HelpDesk.Services.Ticket.Services
                 else
                 {
                     //guardamos el ticket
+
+                    //último número de acuerdo al usuario, no total RN-30
+                    var nuevoNumero = ObtenerMaximoTicketPorUsuario(ticketViewModel.IdUsuario) + 1;
+
                     var nuevoTicket = new Doc_Ticket
                     {
                         IdUsuario = ticketViewModel.IdUsuario,
@@ -46,12 +51,24 @@ namespace HelpDesk.Services.Ticket.Services
                         Telefono = ticketViewModel.Telefono,
                         IdTipoSoporte = ticketViewModel.IdTipoSoporte,
                         IdModuloClasificacion = ticketViewModel.IdModuloClasificacion,
-                        IdEstadoTicket = 1,
+                        IdEstadoTicket = EstadoTicket.Nuevo,
+                        Numero = nuevoNumero,
+                        Turno = nuevoNumero,// temporal RN-30
                         FechaCreacion = DateTime.Now
                     };
                     _context.Doc_Ticket.Add(nuevoTicket);
                     _context.SaveChanges();
                     ticketViewModel.IdTicket = nuevoTicket.IdTicket;
+
+                    //guardamos log
+                    var logTicket = new Log_TicketActividad
+                    {
+                        Accion = "CREÓ TICKET",
+                        NumeroTicket = ticketViewModel.IdTicket,
+                        IdUsuario = ticketViewModel.IdUsuario
+                    };
+                    _context.Log_TicketActividad.Add(logTicket);
+                    _context.SaveChanges();
 
                     //guardamos las autorizaciones 
                     var areasAutorizacion = _context.Cat_Autorizacion
@@ -100,7 +117,7 @@ namespace HelpDesk.Services.Ticket.Services
                 var ticket = _context.Doc_Ticket
                     .Include(ad => ad.Adjuntos)
                     .Include(au => au.Autorizacion)
-                    .ThenInclude(aru=>aru.Area)
+                    .ThenInclude(aru => aru.Area)
                     .Include(au => au.Autorizacion)
                     .ThenInclude(a => a.EstadoAutorizacion)
                     .Include(ar => ar.Respuesta)
@@ -120,6 +137,52 @@ namespace HelpDesk.Services.Ticket.Services
             catch (Exception ex)
             {
                 throw new Exception("Error al obtener el ticket", ex);
+            }
+        }
+      
+
+        public int ObtenerMaximoTicketPorUsuario(string idUsuario)
+        {
+            // Si no hay tickets para el usuario devuelve 0
+            return _context.Doc_Ticket
+                .Where(t => t.IdUsuario == idUsuario)
+                .Select(t => (int?)t.Numero)
+                .Max() ?? 0;
+        }
+
+        public async Task<bool> Validar(int idTicket,string idUsuario)
+        {
+            try
+            {
+                var ticket = await _context.Doc_Ticket.FirstOrDefaultAsync(t => t.IdTicket == idTicket);
+                if(ticket != null)
+                {
+                    //ticket
+                    ticket.IdEstadoTicket = EstadoTicket.Validado;
+                    _context.Update(ticket);
+                    _context.SaveChanges();
+
+                    //log
+                    var log = new Log_TicketActividad
+                    {
+                        Accion = AccionLogTicket.Validar,
+                        NumeroTicket = idTicket,
+                        IdUsuario = idUsuario
+                    };
+                    _context.Log_TicketActividad.Add(log);
+                    _context.SaveChanges();
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+                    
+
+            }catch(Exception ex)
+            {
+                throw new Exception("Error al validar la atención del ticket", ex);
             }
         }
     }

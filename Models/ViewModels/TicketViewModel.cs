@@ -5,6 +5,8 @@ namespace HelpDesk.Models.ViewModels
     public class TicketViewModel
     {
         public int IdTicket { get; set; }
+        public int Turno { get; set; }
+        public int Numero { get; set; }
 
         [Required]
         public int IdTipoSoporte { get; set; }

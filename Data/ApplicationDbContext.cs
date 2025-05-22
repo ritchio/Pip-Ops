@@ -47,7 +47,12 @@ public class ApplicationDbContext
     //Vistas
     public DbSet<Vis_TicketsNuevos> Vis_TicketsNuevos { get; set; }
     public DbSet<Vis_TicketsPorAutorizar> Vis_TicketsPorAutorizar { get; set; }
+    public DbSet<Vis_TicketsAbiertos> Vis_TicketsAbiertos { get; set; }
+    public DbSet<Vis_TicketsPendientes> Vis_TicketsPendientes { get; set; }
+    public DbSet<Vis_TicketsCerrados> Vis_TicketsCerrados { get; set; }
+    public DbSet<Vis_TicketsValidados> Vis_TicketsValidados { get; set; }
     public DbSet<Vis_TicketsRechazados> Vis_TicketsRechazados{ get; set; }
+    public DbSet<Vis_TicketsRespuesta> Vis_TicketsRespuesta{ get; set; }
 
     #endregion [ Entidades ]
     protected override void OnModelCreating(ModelBuilder builder)
@@ -234,6 +239,26 @@ public class ApplicationDbContext
         builder.Entity<Vis_TicketsPorAutorizar>()
             .HasNoKey()
             .ToView("Vis_TicketsPorAutorizar");
+
+        builder.Entity<Vis_TicketsAbiertos>()
+            .HasNoKey()
+            .ToView("Vis_TicketsAbiertos");
+
+        builder.Entity<Vis_TicketsPendientes>()
+            .HasNoKey()
+            .ToView("Vis_TicketsPendientes");
+
+        builder.Entity<Vis_TicketsCerrados>()
+            .HasNoKey()
+            .ToView("Vis_TicketsCerrados");
+
+        builder.Entity<Vis_TicketsValidados>()
+            .HasNoKey()
+            .ToView("Vis_TicketsValidados");
+
+        builder.Entity<Vis_TicketsRespuesta>()
+            .HasNoKey()
+            .ToView("Vis_TicketsRespuesta");
 
         builder.Entity<Vis_TicketsRechazados>()
             .HasNoKey()

@@ -24,6 +24,12 @@ namespace HelpDesk.Profiles
 
             CreateMap<Vis_TicketsNuevos, TicketsNuevosViewModel>();
             CreateMap<Vis_TicketsPorAutorizar, TicketsPorAutorizarViewModel>();
+            CreateMap<Vis_TicketsAbiertos, TicketsAbiertosViewModel>();
+            CreateMap<Vis_TicketsPendientes, TicketsPendientesViewModel>();
+            CreateMap<Vis_TicketsCerrados, TicketsCerradosViewModel>();
+            CreateMap<Vis_TicketsValidados, TicketsValidadosViewModel>();
+            CreateMap<Vis_TicketsRespuesta, TicketsRespuestaViewModel>();
+            CreateMap<Vis_TicketsRechazados, TicketsRechazadosViewModel>();
 
         }
     }
