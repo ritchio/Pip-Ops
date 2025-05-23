@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HelpDesk.Authorization;
 using HelpDesk.Data;
 using HelpDesk.Models.Utils;
 using HelpDesk.Models.ViewModels;
@@ -12,7 +13,7 @@ namespace HelpDesk.Services.Ticket.Services
         ) : ITicketSoporteService
     {
         private readonly IMapper _mapper = mapper;
-        public List<TicketsNuevosViewModel> ObtenerNuevos()
+        public List<TicketsNuevosViewModel> ObtenerNuevos(CatUsuarioViewModel usuario)
         {
            
 
@@ -29,13 +30,22 @@ namespace HelpDesk.Services.Ticket.Services
             
         }
 
-        public List<TicketsPorAutorizarViewModel> ObtenerPorAutorizar()
+        public List<TicketsPorAutorizarViewModel> ObtenerPorAutorizar(CatUsuarioViewModel usuario)
         {
             try
             {
-                var result = _context.Vis_TicketsPorAutorizar.ToList();
+                if (usuario.RolNombre == Roles.Soporte)
+                {
+                    var fechaMinima = DateTime.Now.AddDays(-60);
+                    var result = _context.Vis_TicketsPorAutorizar.Where(ta => ta.FechaSolicitud > fechaMinima).ToList();
+                    return _mapper.Map<List<TicketsPorAutorizarViewModel>>(result);
+                }
+                else
+                {
+                    var result = _context.Vis_TicketsPorAutorizar.ToList();
 
-                return _mapper.Map<List<TicketsPorAutorizarViewModel>>(result);
+                    return _mapper.Map<List<TicketsPorAutorizarViewModel>>(result);
+                } 
             }
             catch (Exception ex)
             {
@@ -43,78 +53,127 @@ namespace HelpDesk.Services.Ticket.Services
             }
         }
 
-        public List<TicketsRechazadosViewModel> ObtenerRechazados()
+        public List<TicketsRechazadosViewModel> ObtenerRechazados(CatUsuarioViewModel usuario)
         {
             try
             {
-                var result = _context.Vis_TicketsRechazados.ToList();
-
-                return _mapper.Map<List<TicketsRechazadosViewModel>>(result);
+                if (usuario.RolNombre == Roles.Soporte)
+                {
+                    var fechaMinima = DateTime.Now.AddDays(-60);
+                    var result = _context.Vis_TicketsRechazados.Where(ta => ta.FechaSolicitud > fechaMinima).ToList();
+                    return _mapper.Map<List<TicketsRechazadosViewModel>>(result);
+                }
+                else
+                {
+                    var result = _context.Vis_TicketsRechazados.ToList();
+                    return _mapper.Map<List<TicketsRechazadosViewModel>>(result);
+                }
+                   
             }
             catch (Exception ex)
             {
                 throw new Exception("No se puso obtener los registros de tickets rechazados" + ex);
             }
         }
-        public List<TicketsAbiertosViewModel> ObtenerAbiertos()
+        public List<TicketsAbiertosViewModel> ObtenerAbiertos(CatUsuarioViewModel usuario)
         {
             try
             {
-                var result = _context.Vis_TicketsAbiertos.ToList();
-
-                return _mapper.Map<List<TicketsAbiertosViewModel>>(result);
+                if (usuario.RolNombre == Roles.Soporte)
+                {
+                    var fechaMinima = DateTime.Now.AddDays(-60);
+                    var result = _context.Vis_TicketsAbiertos.Where(ta => ta.FechaSolicitud > fechaMinima).ToList();
+                    return _mapper.Map<List<TicketsAbiertosViewModel>>(result);
+                }
+                else
+                {
+                    var result = _context.Vis_TicketsAbiertos.ToList();
+                    return _mapper.Map<List<TicketsAbiertosViewModel>>(result);
+                }
             }
             catch (Exception ex)
             {
                 throw new Exception("No se puso obtener los registros de tickets abiertos" + ex);
             }
         }
-        public List<TicketsPendientesViewModel> ObtenerPendientes()
+        public List<TicketsPendientesViewModel> ObtenerPendientes(CatUsuarioViewModel usuario)
         {
             try
             {
-                var result = _context.Vis_TicketsPendientes.ToList();
-
-                return _mapper.Map<List<TicketsPendientesViewModel>>(result);
+                if (usuario.RolNombre == Roles.Soporte)
+                {
+                    var fechaMinima = DateTime.Now.AddDays(-60);
+                    var result = _context.Vis_TicketsPendientes.Where(ta => ta.FechaSolicitud > fechaMinima).ToList();
+                    return _mapper.Map<List<TicketsPendientesViewModel>>(result);
+                }
+                else
+                {
+                    var result = _context.Vis_TicketsPendientes.ToList();
+                    return _mapper.Map<List<TicketsPendientesViewModel>>(result);
+                }
             }
             catch (Exception ex)
             {
                 throw new Exception("No se puso obtener los registros de tickets pendientes" + ex);
             }
         }
-        public List<TicketsCerradosViewModel> ObtenerCerrados()
+        public List<TicketsCerradosViewModel> ObtenerCerrados(CatUsuarioViewModel usuario)
         {
             try
             {
-                var result = _context.Vis_TicketsCerrados.ToList();
-
-                return _mapper.Map<List<TicketsCerradosViewModel>>(result);
+                if(usuario.RolNombre == Roles.Soporte)
+                {
+                    var fechaMinima = DateTime.Now.AddDays(-60);
+                    var result = _context.Vis_TicketsCerrados.Where(ta => ta.FechaSolicitud > fechaMinima).ToList();
+                    return _mapper.Map<List<TicketsCerradosViewModel>>(result);
+                }
+                else
+                {
+                    var result = _context.Vis_TicketsCerrados.ToList();
+                    return _mapper.Map<List<TicketsCerradosViewModel>>(result);
+                }
             }
             catch (Exception ex)
             {
                 throw new Exception("No se puso obtener los registros de tickets cerrados" + ex);
             }
         }
-        public List<TicketsValidadosViewModel> ObtenerValidados()
+        public List<TicketsValidadosViewModel> ObtenerValidados(CatUsuarioViewModel usuario)
         {
             try
             {
-                var result = _context.Vis_TicketsValidados.ToList();
-
-                return _mapper.Map<List<TicketsValidadosViewModel>>(result);
+                if (usuario.RolNombre == Roles.Soporte)
+                {
+                    var fechaMinima = DateTime.Now.AddDays(-60);
+                    var result = _context.Vis_TicketsValidados.Where(ta => ta.FechaSolicitud > fechaMinima).ToList();
+                    return _mapper.Map<List<TicketsValidadosViewModel>>(result);
+                }
+                else
+                {
+                    var result = _context.Vis_TicketsValidados.ToList();
+                    return _mapper.Map<List<TicketsValidadosViewModel>>(result);
+                }
             }
             catch (Exception ex)
             {
                 throw new Exception("No se puso obtener los registros de tickets validados" + ex);
             }
         }
-        public List<TicketsRespuestaViewModel> ObtenerRespuesta()
+        public List<TicketsRespuestaViewModel> ObtenerRespuesta(CatUsuarioViewModel usuario)
         {
             try
             {
-                var result = _context.Vis_TicketsRespuesta.ToList();
-
-                return _mapper.Map<List<TicketsRespuestaViewModel>>(result);
+                if(usuario.RolNombre == Roles.Soporte)
+                {
+                    var fechaMinima = DateTime.Now.AddDays(-60);
+                    var result = _context.Vis_TicketsRespuesta.Where(ta => ta.FechaSolicitud > fechaMinima).ToList();
+                    return _mapper.Map<List<TicketsRespuestaViewModel>>(result);
+                }
+                else
+                {
+                    var result = _context.Vis_TicketsRespuesta.ToList();
+                    return _mapper.Map<List<TicketsRespuestaViewModel>>(result);
+                }
             }
             catch (Exception ex)
             {

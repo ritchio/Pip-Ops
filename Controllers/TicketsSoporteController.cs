@@ -1,45 +1,56 @@
 ﻿using HelpDesk.Authorization;
+using HelpDesk.Models.ViewModels;
 using HelpDesk.Services.Ticket.Interfaces;
+using HelpDesk.Services.Usuario.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace HelpDesk.Controllers
 {
     [Authorize]
     [VerificaPermiso(roles: [Roles.Soporte, Roles.Administrador, Roles.AdministradorSupervisor])]
     public class TicketsSoporteController(
-        ITicketSoporteService ticketSoporteService
+        ITicketSoporteService ticketSoporteService,
+        IUsuarioService usuarioService
         ) : Controller
     {
         private readonly ITicketSoporteService _ticketSoporteService = ticketSoporteService;
-        public IActionResult Index()
+        private readonly IUsuarioService _usuarioService = usuarioService;
+        public async Task<IActionResult> Index()
         {
-            var respuesta = _ticketSoporteService.ObtenerNuevos();
+            var usuario = await _usuarioService.ObtenerUsuarioActual(User);
+            var respuesta = _ticketSoporteService.ObtenerNuevos(usuario);
             return View(respuesta);
         }
-        public IActionResult Abiertos()
+        public async Task<IActionResult> Abiertos()
         {
-            var respuesta = _ticketSoporteService.ObtenerAbiertos();
+            var usuario = await _usuarioService.ObtenerUsuarioActual(User);
+            var respuesta = _ticketSoporteService.ObtenerAbiertos(usuario);
             return View(respuesta);
         }
-        public IActionResult Pendientes()
+        public async Task<IActionResult> Pendientes()
         {
-            var respuesta = _ticketSoporteService.ObtenerPendientes();
+            var usuario = await _usuarioService.ObtenerUsuarioActual(User);
+            var respuesta = _ticketSoporteService.ObtenerPendientes(usuario);
             return View(respuesta);
         }
-        public IActionResult Cerrados()
+        public async Task<IActionResult> Cerrados()
         {
-            var respuesta = _ticketSoporteService.ObtenerCerrados();
+            var usuario = await _usuarioService.ObtenerUsuarioActual(User);
+            var respuesta = _ticketSoporteService.ObtenerCerrados(usuario);
             return View(respuesta);
         }
-        public IActionResult Validados()
+        public async Task<IActionResult> Validados()
         {
-            var respuesta = _ticketSoporteService.ObtenerValidados();
+            var usuario = await _usuarioService.ObtenerUsuarioActual(User);
+            var respuesta = _ticketSoporteService.ObtenerValidados(usuario);
             return View(respuesta);
         }
-        public IActionResult Respuesta()
+        public async Task<IActionResult> Respuesta()
         {
-            var respuesta = _ticketSoporteService.ObtenerRespuesta();
+            var usuario = await _usuarioService.ObtenerUsuarioActual(User);
+            var respuesta = _ticketSoporteService.ObtenerRespuesta(usuario);
             return View(respuesta);
         }
     }
