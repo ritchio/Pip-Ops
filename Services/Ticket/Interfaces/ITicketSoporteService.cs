@@ -5,13 +5,13 @@ namespace HelpDesk.Services.Ticket.Interfaces
 {
     public interface ITicketSoporteService
     {
-        List<TicketsNuevosViewModel> ObtenerNuevos();
-        List<TicketsPorAutorizarViewModel> ObtenerPorAutorizar();
-        List<TicketsRechazadosViewModel> ObtenerRechazados();
-        List<TicketsAbiertosViewModel> ObtenerAbiertos();
-        List<TicketsPendientesViewModel> ObtenerPendientes();
-        List<TicketsCerradosViewModel> ObtenerCerrados();
-        List<TicketsValidadosViewModel> ObtenerValidados();
-        List<TicketsRespuestaViewModel> ObtenerRespuesta();
+        List<TicketsNuevosViewModel> ObtenerNuevos(CatUsuarioViewModel usuario);
+        List<TicketsPorAutorizarViewModel> ObtenerPorAutorizar(CatUsuarioViewModel usuario);
+        List<TicketsRechazadosViewModel> ObtenerRechazados(CatUsuarioViewModel usuario);
+        List<TicketsAbiertosViewModel> ObtenerAbiertos(CatUsuarioViewModel usuario);
+        List<TicketsPendientesViewModel> ObtenerPendientes(CatUsuarioViewModel usuario);
+        List<TicketsCerradosViewModel> ObtenerCerrados(CatUsuarioViewModel usuario);
+        List<TicketsValidadosViewModel> ObtenerValidados(CatUsuarioViewModel usuario);
+        List<TicketsRespuestaViewModel> ObtenerRespuesta(CatUsuarioViewModel usuario);
     }
 }

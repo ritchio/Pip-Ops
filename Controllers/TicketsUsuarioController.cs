@@ -18,7 +18,7 @@ namespace HelpDesk.Controllers
         {
             //aquí no se puede tomar los tickets asignados al agente porque aún no se ha asignado
             var usuario = await _usuarioService.ObtenerUsuarioActual(User);
-            var respuesta = _ticketUsuarioService.ObtenerNuevos(usuario.Id);
+            var respuesta = _ticketUsuarioService.ObtenerNuevos(usuario);
             return View(respuesta);
         }
         public async Task<IActionResult> Abiertos()

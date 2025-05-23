@@ -25,12 +25,12 @@ namespace HelpDesk.ViewComponents
 
             if(usuario.RolNombre == Roles.Soporte || usuario.RolNombre == Roles.Administrador || usuario.RolNombre == Roles.AdministradorSupervisor)
             {
-                var respuesta = _ticketSoporteService.ObtenerRechazados();
+                var respuesta = _ticketSoporteService.ObtenerRechazados(usuario);
                 return View(respuesta);
             }
             else
             {
-                var respuesta = _ticketUsuarioService.ObtenerRechazados(usuario.Id);
+                var respuesta = _ticketUsuarioService.ObtenerRechazados(usuario);
                 return View("Usuario",respuesta);
             }
       
