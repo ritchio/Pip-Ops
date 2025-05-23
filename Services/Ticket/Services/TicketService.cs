@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using HelpDesk.Authorization;
 using HelpDesk.Constants;
 using HelpDesk.Data;
 using HelpDesk.Models.Entities;
 using HelpDesk.Models.ViewModels;
 using HelpDesk.Services.Ticket.Interfaces;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace HelpDesk.Services.Ticket.Services
 {
@@ -183,6 +186,35 @@ namespace HelpDesk.Services.Ticket.Services
             }catch(Exception ex)
             {
                 throw new Exception("Error al validar la atención del ticket", ex);
+            }
+        }
+
+        public List<TicketsCantidadesPorEstadoViewModel> ObtenerCantidadesPorEstado(CatUsuarioViewModel usuario)
+        {
+            try
+            {
+                var esAgente = usuario.RolNombre == Roles.Soporte ? 1 : 0;
+                var param = new []
+                {
+                    new SqlParameter("@IdUsuario", usuario.Id),
+                    new SqlParameter("@EsAgente", esAgente)
+                };
+
+                var cantidades = _context.Sp_TicketsCantidadesPorEstado
+                    .FromSqlRaw("EXEC sp_TicketsCantidadesPorEstado @IdUsuario = {0}, @EsAgente = {1}",param )
+                    .ToList();
+                if(cantidades != null)
+                {
+                    return _mapper.Map<List<TicketsCantidadesPorEstadoViewModel>>(cantidades);
+                }
+                else
+                {
+                    throw new Exception("No se encontraron tickets.");
+                }
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("Error al obtener las cantidades: ", ex);
             }
         }
     }

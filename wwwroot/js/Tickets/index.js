@@ -44,3 +44,22 @@ async function validarTicket(idTicket) {
     }
     
 }
+
+async function obtenerCantidadesPorEstado() {
+    await axiosRequest({
+        url: "/Tickets/CantidadesPorEstado",
+        funcionCallback: function (datos) {
+
+            Object.keys(datos).forEach((item) => {
+                console.log(item);
+                if (datos[item].contexto == "VistaGeneral") {
+                    $("#banderaTicketsSoporte" + datos[item].estado).text(`(${datos[item].cantidad})`);
+                } else {
+                    $("#banderaTicketsUsuario" + datos[item].estado).text(`(${datos[item].cantidad})`);
+                }
+                
+            });
+            
+        }
+    });
+}

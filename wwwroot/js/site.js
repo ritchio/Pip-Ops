@@ -1,4 +1,13 @@
-﻿function mostrarNotificacion(respuesta) {
+﻿$(function () {
+    // tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+  
+})
+
+function mostrarNotificacion(respuesta) {
     try {
         if (typeof respuesta === "string") {
             // Parseamos y convertimos las claves a minúsculas
@@ -86,11 +95,7 @@ function mostrarModalGenerico(html=null,tamanio="normal") {
     }
     
 }
-// tooltips
-var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl)
-});
+
 
 
 //Lenguaje de tablas

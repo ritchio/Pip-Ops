@@ -1,4 +1,5 @@
-﻿using HelpDesk.Models.ViewModels;
+﻿using HelpDesk.Models.Entities;
+using HelpDesk.Models.ViewModels;
 
 namespace HelpDesk.Services.Ticket.Interfaces
 {
@@ -7,6 +8,7 @@ namespace HelpDesk.Services.Ticket.Interfaces
         Task<bool> GuardarTicket(TicketViewModel ticketViewModel);
         Task<TicketViewModel> ObtenerPorId(int idTicket);
         int ObtenerMaximoTicketPorUsuario(string idUsuario);
+        List<TicketsCantidadesPorEstadoViewModel> ObtenerCantidadesPorEstado(CatUsuarioViewModel usuario);
         Task<bool> Validar(int idTicket, string idUsuario);
     }
 }
