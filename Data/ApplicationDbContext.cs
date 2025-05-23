@@ -29,7 +29,7 @@ public class ApplicationDbContext
     public DbSet<Cat_Usuario> Cat_Usuario { get; set; } = default!;
     //Configuración
     public DbSet<Cfg_Opcion> Cfg_Opcion { get; set; }
-    //Datos
+    //Documentos
     public DbSet<Doc_Ticket> Doc_Ticket { get; set; }
     public DbSet<Doc_TicketAdjunto> Doc_TicketAdjunto { get; set; }
     public DbSet<Doc_TicketAsignacion> Doc_TicketAsignacion { get; set; }
@@ -53,6 +53,9 @@ public class ApplicationDbContext
     public DbSet<Vis_TicketsValidados> Vis_TicketsValidados { get; set; }
     public DbSet<Vis_TicketsRechazados> Vis_TicketsRechazados{ get; set; }
     public DbSet<Vis_TicketsRespuesta> Vis_TicketsRespuesta{ get; set; }
+
+    //Procedimientos
+    public DbSet<Sp_TicketsCantidadesPorEstado> Sp_TicketsCantidadesPorEstado { get; set; }
 
     #endregion [ Entidades ]
     protected override void OnModelCreating(ModelBuilder builder)
@@ -264,6 +267,10 @@ public class ApplicationDbContext
             .HasNoKey()
             .ToView("Vis_TicketsRechazados");
 
+        //procedimientos
+        builder.Entity<Sp_TicketsCantidadesPorEstado>()
+            .HasNoKey()
+            .ToView(null);
         #endregion [ Tickets ]
 
     }

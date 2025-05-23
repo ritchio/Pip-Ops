@@ -158,5 +158,18 @@ namespace HelpDesk.Controllers
                
             }
         }
+
+        public async Task<IActionResult> CantidadesPorEstado()
+        {
+            var usuario = await _usuarioService.ObtenerUsuarioActual(User);
+            var cantidades = _ticketService.ObtenerCantidadesPorEstado(usuario);
+            var respuesta = new RespuestaGenerica<List<TicketsCantidadesPorEstadoViewModel>>
+            {
+                Exito = true,
+                Datos = cantidades
+            };
+
+            return Ok(respuesta); 
+        }
     }
 }
