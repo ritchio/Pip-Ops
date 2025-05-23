@@ -12,6 +12,7 @@
         public string? Area { get; set; } = string.Empty;
 
         public string? Asunto { get; set; } = string.Empty;
+        public string? Cuerpo { get; set; } = string.Empty;
 
         public int? AutorizacionesPendientes { get; set; }
         public int? AutorizacionesTotales { get; set; }

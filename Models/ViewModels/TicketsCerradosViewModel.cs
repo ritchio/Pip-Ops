@@ -12,7 +12,7 @@
         public string? Area { get; set; } = string.Empty;
 
         public string? Asunto { get; set; } = string.Empty;
-
+        public string? Cuerpo { get; set; } = string.Empty;
         public string? TipoSoporte { get; set; } = string.Empty;
 
         public DateTime? FechaSolicitud { get; set; }
