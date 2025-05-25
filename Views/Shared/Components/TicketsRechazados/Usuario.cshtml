@@ -17,7 +17,7 @@
             foreach (var ticket in Model)
             {
                 <tr>
-                    <td>@(ticket.Numero?.ToString("D3") ?? "")</td>
+                    <td>@(ticket.IdTicket?.ToString("D3") ?? "")</td>
                     <td>@ticket.Asunto</td>
                     <td class="d-none">@ticket.Cuerpo</td>
                     <td>@ticket.FechaSolicitud</td>

@@ -26,7 +26,7 @@ public static class RenderizarVistaExtension
             sw,
             new HtmlHelperOptions()
         );
-
+        
         viewResult.View.RenderAsync(viewContext);
         return sw.ToString();
     }

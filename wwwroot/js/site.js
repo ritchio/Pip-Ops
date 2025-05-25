@@ -19,8 +19,8 @@ function mostrarNotificacion(respuesta) {
                 }
             }
         }
-       
-        const { exito, mensaje, datos, redireccion } = respuesta;
+        console.log(respuesta);
+        const { exito, mensaje, datos, redireccion, llamada } = respuesta;
 
         if (exito) {
             $("#notificacionTitulo").text("Notificación");
@@ -45,6 +45,21 @@ function mostrarNotificacion(respuesta) {
 
         const toast = new bootstrap.Toast(document.getElementById('notificacionToast')); 
         toast.show();
+
+        console.log(typeof llamada);
+        //llamada a funcion
+        if (llamada != null) {
+           if (llamada != null) {
+               if (typeof llamada === "string" && typeof window[llamada] === "function") {
+                   window[llamada](datos);
+               } else if (typeof llamada === "function") {
+                   llamada(datos);
+               } else {
+                   console.log(`No existe la función ${llamada}`);
+               }
+            }
+        }
+
 
         if (redireccion != null) {
             setTimeout(() => window.location.href = redireccion, 2000);

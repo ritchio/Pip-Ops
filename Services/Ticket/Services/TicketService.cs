@@ -41,7 +41,18 @@ namespace HelpDesk.Services.Ticket.Services
                 else
                 {
                     //guardamos el ticket
+                    //revisamo si necesita autorización
+                    var areasAutorizacion = _context.Cat_Autorizacion
+                        .Include(ra => ra.RelacionAreasAutorizan)
+                        .Where(au => au.IdModuloClasificacion == ticketViewModel.IdModuloClasificacion)
+                        .ToList();
 
+                    var estadoTicket = EstadoTicket.Nuevo;
+
+                    if (areasAutorizacion.Count > 0)
+                    {
+                        estadoTicket = EstadoTicket.PorAutorizar;
+                    }
                     //último número de acuerdo al usuario, no total RN-30
                     var nuevoNumero = ObtenerMaximoTicketPorUsuario(ticketViewModel.IdUsuario) + 1;
 
@@ -54,7 +65,7 @@ namespace HelpDesk.Services.Ticket.Services
                         Telefono = ticketViewModel.Telefono,
                         IdTipoSoporte = ticketViewModel.IdTipoSoporte,
                         IdModuloClasificacion = ticketViewModel.IdModuloClasificacion,
-                        IdEstadoTicket = EstadoTicket.Nuevo,
+                        IdEstadoTicket = estadoTicket,
                         Numero = nuevoNumero,
                         Turno = nuevoNumero,// temporal RN-30
                         FechaCreacion = DateTime.Now
@@ -74,14 +85,10 @@ namespace HelpDesk.Services.Ticket.Services
                     _context.SaveChanges();
 
                     //guardamos las autorizaciones 
-                    var areasAutorizacion = _context.Cat_Autorizacion
-                        .Include(ra => ra.RelacionAreasAutorizan)
-                        .Where(au => au.IdModuloClasificacion == ticketViewModel.IdModuloClasificacion)
-                        .ToList();
-                    
-                    if (areasAutorizacion.Any())
+
+                    if (areasAutorizacion.Count > 0)
                     {
-                        foreach(var auto in areasAutorizacion)
+                        foreach (var auto in areasAutorizacion)
                         {
                             var ticketAutorizacion = new Doc_TicketAutorizacion
                             {
@@ -89,7 +96,7 @@ namespace HelpDesk.Services.Ticket.Services
                                 IdArea = auto.IdArea,
                                 IdEstadoAutorizacion = 1
                             };
-                            
+
                             _context.Add(ticketAutorizacion);
                             _context.SaveChanges();
                         }
@@ -99,14 +106,14 @@ namespace HelpDesk.Services.Ticket.Services
                 //sea cual sea el caso, se guarda el archivo si trae
                 if (ticketViewModel.ArchivoAdjunto != null)
                 {
-                   
+
                     var result = await _ticketAdjuntoService.GuardarAdjunto(ticketViewModel);
                 }
 
                 return true;
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
                 throw new Exception(ex.Message);
@@ -142,7 +149,7 @@ namespace HelpDesk.Services.Ticket.Services
                 throw new Exception("Error al obtener el ticket", ex);
             }
         }
-      
+
 
         public int ObtenerMaximoTicketPorUsuario(string idUsuario)
         {
@@ -153,12 +160,12 @@ namespace HelpDesk.Services.Ticket.Services
                 .Max() ?? 0;
         }
 
-        public async Task<bool> Validar(int idTicket,string idUsuario)
+        public async Task<bool> Validar(int idTicket, string idUsuario)
         {
             try
             {
                 var ticket = await _context.Doc_Ticket.FirstOrDefaultAsync(t => t.IdTicket == idTicket);
-                if(ticket != null)
+                if (ticket != null)
                 {
                     //ticket
                     ticket.IdEstadoTicket = EstadoTicket.Validado;
@@ -181,9 +188,10 @@ namespace HelpDesk.Services.Ticket.Services
                 {
                     return false;
                 }
-                    
 
-            }catch(Exception ex)
+
+            }
+            catch (Exception ex)
             {
                 throw new Exception("Error al validar la atención del ticket", ex);
             }
@@ -194,16 +202,16 @@ namespace HelpDesk.Services.Ticket.Services
             try
             {
                 var esAgente = usuario.RolNombre == Roles.Soporte ? 1 : 0;
-                var param = new []
+                var param = new[]
                 {
                     new SqlParameter("@IdUsuario", usuario.Id),
                     new SqlParameter("@EsAgente", esAgente)
                 };
 
                 var cantidades = _context.Sp_TicketsCantidadesPorEstado
-                    .FromSqlRaw("EXEC sp_TicketsCantidadesPorEstado @IdUsuario = {0}, @EsAgente = {1}",param )
+                    .FromSqlRaw("EXEC sp_TicketsCantidadesPorEstado @IdUsuario = {0}, @EsAgente = {1}", param)
                     .ToList();
-                if(cantidades != null)
+                if (cantidades != null)
                 {
                     return _mapper.Map<List<TicketsCantidadesPorEstadoViewModel>>(cantidades);
                 }
@@ -212,10 +220,81 @@ namespace HelpDesk.Services.Ticket.Services
                     throw new Exception("No se encontraron tickets.");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception("Error al obtener las cantidades: ", ex);
             }
+        }
+
+        public bool Asignar(int idTicket, string idUsuario)
+        {
+            try
+            {
+                var ticket = _context.Doc_Ticket.FirstOrDefault(t => t.IdTicket == idTicket);
+                if (ticket != null)
+                {
+                    
+                    //cambio de estado al ticket
+                    ticket.IdEstadoTicket = EstadoTicket.Abierto;
+                    _context.Update(ticket);
+          
+                    //asignación del ticket
+                    var ticketAsignacion = new Doc_TicketAsignacion
+                    {
+                        IdTicket = idTicket,
+                        IdUsuario = idUsuario,
+                        FechaAsignacion = DateTime.Now
+                    };
+                    _context.Doc_TicketAsignacion.Add(ticketAsignacion);
+
+                    //log
+                    var log = new Log_TicketActividad
+                    {
+                        Accion = AccionLogTicket.Asignar,
+                        NumeroTicket = idTicket,
+                        IdUsuario = idUsuario
+                    };
+                    _context.Log_TicketActividad.Add(log);
+
+                    _context.SaveChanges();
+
+                    //actualizamos los turnos
+                    ActualizarTurnosPosteriores(ticket);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al asignar el ticket", ex);
+            }
+        }
+
+        private void ActualizarTurnosPosteriores(Doc_Ticket ticketActual)
+        {
+
+            var idUsuario = ticketActual.IdUsuario;
+            var turnoActual = ticketActual.Turno;
+
+
+            var ticketsPosteriores = _context.Doc_Ticket
+                .Where(t => t.IdUsuario == idUsuario && t.Turno > turnoActual && t.IdEstadoTicket == EstadoTicket.Nuevo)
+                .OrderBy(t => t.Turno)
+                .ToList();
+
+            // 3. Recorrer y reasignar Turno
+            int nuevoTurno = turnoActual.Value;
+            foreach (var ticket in ticketsPosteriores)
+            {
+                ticket.Turno = nuevoTurno;
+                nuevoTurno++;
+            }
+
+            // 4. Guardar cambios
+            _context.SaveChanges();
         }
     }
 }

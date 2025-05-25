@@ -10,6 +10,7 @@ namespace HelpDesk.Services.Usuario.Interfaces
     {
         Task<CatUsuarioViewModel> ObtenerUsuarioActual(ClaimsPrincipal claim);
         Task<List<CatUsuarioViewModel>> ObtenerUsuarios();
+        Task<List<CatUsuarioViewModel>> ObtenerUsuariosPorRol(string rol);
         Task<RespuestaGenerica<CatUsuarioViewModel>> ObtenerUsuarioPorId(string id);
         Task<RespuestaGenerica<CatUsuarioViewModel>> Crear(CatUsuarioViewModel model);
         Task<CatUsuarioViewModel> Modificar(CatUsuarioViewModel model);

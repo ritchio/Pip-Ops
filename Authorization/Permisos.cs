@@ -31,6 +31,9 @@
             [PermisoDescripcion("Asignar tickets")]
             public const string Asignar = "Ticket.Asignar";
 
+            [PermisoDescripcion("Auto-asignar tickets")]
+            public const string AutoAsignar = "Ticket.AutoAsignar";
+
             [PermisoDescripcion("Marcar tickets como resueltos")]
             public const string Resolver = "Ticket.Resolver";
         }

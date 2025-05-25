@@ -99,18 +99,7 @@
     <!-- END PAGE LIBRARIES -->
     <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
     @* <script src="~/js/tabler.min.js"  integrity="sha384-uSpys8fjyVTPrXxPMi+NhnEMIp1YSGFZSCDrRHjYIUVdInIvlHft8JHLm6Oiw3vA"></script> *@
-    <script>
-
-        @if (TempData["Notificacion"] != null)
-        {
-            var json = System.Text.Json.JsonSerializer.Serialize(TempData["Notificacion"]);
-            <text>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        mostrarNotificacion(@Html.Raw(json))
-                    });
-            </text>
-        }
-    </script>
+   
     <!-- END GLOBAL MANDATORY SCRIPTS -->
     <!-- Inicio notificaciones -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -154,5 +143,18 @@
 <script src="~/js/Shared/axiosRequest.js"></script>
 <script src="~/js/Tickets/index.js"></script>
 <script src="~/js/inicio.js"></script>
+
+<script>
+
+    @if (TempData["Notificacion"] != null)
+    {
+            var json = System.Text.Json.JsonSerializer.Serialize(TempData["Notificacion"]);
+            <text>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        mostrarNotificacion(@Html.Raw(json))
+                    });
+            </text>
+    }
+</script>
 <!-- fin script personalizados-->
 </html>

@@ -1,7 +1,45 @@
-﻿@model HelpDesk.Models.ViewModels.TicketViewModel  
+﻿@using HelpDesk.Authorization
+@using HelpDesk.Constants
+@model HelpDesk.Models.ViewModels.TicketViewModel  
+@{ var colorCirculo = "#ffffff";}
 
 <div class="modal-header">  
-    <h4 class="modal-title">Ticket #@(Model.IdTicket.ToString("D3") ?? "")</h4>
+    <div class="col-8">
+        @if(Model.IdEstadoTicket == EstadoTicket.PorAutorizar)
+        {
+            colorCirculo = "#ebd234";
+        }
+        else if(Model.IdEstadoTicket == EstadoTicket.Rechazado)
+        {
+            colorCirculo = "#d6184e";
+        }
+        else if(Model.IdEstadoTicket == EstadoTicket.Cerrado)
+        {
+            colorCirculo = "#cacaca";
+        }
+        else 
+        {
+            colorCirculo = "#34d618";
+        }
+        <h4 class="modal-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="@colorCirculo" class="bi bi-circle-fill" viewBox="0 0 16 16">
+                <circle cx="8" cy="8" r="8" />
+            </svg>&nbsp;Ticket #@(Model.IdTicket.ToString("D3") ?? "")
+        </h4>
+    </div>
+    <div class="col-4 d-flex justify-content-end">
+        @if (Html.TieneAcceso( roles: [Roles.Soporte, Roles.Administrador, Roles.AdministradorSupervisor]) && Model.IdEstadoTicket == EstadoTicket.Nuevo)
+        {
+            if (Html.TieneAcceso(Permisos.Ticket.Asignar))
+            {
+                <button class="btn btn-primary" onclick="mostrarAsignarAgente(@Model.IdTicket)">Asignar Ticket</button>
+            }else if (Html.TieneAcceso(Permisos.Ticket.AutoAsignar))
+            {
+                <button class="btn btn-primary" onclick="asignarTicket(@Model.IdTicket,'auto')">Asignar Ticket</button>
+            }
+           
+        }
+    </div>
 </div>  
 <div class="modal-body">  
     <form asp-action="Crear" method="post" class="row" enctype="multipart/form-data">  
@@ -21,12 +59,28 @@
         <div class="col-sm-3">
             <p>Autorizaciones pendientes</p>
             <div class="form-control">
-                <ul>
+                
                     @foreach(var auto in Model.Autorizaciones)
                     {
-                        <li>@auto.NombreArea - @auto.NombreEstado</li>
+                        @if(auto.IdEstadoAutorizacion == EstadoAutorizacion.PorAutorizar)
+                        {
+                            colorCirculo = "#ebd234";
+                        }
+                        else if(auto.IdEstadoAutorizacion == EstadoAutorizacion.Autorizado)
+                        {
+                            colorCirculo = "#34d618";
+                        }
+                        else
+                        {
+                            colorCirculo = "#d6184e";
+                        }
+                        <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="@colorCirculo" class="bi bi-circle-fill" viewBox="0 0 16 16">
+                                    <circle cx="8" cy="8" r="8" />
+                                </svg>&nbsp;@auto.NombreArea
+                        </div>
                     }
-                </ul>
+                
             </div>
         </div>
 

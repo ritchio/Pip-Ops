@@ -36,7 +36,7 @@
                             {
                                 <tr>
 
-                                    <td>@(ticket.Numero?.ToString("D3") ?? "")</td>
+                                    <td>@(ticket.IdTicket?.ToString("D3") ?? "")</td>
                                     <td>@ticket.Solicitante</td>
                                     <td>@ticket.Plaza</td>
                                     <td>@ticket.Area</td>
@@ -72,7 +72,7 @@
                             foreach (var ticket in Model)
                             {
                                 <tr>
-                                    <td>@(ticket.Numero?.ToString("D3") ?? "")</td>
+                                    <td>@(ticket.IdTicket?.ToString("D3") ?? "")</td>
                                     <td>@ticket.NombreAgente</td>
                                     <td>@ticket.Asunto</td>
                                     <td class="d-none">@ticket.Cuerpo</td>

@@ -10,5 +10,6 @@ namespace HelpDesk.Services.Ticket.Interfaces
         int ObtenerMaximoTicketPorUsuario(string idUsuario);
         List<TicketsCantidadesPorEstadoViewModel> ObtenerCantidadesPorEstado(CatUsuarioViewModel usuario);
         Task<bool> Validar(int idTicket, string idUsuario);
+        bool Asignar(int idTicket, string idUsuario);
     }
 }
