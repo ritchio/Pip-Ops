@@ -28,6 +28,7 @@ async function obtenerAutorizacion(idModulo) {
 }
 
 async function mostrarDetallesTicket(idTicket) {
+
     await axiosRequest({
         url: "/Tickets/Detalles/" + idTicket,
         funcionCallback: mostrarModalGenerico,
@@ -51,7 +52,7 @@ async function obtenerCantidadesPorEstado() {
         funcionCallback: function (datos) {
 
             Object.keys(datos).forEach((item) => {
-                console.log(item);
+
                 if (datos[item].contexto == "VistaGeneral") {
                     $("#banderaTicketsSoporte" + datos[item].estado).text(`(${datos[item].cantidad})`);
                 } else {
@@ -61,5 +62,21 @@ async function obtenerCantidadesPorEstado() {
             });
             
         }
+    });
+}
+
+async function asignarTicket(idTicket,idUsuario) {
+    let mensaje = (idUsuario == "auto") ? "¿Realmente desea asignarse este ticket?" : "¿Realmente desea asignar el agente a este ticket?"
+
+    if (confirm(mensaje)) {
+        window.location.href = `/Tickets/Asignar/${idTicket}/${idUsuario}`;
+    }
+}
+
+async function mostrarAsignarAgente(idTicket) {
+    await axiosRequest({
+        url: `/TicketsSoporte/AsignarAgente/${idTicket}`,
+        funcionCallback: mostrarModalGenerico,
+        keyCache : "asignarAgente"
     });
 }

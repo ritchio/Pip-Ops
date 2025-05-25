@@ -28,6 +28,8 @@ namespace HelpDesk.Models.ViewModels
         [MaxLength(140)]
         public string Asunto { get; set; } = string.Empty;
 
+        public int IdEstadoTicket { get; set; }
+
         [Required]
         [MaxLength(1000)]
         public string Cuerpo { get; set; } = string.Empty;

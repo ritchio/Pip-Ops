@@ -1,4 +1,5 @@
 ﻿using HelpDesk.Authorization;
+using HelpDesk.Models.Utils;
 using HelpDesk.Models.ViewModels;
 using HelpDesk.Services.Ticket.Interfaces;
 using HelpDesk.Services.Usuario.Interfaces;
@@ -52,6 +53,24 @@ namespace HelpDesk.Controllers
             var usuario = await _usuarioService.ObtenerUsuarioActual(User);
             var respuesta = _ticketSoporteService.ObtenerRespuesta(usuario);
             return View(respuesta);
+        }
+
+        [VerificaPermiso(Permisos.Ticket.Asignar)]
+        [HttpGet("/TicketsSoporte/AsignarAgente/{idTicket}")]
+        public async Task<IActionResult> AsignarAgente(int idTicket)
+        {
+            var usuarios = await _usuarioService.ObtenerUsuariosPorRol(Roles.Soporte);
+            
+            ViewData["IdTicket"] = idTicket;
+            var respuesta = new RespuestaGenerica<string>
+            {
+                Exito = true,
+                Datos = this.RenderizarVista("_AsignarAgente", usuarios, true)
+            };
+
+            
+            return Ok(respuesta);
+            //return View("_AsignarAgente", usuarios);
         }
     }
 }

@@ -111,6 +111,26 @@ namespace HelpDesk.Services.Usuario.Services
             }
         }
 
+        public async Task<List<CatUsuarioViewModel>> ObtenerUsuariosPorRol(string rol)
+        {
+            try
+            {
+                var usuarios = await _context.Users
+                    .Include(u => u.RolesUsuario)
+                    .ThenInclude(ur => ur.Rol)
+                    .Include(u => u.Plaza)
+                    .Include(u => u.AreasUsuario)
+                    .Where(u=>u.RolesUsuario.Any(ur => ur.Rol.Name == rol && u.Activo == true))
+                    .ToListAsync();
+
+                return _mapper.Map<List<CatUsuarioViewModel>>(usuarios);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         public async Task<RespuestaGenerica<CatUsuarioViewModel>> ObtenerUsuarioPorId(string id)
         {
             var respuesta = new RespuestaGenerica<CatUsuarioViewModel>();

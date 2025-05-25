@@ -171,5 +171,39 @@ namespace HelpDesk.Controllers
 
             return Ok(respuesta); 
         }
+
+        [HttpGet("/Tickets/Asignar/{idTicket}/{idUsuario}")]
+        public async Task<IActionResult> Asignar(int idTicket, string idUsuario)
+        {
+            var ticket = await _ticketService.ObtenerPorId(idTicket);
+            if(idUsuario == "auto")
+            {
+                var usuario = await _usuarioService.ObtenerUsuarioActual(User);
+                idUsuario = usuario.Id;
+            }
+
+            var result = _ticketService.Asignar(idTicket, idUsuario);
+            if (result)
+            {
+                var respuesta = new RespuestaGenerica<int>
+                {
+                    Exito = true,
+                    Datos =ticket.IdTicket,
+                    Mensaje = "Ticket asignado exitosamente.",
+                    Llamada = "mostrarDetallesTicket"
+                };
+                TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                return RedirectToAction("Abiertos", "TicketsSoporte");
+            }
+            else
+            {
+                var respuesta = new RespuestaGenerica<string>
+                {
+                    Exito = false,
+                    Mensaje = "Error al asignar el ticket."
+                };
+                return BadRequest(respuesta);
+            }
+        }
     }
 }
