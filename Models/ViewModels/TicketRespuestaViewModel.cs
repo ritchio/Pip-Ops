@@ -11,6 +11,8 @@ namespace HelpDesk.Models.ViewModels
         public string? Mensaje { get; set; }
         public string IdUsuario { get; set; } = string.Empty;
         public DateTime Fecha { get; set; } = DateTime.Now;
+        public bool DelSolicitante { get; set; } = false;
+        public IFormFile? ArchivoAdjunto { get; set; }
         public List<Doc_TicketRespuestaAdjunto>? Adjuntos { get; set; } = [];
     }
 }

@@ -110,6 +110,8 @@ builder.Services.AddScoped<IPlazaService, PlazaService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<ITicketAdjuntoService, TicketAdjuntoService>();
 builder.Services.AddScoped<ITicketAdministradorService, TicketAdministradorService>();
+builder.Services.AddScoped<ITicketRespuestaService, TicketRespuestaService>();
+builder.Services.AddScoped<ITicketRespuestaAdjuntoService, TicketRespuestaAdjuntoService>();
 builder.Services.AddScoped<ITicketSoporteService, TicketSoporteService>();
 builder.Services.AddScoped<ITicketUsuarioService, TicketUsuarioService>();
 builder.Services.AddScoped<ITipoSoporteService, TipoSoporteService>();

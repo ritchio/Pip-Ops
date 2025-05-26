@@ -11,7 +11,10 @@ namespace HelpDesk.Profiles
             CreateMap<Doc_Ticket, TicketViewModel>()
             .ForMember(dest => dest.IdTipoSoporte, opt => opt.MapFrom(src => src.IdTipoSoporte ?? 0))
             .ForMember(dest => dest.IdModuloClasificacion, opt => opt.MapFrom(src => src.IdModuloClasificacion ?? 0))
-            .ForMember(dest => dest.Autorizaciones, opt => opt.MapFrom(src => src.Autorizacion != null ? src.Autorizacion : null));
+            .ForMember(dest => dest.Autorizaciones, opt => opt.MapFrom(src => src.Autorizacion != null ? src.Autorizacion : null))
+            .ForMember(dest => dest.Adjuntos, opt => opt.MapFrom(src => src.Adjuntos != null ? src.Adjuntos : null))
+            .ForMember(dest => dest.Respuestas, opt => opt.MapFrom(src => src.Respuesta != null ? src.Respuesta : null))
+            .ForMember(dest => dest.Asignacion, opt => opt.MapFrom(src => src.Asignacion != null ? src.Asignacion : null));
 
             CreateMap<Doc_TicketAdjunto, TicketAdjuntoViewModel>()
                 .ForMember(dest => dest.IdTickeAdjunto, opt => opt.MapFrom(src => src.IdTicketAdjunto));
@@ -21,7 +24,8 @@ namespace HelpDesk.Profiles
                 .ForMember(dest => dest.NombreEstado, opt => opt.MapFrom(src => src.EstadoAutorizacion != null ? src.EstadoAutorizacion.Nombre : string.Empty));
 
             CreateMap<Doc_TicketRespuesta, TicketRespuestaViewModel>();
-
+            CreateMap<Doc_TicketAsignacion, TicketAsignacionViewModel>();
+               
             CreateMap<Vis_TicketsNuevos, TicketsNuevosViewModel>();
             CreateMap<Vis_TicketsPorAutorizar, TicketsPorAutorizarViewModel>();
             CreateMap<Vis_TicketsAbiertos, TicketsAbiertosViewModel>();

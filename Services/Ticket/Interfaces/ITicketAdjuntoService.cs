@@ -1,4 +1,5 @@
-﻿using HelpDesk.Models.ViewModels;
+﻿using HelpDesk.Models.Entities;
+using HelpDesk.Models.ViewModels;
 
 namespace HelpDesk.Services.Ticket.Interfaces
 {
@@ -6,6 +7,7 @@ namespace HelpDesk.Services.Ticket.Interfaces
     {
         Task<bool> GuardarAdjunto(TicketViewModel ticketViewModel);
         Task<bool> EliminarAdjunto(int idAdjunto);
+        Task<Doc_TicketAdjunto> ObtenerPorHash(string hash);
         Task<List<TicketAdjuntoViewModel>> ObtenerAdjuntosPorTicketId(int idTicket);
         Task<TicketAdjuntoViewModel> ObtenerAdjuntoPorId(int idAdjunto);
     }

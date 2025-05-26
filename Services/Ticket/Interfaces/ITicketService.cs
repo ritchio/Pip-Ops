@@ -11,5 +11,7 @@ namespace HelpDesk.Services.Ticket.Interfaces
         List<TicketsCantidadesPorEstadoViewModel> ObtenerCantidadesPorEstado(CatUsuarioViewModel usuario);
         Task<bool> Validar(int idTicket, string idUsuario);
         bool Asignar(int idTicket, string idUsuario);
+
+        Task<bool> CambiarEstado(int idTicket, int nuevoEstado, string idUsuario);
     }
 }

@@ -18,6 +18,7 @@ namespace HelpDesk.Models.Entities
         [StringLength(450)]
         public string IdUsuario { get; set; } = string.Empty;
 
+        public bool DelSolicitante { get; set; }
         public DateTime Fecha { get; set; } = DateTime.Now;
 
         // Relaciones de navegación

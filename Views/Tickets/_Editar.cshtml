@@ -135,7 +135,7 @@
                 <div class="form-control">
                     @foreach (var archivo in Model.Adjuntos)
                     {
-                        <a href="#">@archivo.Nombre</a>
+                        <a asp-controller="Tickets" asp-action="Adjunto" asp-route-hash="@archivo.Hash" target="_blank">@archivo.Nombre</a>
                     }
                     <a href="#"></a>
                 </div>
@@ -143,7 +143,8 @@
         }
 
         <div class="col-sm-12">
-            <label>Respuestas de autorizaciones</label>
+            <hr />
+            <h3>Respuestas de autorizaciones</h3>
             @foreach (var autorizacion in Model.Autorizaciones)
             {
                 @if(autorizacion.Observacion != null)
@@ -156,17 +157,14 @@
                 }
                 
             }
-            <label>Respuestas del agente</label>
-            @foreach(var respuesta in Model.Respuestas)
-            {
-                <div class="form-control">
-                    @respuesta.Mensaje
-                </div>
-            }
+            
+
+
         </div>
 
         @if (Model.Editable)
         {
+            
             <div class="form-group mt-4">
                 <input type="submit" value="Solicitar ticket" class="btn btn-primary" />
             </div>
@@ -177,6 +175,46 @@
         }
 
    </form>  
+    @if(Model.IdEstadoTicket > EstadoTicket.Nuevo && Model.IdEstadoTicket < EstadoTicket.Validado)
+    {
+        <hr />
+        <h3>Respuestas del ticket</h3>
+        @foreach (var respuesta in Model.Respuestas)
+        {
+            <div class="form-control">
+                <i>@respuesta.Fecha</i>
+                <p>@respuesta.Mensaje</p>
+                @if(respuesta.Adjuntos.Count > 0)
+                {
+                    @foreach(var adjunto in respuesta.Adjuntos)
+                    {
+                        <a asp-controller="Tickets" asp-action="AdjuntoRespuesta" asp-route-hash="@adjunto.Hash" target="_blank">@adjunto.Nombre</a>
+                    }
+                    
+                }
+            </div>
+        }
+
+        @if (Model.EsAgente || Model.EsSolicitante)
+        {
+            <hr />
+            <form class="col-12" enctype="multipart/form-data" asp-controller="Tickets" asp-action="GuardarRespuesta" method="post">
+                <div class="form-group">
+                    <label>Respuesta</label>
+                    <textarea name="Mensaje" class="form-control" placeholder="Escriba detalladamente su respuesta"></textarea>
+                    <input type="hidden" name="IdTicket" value="@Model.IdTicket"/>
+                </div>
+                <div class="form-group">
+                    <label>Adjuntar archivo</label>
+                    <i class="blockquote-footer block">Máximo 1 MB</i>
+                    <input type="file" name="ArchivoAdjunto" class="form-control" accept=".jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx,.pdf" />
+                </div>
+                <div class="form-group mt-4">
+                    <input type="submit" value="Enviar respuesta" class="btn btn-primary" />
+                </div>
+            </form>
+        }
+    } 
 </div>  
 <div class="modal-footer">  
    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>  
