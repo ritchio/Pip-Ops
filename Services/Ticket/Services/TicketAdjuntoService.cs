@@ -57,6 +57,21 @@ namespace HelpDesk.Services.Ticket.Services
             }
         }
 
+        public async Task<Doc_TicketAdjunto> ObtenerPorHash(string hash)
+        {
+            try
+            {
+                var adjunto = await _context.Doc_TicketAdjunto
+                .FirstOrDefaultAsync(a => a.Hash == hash);
+                return adjunto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("No se pudo obtener el adjunto.", ex);
+            }
+            
+        }
+
         public Task<TicketAdjuntoViewModel> ObtenerAdjuntoPorId(int idAdjunto)
         {
             throw new NotImplementedException();

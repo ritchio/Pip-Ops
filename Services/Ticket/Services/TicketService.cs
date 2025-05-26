@@ -130,7 +130,9 @@ namespace HelpDesk.Services.Ticket.Services
                     .ThenInclude(aru => aru.Area)
                     .Include(au => au.Autorizacion)
                     .ThenInclude(a => a.EstadoAutorizacion)
+                    .Include(asi => asi.Asignacion)
                     .Include(ar => ar.Respuesta)
+                    .ThenInclude(ra=>ra.Adjuntos)
                     .FirstOrDefault(t => t.IdTicket == idTicket);
 
                 if (ticket != null)
@@ -270,6 +272,43 @@ namespace HelpDesk.Services.Ticket.Services
             catch (Exception ex)
             {
                 throw new Exception("Error al asignar el ticket", ex);
+            }
+        }
+
+        public async Task<bool> CambiarEstado(int idTicket, int nuevoEstado, string idUsuario)
+        {
+            try
+            {
+                var ticket =  _context.Doc_Ticket.FirstOrDefault(t => t.IdTicket == idTicket);
+                if (ticket != null)
+                {
+                    //cambio de estado al ticket
+                    ticket.IdEstadoTicket = nuevoEstado;
+                    _context.Update(ticket);
+                    await _context.SaveChangesAsync();
+                    //log
+                    if (nuevoEstado == EstadoTicket.Cerrado || nuevoEstado == EstadoTicket.Validado)
+                    {
+                        var log = new Log_TicketActividad
+                        {
+                            Accion = AccionLogTicket.AccionEstado(nuevoEstado),
+                            NumeroTicket = idTicket,
+                            IdUsuario = idUsuario
+                        };
+                        _context.Log_TicketActividad.Add(log);
+                        _context.SaveChanges();
+                        
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al cambiar el estado del ticket", ex);
             }
         }
 

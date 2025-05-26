@@ -1,4 +1,5 @@
 ﻿using HelpDesk.Authorization;
+using HelpDesk.Constants;
 using HelpDesk.Models.Utils;
 using HelpDesk.Models.ViewModels;
 using HelpDesk.Services.Autorizacion.Interfaces;
@@ -19,6 +20,9 @@ namespace HelpDesk.Controllers
         IAutorizacionService autorizacionService,
         ITipoSoporteService tipoSoporte,
         ITicketService ticketService,
+        ITicketAdjuntoService ticketAdjuntoService,
+        ITicketRespuestaService ticketRespuestaService,
+        ITicketRespuestaAdjuntoService ticketRespuestaAdjuntoService,
         IUsuarioService usuarioService
         ) : Controller
     {
@@ -27,6 +31,9 @@ namespace HelpDesk.Controllers
         private readonly IAutorizacionService _autorizacionService = autorizacionService;
         private readonly ITipoSoporteService _tipoSoporteService = tipoSoporte;
         private readonly ITicketService _ticketService = ticketService;
+        private readonly ITicketAdjuntoService _ticketAdjuntoService = ticketAdjuntoService;
+        private readonly ITicketRespuestaService _ticketRespuestaService = ticketRespuestaService;
+        private readonly ITicketRespuestaAdjuntoService _ticketRespuestaAdjuntoService = ticketRespuestaAdjuntoService;
         private readonly IUsuarioService _usuarioService = usuarioService;
         #endregion [ Atributos ]
         public IActionResult Index()
@@ -51,6 +58,17 @@ namespace HelpDesk.Controllers
             {
                 ticket.Usuario = usuario.Datos;
             }
+            //agente
+            var usuarioActual = await _usuarioService.ObtenerUsuarioActual(User);
+
+            if(usuarioActual != null)
+            {
+                ticket.EsAgente = usuarioActual.Id == ticket.Asignacion?.Where(a => a.Activo = true).FirstOrDefault()?.IdUsuario;
+                ticket.EsSolicitante = usuarioActual.Id == ticket.IdUsuario;
+            }
+
+            
+            
             ticket.Editable = false;
 
             var respuesta = new RespuestaGenerica<string>
@@ -204,6 +222,88 @@ namespace HelpDesk.Controllers
                 };
                 return BadRequest(respuesta);
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GuardarRespuesta(TicketRespuestaViewModel ticketRespuesta)
+        {
+            var usuario = await _usuarioService.ObtenerUsuarioActual(User);
+
+            ticketRespuesta.IdUsuario = usuario.Id;
+            if (usuario.RolNombre == Roles.Usuario)
+            {
+                ticketRespuesta.DelSolicitante = true;
+            }
+
+                var exito = await _ticketRespuestaService.Guardar(ticketRespuesta);
+
+            if (exito)
+            {
+                //cambiamos estado si está abierto
+                var ticket = await _ticketService.ObtenerPorId(ticketRespuesta.IdTicket);
+                if (ticket != null && ticket.IdEstadoTicket == EstadoTicket.Abierto)
+                {
+                    await _ticketService.CambiarEstado(ticket.IdTicket,EstadoTicket.Pendiente,usuario.Id);
+                }
+
+                var respuesta = new RespuestaGenerica<int>
+                {
+                    Exito = true,
+                    Mensaje = "Respuesta guardada exitosamente.",
+                    Llamada = "mostrarDetallesTicket",
+                    Datos = ticketRespuesta.IdTicket
+                };
+                TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                if(usuario.RolNombre == Roles.Usuario)
+                {
+                    return RedirectToAction("Respuestas", "TicketsUsuario");
+                }
+                else
+                {
+                    return RedirectToAction("Pendientes", "TicketsSoporte");
+                }
+                
+            }
+            else
+            {
+                var respuesta = new RespuestaGenerica<int>
+                {
+                    Exito = false,
+                    Mensaje = "Error al guardar la respuesta.",
+                    Llamada = "mostrarDetallesTicket",
+                    Datos = ticketRespuesta.IdTicket
+                };
+                TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                return RedirectToAction("Index", "TicketsSoporte");
+            }
+
+        }
+
+        public async Task<IActionResult> Adjunto(string hash)
+        {
+            if (string.IsNullOrWhiteSpace(hash))
+                return NotFound();
+
+            var adjunto  = await _ticketAdjuntoService.ObtenerPorHash(hash);
+
+            if (adjunto == null || adjunto.Archivo == null)
+                return NotFound();
+
+            // Devolver el archivo para descarga
+            return File(adjunto.Archivo, adjunto.TipoMime ?? "application/octet-stream", adjunto.Nombre ?? "archivo");
+        }
+        public async Task<IActionResult> AdjuntoRespuesta(string hash)
+        {
+            if (string.IsNullOrWhiteSpace(hash))
+                return NotFound();
+
+            var adjunto  = await _ticketRespuestaAdjuntoService.ObtenerPorHash(hash);
+
+            if (adjunto == null || adjunto.Archivo == null)
+                return NotFound();
+
+            // Devolver el archivo para descarga
+            return File(adjunto.Archivo, adjunto.TipoMime ?? "application/octet-stream", adjunto.Nombre ?? "archivo");
         }
     }
 }
