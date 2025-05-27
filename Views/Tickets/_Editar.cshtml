@@ -37,7 +37,13 @@
             {
                 <button class="btn btn-primary" onclick="asignarTicket(@Model.IdTicket,'auto')">Asignar Ticket</button>
             }
-           
+
+        }else if(Model.IdEstadoTicket > EstadoTicket.Nuevo && Model.IdEstadoTicket < EstadoTicket.Cerrado)
+        {
+            if(Html.TieneAcceso(Permisos.Ticket.ReAsignar, roles: [Roles.Administrador, Roles.AdministradorSupervisor]))
+            {
+                <button class="btn btn-primary" onclick="mostrarAsignarAgente(@Model.IdTicket)">Reasignar Ticket</button>
+            }
         }
     </div>
 </div>  
@@ -181,7 +187,13 @@
         <h3>Respuestas del ticket</h3>
         @foreach (var respuesta in Model.Respuestas)
         {
-            <div class="form-control">
+            <div class="form-control mt-4">
+                @if (respuesta.DelSolicitante) {
+                    <i>Solicitante -- </i>
+                } else { 
+                    <i>Agente de Soporte -- </i>
+                }
+                    
                 <i>@respuesta.Fecha</i>
                 <p>@respuesta.Mensaje</p>
                 @if(respuesta.Adjuntos.Count > 0)
@@ -211,6 +223,21 @@
                 </div>
                 <div class="form-group mt-4">
                     <input type="submit" value="Enviar respuesta" class="btn btn-primary" />
+                </div>
+            </form>
+        }
+
+        if(Model.EsAgente || Html.TieneAcceso(roles: [Roles.Administrador,Roles.AdministradorSupervisor])){
+            <hr />
+            <form class="col-12" asp-controller="Tickets" asp-action="CambiarEstado" method="post">
+                <div class="form-group">
+                    <input type="hidden" name="IdTicket" value="@Model.IdTicket"/>
+                    <label>Cambiar estatus</label>
+                    <select asp-for="IdEstadoTicket" class="form-control" asp-items="@(new SelectList(Model.EstadosTicket, "IdEstadoTicket", "Nombre"))"></select>
+
+                </div>
+                <div class="form-group mt-4">
+                    <input type="submit" class="btn btn-primary" value="Guardar cambio de estatus"/>
                 </div>
             </form>
         }

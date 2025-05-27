@@ -53,6 +53,10 @@ namespace HelpDesk.Controllers
             ticket.TiposSoporte = await _tipoSoporteService.ObtenerTiposSoporteAsync();
             var tipoSoporte = ticket.TiposSoporte.FirstOrDefault();
             ticket.ModulosClasificaciones = await _moduloClasificacionService.ObtenerModulosClasificacionesPorTipoSoporteAsync(tipoSoporte.IdTipoSoporte);
+            var estados = await _ticketService.ObtenerEstadosTicket();
+            ticket.EstadosTicket = estados.Where(et => et.IdEstadoTicket > EstadoTicket.Nuevo && et.IdEstadoTicket < EstadoTicket.Validado).ToList();
+
+
 
             if (usuario != null)
             {
@@ -61,14 +65,14 @@ namespace HelpDesk.Controllers
             //agente
             var usuarioActual = await _usuarioService.ObtenerUsuarioActual(User);
 
-            if(usuarioActual != null)
+            if (usuarioActual != null)
             {
                 ticket.EsAgente = usuarioActual.Id == ticket.Asignacion?.Where(a => a.Activo = true).FirstOrDefault()?.IdUsuario;
                 ticket.EsSolicitante = usuarioActual.Id == ticket.IdUsuario;
             }
 
-            
-            
+
+
             ticket.Editable = false;
 
             var respuesta = new RespuestaGenerica<string>
@@ -89,7 +93,7 @@ namespace HelpDesk.Controllers
             modelo.TiposSoporte = await _tipoSoporteService.ObtenerTiposSoporteAsync();
             var tipoSoporte = modelo.TiposSoporte.FirstOrDefault();
             modelo.ModulosClasificaciones = await _moduloClasificacionService.ObtenerModulosClasificacionesPorTipoSoporteAsync(tipoSoporte.IdTipoSoporte);
-            
+
 
             var respuesta = new RespuestaGenerica<string>
             {
@@ -104,7 +108,7 @@ namespace HelpDesk.Controllers
         [HttpPost]
         public async Task<IActionResult> Crear(TicketViewModel ticketModel)
         {
-            
+
 
             if (ModelState.IsValid)
             {
@@ -173,7 +177,7 @@ namespace HelpDesk.Controllers
                 };
 
                 return Ok(respuesta);
-               
+
             }
         }
 
@@ -187,26 +191,26 @@ namespace HelpDesk.Controllers
                 Datos = cantidades
             };
 
-            return Ok(respuesta); 
+            return Ok(respuesta);
         }
 
         [HttpGet("/Tickets/Asignar/{idTicket}/{idUsuario}")]
         public async Task<IActionResult> Asignar(int idTicket, string idUsuario)
         {
             var ticket = await _ticketService.ObtenerPorId(idTicket);
-            if(idUsuario == "auto")
+            if (idUsuario == "auto")
             {
                 var usuario = await _usuarioService.ObtenerUsuarioActual(User);
                 idUsuario = usuario.Id;
             }
 
-            var result = _ticketService.Asignar(idTicket, idUsuario);
+            var result = await _ticketService.Asignar(idTicket, idUsuario);
             if (result)
             {
                 var respuesta = new RespuestaGenerica<int>
                 {
                     Exito = true,
-                    Datos =ticket.IdTicket,
+                    Datos = ticket.IdTicket,
                     Mensaje = "Ticket asignado exitosamente.",
                     Llamada = "mostrarDetallesTicket"
                 };
@@ -235,7 +239,7 @@ namespace HelpDesk.Controllers
                 ticketRespuesta.DelSolicitante = true;
             }
 
-                var exito = await _ticketRespuestaService.Guardar(ticketRespuesta);
+            var exito = await _ticketRespuestaService.Guardar(ticketRespuesta);
 
             if (exito)
             {
@@ -243,7 +247,7 @@ namespace HelpDesk.Controllers
                 var ticket = await _ticketService.ObtenerPorId(ticketRespuesta.IdTicket);
                 if (ticket != null && ticket.IdEstadoTicket == EstadoTicket.Abierto)
                 {
-                    await _ticketService.CambiarEstado(ticket.IdTicket,EstadoTicket.Pendiente,usuario.Id);
+                    await _ticketService.CambiarEstado(ticket.IdTicket, EstadoTicket.Pendiente, usuario.Id);
                 }
 
                 var respuesta = new RespuestaGenerica<int>
@@ -254,7 +258,7 @@ namespace HelpDesk.Controllers
                     Datos = ticketRespuesta.IdTicket
                 };
                 TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
-                if(usuario.RolNombre == Roles.Usuario)
+                if (usuario.RolNombre == Roles.Usuario)
                 {
                     return RedirectToAction("Respuestas", "TicketsUsuario");
                 }
@@ -262,7 +266,7 @@ namespace HelpDesk.Controllers
                 {
                     return RedirectToAction("Pendientes", "TicketsSoporte");
                 }
-                
+
             }
             else
             {
@@ -284,7 +288,7 @@ namespace HelpDesk.Controllers
             if (string.IsNullOrWhiteSpace(hash))
                 return NotFound();
 
-            var adjunto  = await _ticketAdjuntoService.ObtenerPorHash(hash);
+            var adjunto = await _ticketAdjuntoService.ObtenerPorHash(hash);
 
             if (adjunto == null || adjunto.Archivo == null)
                 return NotFound();
@@ -297,13 +301,36 @@ namespace HelpDesk.Controllers
             if (string.IsNullOrWhiteSpace(hash))
                 return NotFound();
 
-            var adjunto  = await _ticketRespuestaAdjuntoService.ObtenerPorHash(hash);
+            var adjunto = await _ticketRespuestaAdjuntoService.ObtenerPorHash(hash);
 
             if (adjunto == null || adjunto.Archivo == null)
                 return NotFound();
 
             // Devolver el archivo para descarga
             return File(adjunto.Archivo, adjunto.TipoMime ?? "application/octet-stream", adjunto.Nombre ?? "archivo");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CambiarEstado(int idTicket, int idEstadoTicket)
+        {
+            var usuario = await _usuarioService.ObtenerUsuarioActual(User);
+            var exito = await _ticketService.CambiarEstado(idTicket, idEstadoTicket, usuario.Id);
+            var accion = idEstadoTicket switch {
+                EstadoTicket.Abierto => "Abiertos",
+                EstadoTicket.Pendiente => "Pendientes",
+                EstadoTicket.Cerrado => "Cerrados",
+                _ => "Index"
+            };
+
+            var respuesta = new RespuestaGenerica<string>
+            {
+                Exito = true,
+                Mensaje = "Cambio de estatus realizado con éxito."
+            };
+
+            TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+
+            return RedirectToAction(accion, "TicketsSoporte");
         }
     }
 }

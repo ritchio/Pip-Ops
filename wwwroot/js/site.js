@@ -46,7 +46,7 @@ function mostrarNotificacion(respuesta) {
         const toast = new bootstrap.Toast(document.getElementById('notificacionToast')); 
         toast.show();
 
-        console.log(typeof llamada);
+        //console.log(typeof llamada);
         //llamada a funcion
         if (llamada != null) {
            if (llamada != null) {
@@ -293,6 +293,36 @@ const lenguajeTablaGenerica = {
     },
     "info": "Mostrando de _START_ a _END_ de _TOTAL_ entradas"
 };
+
+
+function solicitarPermisoNotificaciones() {
+    if ("Notification" in window) {
+        Notification.requestPermission().then(function (permiso) {
+            if (permiso === "granted") {
+                console.log("Permiso de notificaciones concedido.");
+            } else {
+                console.log("Permiso de notificaciones denegado.");
+            }
+        });
+    }
+}
+
+function mostrarNotificacionEscritorio(titulo, mensaje) {
+    if (Notification.permission === "granted") {
+        const opciones = {
+            body: mensaje,
+            //icon: "/icono-notificacion.png", // opcional, usa un ícono si tienes uno
+        };
+
+        const noti = new Notification(titulo, opciones);
+
+        // (Opcional) redirigir al hacer clic
+        noti.onclick = () => {
+            window.focus();
+            noti.close();
+        };
+    }
+}
 
 //if (Notification.permission === "default") {
 //    Notification.requestPermission().then(permission => {

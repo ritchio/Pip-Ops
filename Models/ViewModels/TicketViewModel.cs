@@ -50,6 +50,7 @@ namespace HelpDesk.Models.ViewModels
         public bool EsSolicitante { get; set; } = false; //para que en la vista sepamos si el usuario actual es el solicitante
 
         // Relaciones
+        public List<Cat_EstadoTicket> EstadosTicket { get; set; } = [];
         public List<CatTipoSoporteViewModel> TiposSoporte { get; set; } = [];
         public List<CatModuloClasificacionViewModel> ModulosClasificaciones { get; set; } = [];
         public List<TicketAdjuntoViewModel> Adjuntos { get; set; } = [];
