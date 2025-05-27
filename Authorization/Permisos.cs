@@ -25,14 +25,14 @@
             [PermisoDescripcion("Crear tickets")]
             public const string Crear = "Ticket.Crear";
 
-            [PermisoDescripcion("Ver tickets")]
-            public const string Ver = "Ticket.Ver";
-
-            [PermisoDescripcion("Asignar tickets")]
+            [PermisoDescripcion("Asignar tickets a agentes de soporte")]
             public const string Asignar = "Ticket.Asignar";
 
             [PermisoDescripcion("Auto-asignar tickets")]
             public const string AutoAsignar = "Ticket.AutoAsignar";
+
+            [PermisoDescripcion("Quitar asignación de un ticket a un agente y asignarlo a otro")]
+            public const string ReAsignar = "Ticket.ReAsignar";
 
             [PermisoDescripcion("Marcar tickets como resueltos")]
             public const string Resolver = "Ticket.Resolver";

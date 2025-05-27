@@ -2,22 +2,30 @@
 using HelpDesk.Authorization;
 using HelpDesk.Constants;
 using HelpDesk.Data;
+using HelpDesk.Hubs;
 using HelpDesk.Models.Entities;
 using HelpDesk.Models.ViewModels;
+using HelpDesk.Services.Correo.Interfaces;
 using HelpDesk.Services.Ticket.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore; 
 using System.Linq.Expressions;
+using System.Security.Claims;
 
 namespace HelpDesk.Services.Ticket.Services
 {
     public class TicketService(
         ApplicationDbContext _context,
         IMapper mapper,
-        ITicketAdjuntoService ticketAdjuntoService
+        ITicketAdjuntoService ticketAdjuntoService,
+        IHubContext<NotificacionHub> hubContext,
+        ICorreoService correoService
         ) : ITicketService
     {
         private readonly ITicketAdjuntoService _ticketAdjuntoService = ticketAdjuntoService;
+        private readonly ICorreoService _correoService = correoService;
+        private readonly IHubContext<NotificacionHub> _hubContext = hubContext;
         private readonly IMapper _mapper = mapper;
         public async Task<bool> GuardarTicket(TicketViewModel ticketViewModel)
         {
@@ -152,6 +160,25 @@ namespace HelpDesk.Services.Ticket.Services
             }
         }
 
+        public async Task<List<Cat_EstadoTicket>> ObtenerEstadosTicket()
+        {
+            try
+            {
+                var estados = await _context.Cat_EstadoTicket.ToListAsync();
+                if (estados != null)
+                {
+                    return estados;
+                }
+                else
+                {
+                    throw new Exception("No se encontraron estados de ticket.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener los estados de ticket: ", ex);
+            }
+        }
 
         public int ObtenerMaximoTicketPorUsuario(string idUsuario)
         {
@@ -228,18 +255,30 @@ namespace HelpDesk.Services.Ticket.Services
             }
         }
 
-        public bool Asignar(int idTicket, string idUsuario)
+        public async Task<bool> Asignar(int idTicket, string idUsuario)
         {
             try
             {
-                var ticket = _context.Doc_Ticket.FirstOrDefault(t => t.IdTicket == idTicket);
+                var ticket = await _context.Doc_Ticket
+                    .Include(t => t.Asignacion)
+                    .ThenInclude(a => a.Usuario)
+                    .FirstOrDefaultAsync(t => t.IdTicket == idTicket);
                 if (ticket != null)
                 {
                     
                     //cambio de estado al ticket
                     ticket.IdEstadoTicket = EstadoTicket.Abierto;
                     _context.Update(ticket);
-          
+
+                    //quitamos la asignación previa si existe
+                    var asignacionExistente = _context.Doc_TicketAsignacion.Where(a => a.IdTicket == idTicket && a.Activo == true);
+                    if(asignacionExistente.Any())
+                    {
+                        foreach (var asignacion in asignacionExistente)
+                        {
+                            asignacion.Activo = false; // desactivamos la asignación previa
+                        }
+                    }
                     //asignación del ticket
                     var ticketAsignacion = new Doc_TicketAsignacion
                     {
@@ -248,6 +287,18 @@ namespace HelpDesk.Services.Ticket.Services
                         FechaAsignacion = DateTime.Now
                     };
                     _context.Doc_TicketAsignacion.Add(ticketAsignacion);
+
+                    //correo
+                    var asunto = "Centro de soporte";
+                    var cuerpo = $"Estimado/a {ticket.Usuario.NombreCompleto}<br><br>"
+                        + $"El ticket #{idTicket} será atendido por el agente {ticket.Asignacion.FirstOrDefault(a => a.Activo == true).Usuario.NombreCompleto}"
+                        + " para su pronta atención."
+                        + "<br><br>Para seguimiento ingresar al ticket en la página."
+                        + "<br><br>No responder a este correo."
+                        + $"<br>{DateTime.Now}";
+                    var destinatario = ticket.Usuario.Email;
+
+                    var correo = await _correoService.EnviarCorreoAsync(destinatario, asunto, cuerpo);
 
                     //log
                     var log = new Log_TicketActividad
@@ -279,13 +330,60 @@ namespace HelpDesk.Services.Ticket.Services
         {
             try
             {
-                var ticket =  _context.Doc_Ticket.FirstOrDefault(t => t.IdTicket == idTicket);
+                var ticket =  _context.Doc_Ticket
+                    .Include(u => u.Usuario)
+                    .Include(a => a.Asignacion)
+                    .ThenInclude(a => a.Usuario)
+                    .FirstOrDefault(t => t.IdTicket == idTicket);
                 if (ticket != null)
                 {
                     //cambio de estado al ticket
                     ticket.IdEstadoTicket = nuevoEstado;
+                    if(nuevoEstado == EstadoTicket.Cerrado)
+                    {
+                        ticket.FechaCerrado = DateTime.Now;
+                    }
                     _context.Update(ticket);
                     await _context.SaveChangesAsync();
+
+                    //mandamos correo al usuario cada cambio de estado
+                    if(nuevoEstado == EstadoTicket.Validado)
+                    {
+                        var asunto = "Centro de soporte";
+                        var cuerpo = $"Creado por: {ticket.Usuario.PrimerNombre} {ticket.Usuario.ApellidoPaterno}<br><br>"
+                            + $"El ticket #{idTicket} {EstadoTicket.MensajeCorreo(nuevoEstado)}."
+                            + "<br><br>No responder a este correo."
+                            + $"<br>{DateTime.Now}";
+                        var destinatario = ticket.Asignacion.FirstOrDefault(a => a.Activo == true).Usuario.Email;
+
+                        var correo = await _correoService.EnviarCorreoAsync(destinatario, asunto, cuerpo);
+
+                        await _hubContext.Clients.User(ticket.Asignacion.FirstOrDefault(a => a.Activo == true).Usuario.Id).SendAsync(
+                            "RecibirNotificacion",
+                            "Centro de Soporte",
+                            $"El ticket #{idTicket} {EstadoTicket.MensajeCorreo(nuevoEstado)}."
+                        );
+                    }
+                    else
+                    {
+                        var asunto = "Centro de soporte";
+                        var cuerpo = $"Hola {ticket.Usuario.PrimerNombre} {ticket.Usuario.ApellidoPaterno}<br><br>"
+                            + $"El estado del ticket #{idTicket} {EstadoTicket.MensajeCorreo(nuevoEstado)}."
+                            + "<br><br>No responder a este correo."
+                            + $"<br>{DateTime.Now}";
+                        var destinatario = ticket.Usuario.Email;
+
+                        var correo = await _correoService.EnviarCorreoAsync(destinatario, asunto, cuerpo);
+
+                        await _hubContext.Clients.User(ticket.Usuario.Id).SendAsync(
+                            "RecibirNotificacion",
+                            "Centro de Soporte",
+                            $"El estado del ticket #{idTicket} {EstadoTicket.MensajeCorreo(nuevoEstado)}."
+                        );
+
+                    }
+                        
+
                     //log
                     if (nuevoEstado == EstadoTicket.Cerrado || nuevoEstado == EstadoTicket.Validado)
                     {

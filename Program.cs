@@ -1,30 +1,32 @@
 #region  [ Usings ]
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using HelpDesk.Data;
-using HelpDesk.Services.Usuario.Interfaces;
-using HelpDesk.Services.Usuario.Services;
+using HelpDesk.Hubs;
 using HelpDesk.Models.Entities;
-using HelpDesk.Services.Plaza.Services;
-using HelpDesk.Services.Plaza.Interfaces;
 using HelpDesk.Services.Area.Interfaces;
 using HelpDesk.Services.Area.Services;
-using HelpDesk.Services.Correo.Services;
-using HelpDesk.Services.Correo.Interfaces;
-using HelpDesk.Services.Identity.Services;
-using HelpDesk.Services.Opcion.Interfaces;
-using HelpDesk.Services.Opcion.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using HelpDesk.Services.Historial.Interfaces;
-using HelpDesk.Services.Historial.Services;
-using HelpDesk.Services.ModuloClasificacion.Services;
-using HelpDesk.Services.ModuloClasificacion.Interfaces;
 using HelpDesk.Services.Autorizacion.Interfaces;
 using HelpDesk.Services.Autorizacion.Services;
+using HelpDesk.Services.Correo.Interfaces;
+using HelpDesk.Services.Correo.Services;
+using HelpDesk.Services.Historial.Interfaces;
+using HelpDesk.Services.Historial.Services;
+using HelpDesk.Services.Identity.Services;
+using HelpDesk.Services.ModuloClasificacion.Interfaces;
+using HelpDesk.Services.ModuloClasificacion.Services;
+using HelpDesk.Services.Opcion.Interfaces;
+using HelpDesk.Services.Opcion.Services;
+using HelpDesk.Services.Plaza.Interfaces;
+using HelpDesk.Services.Plaza.Services;
 using HelpDesk.Services.Ticket.Interfaces;
 using HelpDesk.Services.Ticket.Services;
 using HelpDesk.Services.TipoSoporte.Interfaces;
 using HelpDesk.Services.TipoSoporte.Services;
+using HelpDesk.Services.Usuario.Interfaces;
+using HelpDesk.Services.Usuario.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 
 #endregion [ Usings ]
 
@@ -36,6 +38,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString)
     .LogTo(Console.WriteLine, LogLevel.Information)
     );
+
+builder.Logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Error);
 
 //builder.Services.AddDefaultIdentity<Cat_Usuario>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -118,6 +122,11 @@ builder.Services.AddScoped<ITipoSoporteService, TipoSoporteService>();
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<Cat_Usuario>, ApplicationUserClaimsPrincipalFactory>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
+builder.Services.AddSignalR();//notificaciones
+//builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
+
+
+
 #endregion [ Servicios ]
 
 builder.Services.AddAutoMapper(typeof(Program)); 
@@ -137,6 +146,7 @@ else
     app.UseHsts();
 }
 
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -144,6 +154,7 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.MapHub<NotificacionHub>("/notificacionesHub");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

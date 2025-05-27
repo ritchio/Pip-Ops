@@ -7,10 +7,11 @@ namespace HelpDesk.Services.Ticket.Interfaces
     {
         Task<bool> GuardarTicket(TicketViewModel ticketViewModel);
         Task<TicketViewModel> ObtenerPorId(int idTicket);
+        Task<List<Cat_EstadoTicket>> ObtenerEstadosTicket();
         int ObtenerMaximoTicketPorUsuario(string idUsuario);
         List<TicketsCantidadesPorEstadoViewModel> ObtenerCantidadesPorEstado(CatUsuarioViewModel usuario);
         Task<bool> Validar(int idTicket, string idUsuario);
-        bool Asignar(int idTicket, string idUsuario);
+        Task<bool> Asignar(int idTicket, string idUsuario);
 
         Task<bool> CambiarEstado(int idTicket, int nuevoEstado, string idUsuario);
     }
