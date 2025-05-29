@@ -5,7 +5,7 @@ namespace HelpDesk.Services.Ticket.Interfaces
 {
     public interface ITicketService
     {
-        Task<bool> GuardarTicket(TicketViewModel ticketViewModel);
+        Task<bool> GuardarTicket(TicketViewModel ticketViewModel, CatUsuarioViewModel usuario);
         Task<TicketViewModel> ObtenerPorId(int idTicket);
         Task<List<Cat_EstadoTicket>> ObtenerEstadosTicket();
         int ObtenerMaximoTicketPorUsuario(string idUsuario);
@@ -14,5 +14,8 @@ namespace HelpDesk.Services.Ticket.Interfaces
         Task<bool> Asignar(int idTicket, string idUsuario);
 
         Task<bool> CambiarEstado(int idTicket, int nuevoEstado, string idUsuario);
+
+        Task<List<ReporteAgenteViewModel>> AtendidosPorAgente(DateTime fechaInicio, DateTime fechaFinal, string? idUsuario);
+        Task<List<ReporteDetalladoViewModel>> ReporteDetallado(DateTime fechaInicio, DateTime fechaFinal);
     }
 }

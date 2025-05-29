@@ -40,7 +40,7 @@
 
         }else if(Model.IdEstadoTicket > EstadoTicket.Nuevo && Model.IdEstadoTicket < EstadoTicket.Cerrado)
         {
-            if(Html.TieneAcceso(Permisos.Ticket.ReAsignar, roles: [Roles.Administrador, Roles.AdministradorSupervisor]))
+            if(Html.TieneAcceso(Permisos.Ticket.ReAsignar) && Html.TieneAcceso(roles: [Roles.Administrador, Roles.AdministradorSupervisor]))
             {
                 <button class="btn btn-primary" onclick="mostrarAsignarAgente(@Model.IdTicket)">Reasignar Ticket</button>
             }
@@ -49,19 +49,37 @@
 </div>  
 <div class="modal-body">  
     <form asp-action="Crear" method="post" class="row" enctype="multipart/form-data">  
+        <input asp-for="IdTicket" type="hidden"/>
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>  
+        @if(Html.TieneAcceso(Permisos.Ticket.ReClasificar) && Html.TieneAcceso(roles: [Roles.Administrador,Roles.Administrador]))
+        {
+            <div class="form-group col-sm-4">  
+                <label asp-for="IdTipoSoporte" class="control-label">Tipo de Soporte</label>  
+                <select asp-for="IdTipoSoporte" class="form-control" asp-items="@(new SelectList(Model.TiposSoporte, "IdTipoSoporte", "Nombre"))" onchange="obtenerModulosClasificaciones(this.value)" ></select>
+                <span asp-validation-for="IdTipoSoporte" class="text-danger"></span>  
+            </div>  
 
-        <div class="form-group col-sm-4">  
-            <label asp-for="IdTipoSoporte" class="control-label">Tipo de Soporte</label>  
-            <select asp-for="IdTipoSoporte" class="form-control" asp-items="@(new SelectList(Model.TiposSoporte, "IdTipoSoporte", "Nombre"))" onchange="obtenerModulosClasificaciones(this.value)" disabled="@(Model.Editable?null:"disabled")"></select>
-            <span asp-validation-for="IdTipoSoporte" class="text-danger"></span>  
-        </div>  
+            <div class="form-group col-sm-5">  
+                <label asp-for="IdModuloClasificacion" class="control-label">Módulo Clasificación</label>
+                <select asp-for="IdModuloClasificacion" class="form-control" asp-items="@(new SelectList(Model.ModulosClasificaciones, "IdModuloClasificacion", "Nombre"))" onchange="obtenerAutorizacion(this.value)"></select>
+                <span asp-validation-for="IdModuloClasificacion" class="text-danger"></span>  
+            </div>
+        }
+        else
+        {
+            <div class="form-group col-sm-4">  
+                <label asp-for="IdTipoSoporte" class="control-label">Tipo de Soporte</label>  
+                <select asp-for="IdTipoSoporte" class="form-control" asp-items="@(new SelectList(Model.TiposSoporte, "IdTipoSoporte", "Nombre"))" onchange="obtenerModulosClasificaciones(this.value)" readonly="@(Model.Editable?null:"true")"></select>
+                <span asp-validation-for="IdTipoSoporte" class="text-danger"></span>  
+            </div>  
 
-        <div class="form-group col-sm-5">  
-            <label asp-for="IdModuloClasificacion" class="control-label">Módulo Clasificación</label>
-            <select asp-for="IdModuloClasificacion" class="form-control" asp-items="@(new SelectList(Model.ModulosClasificaciones, "IdModuloClasificacion", "Nombre"))" onchange="obtenerAutorizacion(this.value)" disabled="@(Model.Editable?null:"disabled")"></select>
-            <span asp-validation-for="IdModuloClasificacion" class="text-danger"></span>  
-        </div>  
+            <div class="form-group col-sm-5">  
+                <label asp-for="IdModuloClasificacion" class="control-label">Módulo Clasificación</label>
+                <select asp-for="IdModuloClasificacion" class="form-control" asp-items="@(new SelectList(Model.ModulosClasificaciones, "IdModuloClasificacion", "Nombre"))" onchange="obtenerAutorizacion(this.value)" readonly="@(Model.Editable?null:"true")"></select>
+                <span asp-validation-for="IdModuloClasificacion" class="text-danger"></span>  
+            </div>
+        }
+          
         <div class="col-sm-3">
             <p>Autorizaciones pendientes</p>
             <div class="form-control">
@@ -92,13 +110,13 @@
 
         <div class="form-group col-sm-6">  
             <label asp-for="CorreoElectronico" class="control-label">Correo Electrónico</label>
-            <input asp-for="CorreoElectronico" class="form-control" disabled="@(Model.Editable?null:"disabled")" />
+            <input asp-for="CorreoElectronico" class="form-control" readonly="@(Model.Editable?null:"true")" />
             <span asp-validation-for="CorreoElectronico" class="text-danger"></span>  
         </div>  
 
         <div class="form-group col-sm-6">  
             <label asp-for="Telefono" class="control-label">Teléfono</label>
-            <input asp-for="Telefono" class="form-control" disabled="@(Model.Editable?null:"disabled")" />
+            <input asp-for="Telefono" class="form-control" readonly="@(Model.Editable?null:"true")" />
             <span asp-validation-for="Telefono" class="text-danger"></span>  
         </div>  
 
@@ -109,7 +127,7 @@
 
         <div class="form-group col-sm-12">  
             <label asp-for="Asunto" class="control-label">Asunto</label>
-            <input asp-for="Asunto" class="form-control" disabled="@(Model.Editable?null:"disabled")" />
+            <input asp-for="Asunto" class="form-control" readonly="@(Model.Editable?null:"true")" />
             <span asp-validation-for="Asunto" class="text-danger"></span>  
         </div>  
 
@@ -123,7 +141,7 @@
 
         <div class="form-group col-sm-12">  
             <label asp-for="Cuerpo" class="control-label">Descripción</label>
-            <textarea asp-for="Cuerpo" class="form-control" disabled="@(Model.Editable?null:"disabled")"></textarea>
+            <textarea asp-for="Cuerpo" class="form-control" readonly="@(Model.Editable?null:"true")"></textarea>
             <span asp-validation-for="Cuerpo" class="text-danger"></span>  
         </div>  
         @if (Model.Editable)
@@ -131,7 +149,7 @@
             <div class="form-group col-sm-12">
                 <label for="ArchivoAdjunto" class="control-label">Subir Archivo</label>
                 <i class="blockquote-footer">Máximo 1 MB</i>
-                <input tupe="file" name="ArchivoAdjunto" id="ArchivoAdjunto" type="file" class="form-control" accept=".jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx,.pdf" disabled="@(Model.Editable?null:"disabled")" />
+                <input tupe="file" name="ArchivoAdjunto" id="ArchivoAdjunto" type="file" class="form-control" accept=".jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx,.pdf" readonly="@(Model.Editable?null:"true")" />
             </div>
         }
         else
@@ -163,8 +181,6 @@
                 }
                 
             }
-            
-
 
         </div>
 
@@ -174,10 +190,11 @@
             <div class="form-group mt-4">
                 <input type="submit" value="Solicitar ticket" class="btn btn-primary" />
             </div>
-        }
-        else
+        }else if((Html.TieneAcceso(Permisos.Ticket.ReClasificar) && Html.TieneAcceso(roles: [Roles.Administrador, Roles.Administrador])))
         {
-            
+            <div class="form-group mt-4">
+                <input type="submit" value="Guardar Re-Clasificacion" class="btn btn-primary" />
+            </div>
         }
 
    </form>  

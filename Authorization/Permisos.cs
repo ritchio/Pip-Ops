@@ -34,6 +34,9 @@
             [PermisoDescripcion("Quitar asignación de un ticket a un agente y asignarlo a otro")]
             public const string ReAsignar = "Ticket.ReAsignar";
 
+            [PermisoDescripcion("Modificación de Tipo de Soporte y Módulo/Clasificación de un ticket capturado por cualquier usuario")]
+            public const string ReClasificar = "Ticket.ReClasificar";
+
             [PermisoDescripcion("Marcar tickets como resueltos")]
             public const string Resolver = "Ticket.Resolver";
         }

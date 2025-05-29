@@ -45,3 +45,9 @@ body {
 label{
     padding:0.6rem 0 0.6rem 0;
 }
+
+.progress {
+   line-height: 1rem !important;
+   --tblr-progress-height: 1rem !important;
+   --tblr-progress-font-size: 0.8rem !important;
+}

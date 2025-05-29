@@ -56,6 +56,7 @@ public class ApplicationDbContext
 
     //Procedimientos
     public DbSet<Sp_TicketsCantidadesPorEstado> Sp_TicketsCantidadesPorEstado { get; set; }
+    public DbSet<ReporteDetalladoViewModel> Sp_ReporteDetallado { get; set; }
 
     #endregion [ Entidades ]
     protected override void OnModelCreating(ModelBuilder builder)
@@ -269,6 +270,10 @@ public class ApplicationDbContext
 
         //procedimientos
         builder.Entity<Sp_TicketsCantidadesPorEstado>()
+            .HasNoKey()
+            .ToView(null);
+
+        builder.Entity<ReporteDetalladoViewModel>()
             .HasNoKey()
             .ToView(null);
         #endregion [ Tickets ]

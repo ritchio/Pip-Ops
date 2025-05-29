@@ -213,7 +213,7 @@ namespace HelpDesk.Services.Usuario.Services
                 usuario.EmailConfirmed = true;
                 usuario.PhoneNumberConfirmed = true;
                 usuario.TwoFactorEnabled = false;
-                usuario.LockoutEnabled = false;
+                usuario.LockoutEnabled = true;
                 usuario.LockoutEnd = null;
                 usuario.ConcurrencyStamp = Guid.NewGuid().ToString();
                 usuario.IdPlaza = model.IdPlaza ?? 0;
@@ -385,7 +385,11 @@ namespace HelpDesk.Services.Usuario.Services
 
                 string correo = (usuario.Activo)?usuario.NormalizedEmail.Replace($"{usuario.Id}#", ""):usuario.Id+"#"+usuario.NormalizedEmail;
 
-               //usuario.Email = correo.ToLower();
+                //usuario.Email = correo.ToLower();
+                usuario.LockoutEnabled = true;
+                
+                usuario.LockoutEnd = (usuario.Activo)?null:DateTime.Now.AddYears(100);//100 creo que son suficientes
+                
                 usuario.NormalizedEmail = correo;
                 usuario.UserName = correo.ToLower();
                 usuario.NormalizedUserName = usuario.NormalizedEmail;

@@ -1,0 +1,51 @@
+﻿<div class="row">
+    <div class="col-8 d-flex justify-content-start">
+        <i class="ti ti-graph title-icon"></i>
+        <div>
+            <h2 class="page-title">Reportes</h2>
+            <div class="page-pretitle">Generación del reporte de tickets por agente y el detallado de tickets</div>
+        </div>
+    </div>
+    <div class="col-4 d-flex justify-content-end" id="botonesHeader">
+        @* <a class="btn btn-primary" asp-action="Detalles" asp-controller="Reportes"><i class="ti ti-file-type-xls" ></i>Generar reporte detallado</a> *@
+    </div>
+</div>
+<div class="col-12">
+    <div class="card">
+        <div class="card-header">
+            <div class="col-4">
+                <h4>Totales de tickets por agente</h4>
+            </div>
+            <div class="col-8 d-flex justify-content-end">
+                <div class="col-auto">
+                        <label>De: </label>
+                </div>
+                <div class="col-auto px-3">
+                    <input type="date" id="fechaInicioReporte" class="form-control" value="@DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd")" />
+                </div>
+                <div class="col-auto">
+                    <label> a: </label>
+                </div>
+                <div class="col-auto px-3">
+                    <input type="date" id="fechaFinalReporte" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-primary" onclick="obtenerRegistros()">Generar</button>
+
+                </div>
+            </div>
+        </div>
+        <div class="card-body" id="registrosAtendidos">
+            
+        </div>
+        <div class="d-none">
+            <table id="tablaReporteDetalles" >
+
+            </table>
+
+        </div>
+        <div class="card-footer"></div>
+    </div>
+</div>
+
+<script src="/js/Reportes/index.js"></script>

@@ -10,7 +10,9 @@ using HelpDesk.Services.Usuario.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Build.Framework;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
+using static HelpDesk.Authorization.Permisos;
 
 namespace HelpDesk.Controllers
 {
@@ -52,9 +54,9 @@ namespace HelpDesk.Controllers
             //catalogos
             ticket.TiposSoporte = await _tipoSoporteService.ObtenerTiposSoporteAsync();
             var tipoSoporte = ticket.TiposSoporte.FirstOrDefault();
-            ticket.ModulosClasificaciones = await _moduloClasificacionService.ObtenerModulosClasificacionesPorTipoSoporteAsync(tipoSoporte.IdTipoSoporte);
+            ticket.ModulosClasificaciones = await _moduloClasificacionService.ObtenerModulosClasificacionesPorTipoSoporteAsync(ticket.IdTipoSoporte);
             var estados = await _ticketService.ObtenerEstadosTicket();
-            ticket.EstadosTicket = estados.Where(et => et.IdEstadoTicket > EstadoTicket.Nuevo && et.IdEstadoTicket < EstadoTicket.Validado).ToList();
+            ticket.EstadosTicket = estados.Where(et => et.IdEstadoTicket > EstadoTicket.Abierto && et.IdEstadoTicket < EstadoTicket.Validado).ToList();
 
 
 
@@ -72,8 +74,7 @@ namespace HelpDesk.Controllers
             }
 
 
-
-            ticket.Editable = false;
+            ticket.Editable = (ticket.IdEstadoTicket == EstadoTicket.Rechazado);
 
             var respuesta = new RespuestaGenerica<string>
             {
@@ -109,22 +110,22 @@ namespace HelpDesk.Controllers
         public async Task<IActionResult> Crear(TicketViewModel ticketModel)
         {
 
+            var usuario = await _usuarioService.ObtenerUsuarioActual(User);
 
             if (ModelState.IsValid)
             {
-                var usuario = await _usuarioService.ObtenerUsuarioActual(User);
-                ticketModel.IdUsuario = usuario.Id;
 
-                var success = await _ticketService.GuardarTicket(ticketModel);
+                var conto = (usuario.RolNombre == Roles.Usuario) ? "TicketsUsuario" : "TicketSoporte";
+                var success = await _ticketService.GuardarTicket(ticketModel,usuario);
                 if (success)
                 {
                     var respuesta = new RespuestaGenerica<string>
                     {
                         Exito = true,
-                        Mensaje = "Ticket creado exitosamente."
+                        Mensaje = "Ticket guardado exitosamente."
                     };
                     TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
-                    return RedirectToAction("Index", "Tickets");
+                    return RedirectToAction("Index", conto);
                 }
                 else
                 {
@@ -135,12 +136,14 @@ namespace HelpDesk.Controllers
                         Mensaje = "Error al crear el ticket."
                     };
                     TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
-                    return RedirectToAction("Index", "Tickets");
+                    return RedirectToAction("Index", conto);
 
                 }
             }
             else
             {
+                var conto = (usuario.RolNombre == Roles.Usuario) ? "TicketsUsuario" : "TicketSoporte";
+
                 var respuesta = new RespuestaGenerica<string>
                 {
                     Exito = false,
@@ -148,7 +151,7 @@ namespace HelpDesk.Controllers
                 };
                 TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
 
-                return RedirectToAction("Index", "Tickets");
+                return RedirectToAction(conto, "Tickets");
             }
         }
 

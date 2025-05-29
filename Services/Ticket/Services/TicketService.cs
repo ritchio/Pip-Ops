@@ -27,23 +27,140 @@ namespace HelpDesk.Services.Ticket.Services
         private readonly ICorreoService _correoService = correoService;
         private readonly IHubContext<NotificacionHub> _hubContext = hubContext;
         private readonly IMapper _mapper = mapper;
-        public async Task<bool> GuardarTicket(TicketViewModel ticketViewModel)
+        public async Task<bool> GuardarTicket(TicketViewModel ticketViewModel,CatUsuarioViewModel usuario)
         {
             try
             {
                 if (ticketViewModel.IdTicket > 0)
                 {
                     var ticket = _context.Doc_Ticket.FirstOrDefault(t => t.IdTicket == ticketViewModel.IdTicket);
+
                     if (ticket != null)
                     {
-                        ticket.Asunto = ticketViewModel.Asunto;
-                        ticket.Cuerpo = ticketViewModel.Cuerpo;
-                        ticket.CorreoElectronico = ticketViewModel.CorreoElectronico;
-                        ticket.Telefono = ticketViewModel.Telefono;
-                        ticket.IdTipoSoporte = ticketViewModel.IdTipoSoporte;
-                        ticket.IdModuloClasificacion = ticketViewModel.IdModuloClasificacion;
-                        //ticket.FechaCreacion = DateTime.Now;
+                        var esSolicitante = (ticket.IdUsuario == usuario.Id);
+                       
+                        if (esSolicitante)
+                        {
+                            var limpiarAutorizaciones = false;
+                            ticket.Asunto = ticketViewModel.Asunto;
+                            ticket.Cuerpo = ticketViewModel.Cuerpo;
+                            ticket.CorreoElectronico = ticketViewModel.CorreoElectronico;
+                            ticket.Telefono = ticketViewModel.Telefono;
+
+                            var autorizaciones = _context.Doc_TicketAutorizacion.Where(au => au.IdTicket == ticket.IdTicket).ToList();
+                            
+                            //revisamo si necesita autorización
+                            var areasAutorizacion = _context.Cat_Autorizacion
+                                .Include(ra => ra.RelacionAreasAutorizan)
+                                .Where(au => au.IdModuloClasificacion == ticketViewModel.IdModuloClasificacion)
+                                .ToList();
+
+                            if (ticket.IdModuloClasificacion != ticketViewModel.IdModuloClasificacion)
+                            {
+                               
+                                ticket.IdEstadoTicket = (areasAutorizacion.Count > 0)? EstadoTicket.PorAutorizar : EstadoTicket.Nuevo;
+                                limpiarAutorizaciones = true;
+                                
+                            }else if (ticket.IdEstadoTicket == EstadoTicket.Rechazado)
+                            {
+                                ticket.IdEstadoTicket = EstadoTicket.PorAutorizar;
+                            }
+
+                            ticket.IdTipoSoporte = ticketViewModel.IdTipoSoporte;
+                            ticket.IdModuloClasificacion = ticketViewModel.IdModuloClasificacion;
+                            //ticket.FechaCreacion = DateTime.Now;
+                            _context.SaveChanges();
+
+                            if (limpiarAutorizaciones)
+                            {
+                                //eliminamos todas las autorizaciones anteriores
+
+                                if (autorizaciones.Any())
+                                {
+                                    _context.Doc_TicketAutorizacion.RemoveRange(autorizaciones);
+                                    _context.SaveChanges();
+                                }
+
+                                //agregamos las nuevas autorizaciones
+                                if (areasAutorizacion.Count > 0)
+                                {
+                                    foreach (var auto in areasAutorizacion)
+                                    {
+                                        var ticketAutorizacion = new Doc_TicketAutorizacion
+                                        {
+                                            IdTicket = ticketViewModel.IdTicket,
+                                            IdArea = auto.IdArea,
+                                            IdEstadoAutorizacion = EstadoAutorizacion.PorAutorizar
+                                        };
+
+                                        _context.Add(ticketAutorizacion);
+                                        _context.SaveChanges();
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //actualizamos las autorizaciones existentes
+                                foreach (var aut in autorizaciones)
+                                {
+                                    aut.IdEstadoAutorizacion = EstadoAutorizacion.PorAutorizar;
+                                    _context.Update(aut);
+                                }
+                                _context.SaveChanges();
+                            }
+
+                        }
+                        else
+                        {
+                            var limpiarAutorizaciones = (ticket.IdModuloClasificacion != ticketViewModel.IdModuloClasificacion);
+                            ticket.IdTipoSoporte = ticketViewModel.IdTipoSoporte;
+                            ticket.IdModuloClasificacion = ticketViewModel.IdModuloClasificacion;
+                            _context.SaveChanges();
+                            if(limpiarAutorizaciones)
+                            {
+                                //eliminamos todas las autorizaciones anteriores
+                                var autorizaciones = _context.Doc_TicketAutorizacion.Where(au => au.IdTicket == ticket.IdTicket).ToList();
+
+                                //revisamo si necesita autorización
+                                var areasAutorizacion = _context.Cat_Autorizacion
+                                    .Include(ra => ra.RelacionAreasAutorizan)
+                                    .Where(au => au.IdModuloClasificacion == ticketViewModel.IdModuloClasificacion)
+                                    .ToList();
+                                if (autorizaciones.Any())
+                                {
+                                    _context.Doc_TicketAutorizacion.RemoveRange(autorizaciones);
+                                    _context.SaveChanges();
+                                }
+
+                                //agregamos las nuevas autorizaciones
+                                if (areasAutorizacion.Count > 0)
+                                {
+                                    foreach (var auto in areasAutorizacion)
+                                    {
+                                        var ticketAutorizacion = new Doc_TicketAutorizacion
+                                        {
+                                            IdTicket = ticketViewModel.IdTicket,
+                                            IdArea = auto.IdArea,
+                                            IdEstadoAutorizacion = EstadoAutorizacion.PorAutorizar
+                                        };
+
+                                        _context.Add(ticketAutorizacion);
+                                        _context.SaveChanges();
+                                    }
+                                }
+                            }
+                        }
+
+                        //guardamos log
+                        var logTicket = new Log_TicketActividad
+                        {
+                            Accion = AccionLogTicket.Editar,
+                            NumeroTicket = ticketViewModel.IdTicket,
+                            IdUsuario = usuario.Id
+                        };
+                        _context.Log_TicketActividad.Add(logTicket);
                         _context.SaveChanges();
+
                     }
                 }
                 else
@@ -124,7 +241,7 @@ namespace HelpDesk.Services.Ticket.Services
             catch (Exception ex)
             {
 
-                throw new Exception(ex.Message);
+                throw new Exception("No se pudo guardar los cambios en el ticket",ex);
             }
         }
 
@@ -409,6 +526,72 @@ namespace HelpDesk.Services.Ticket.Services
                 throw new Exception("Error al cambiar el estado del ticket", ex);
             }
         }
+
+        #region [ Reportes ]
+        public async Task<List<ReporteAgenteViewModel>> AtendidosPorAgente(DateTime fechaInicio, DateTime fechaFinal, string? idUsuario)
+        {
+            try
+            {
+              
+                
+
+                //traer los el total de tickets capturados
+                var totalTickets = await _context.Doc_Ticket
+                    .Where(t => t.FechaCreacion >= fechaInicio && t.FechaCreacion <= fechaFinal)
+                    .CountAsync();
+
+                var reporte = await _context.Cat_Usuario
+                .Include(u => u.RolesUsuario)
+                .ThenInclude(ru => ru.Rol)
+                .Where(r => r.RolesUsuario.FirstOrDefault().Rol.Name != Roles.Usuario)
+                .GroupJoin(
+                    _context.Doc_Ticket
+                        .Where(t => t.FechaCreacion >= fechaInicio && t.FechaCreacion <= fechaFinal),
+                    user => user.Id,
+                    ticket => ticket.IdUsuario,
+                    (user, tickets) => new ReporteAgenteViewModel
+                    {
+                        IdUsuario = user.Id,
+                        NombreAgente = user.PrimerNombre + " " +
+                                       (user.SegundoNombre ?? "") + " " +
+                                       user.ApellidoPaterno + " " +
+                                       user.ApellidoMaterno,
+                        Atendido = tickets.Count(),
+                        Total = totalTickets 
+                    }
+                )
+                .ToListAsync();
+
+
+
+                return reporte;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener el reporte de agentes", ex);
+            }
+        }
+
+        public async Task<List<ReporteDetalladoViewModel>> ReporteDetallado(DateTime fechaInicio, DateTime fechaFinal)
+        {
+            try
+            {
+                var inicioParam = new SqlParameter("@FechaInicio", fechaInicio);
+                var finParam = new SqlParameter("@FechaFin", fechaFinal);
+
+                var resultado = await _context.Sp_ReporteDetallado
+                    .FromSqlRaw("EXEC dbo.Sp_ReporteDetalladoPorPeriodo @FechaInicio, @FechaFin", inicioParam, finParam)
+                    .ToListAsync();
+
+                return resultado;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener el reporte detallado", ex);
+            }
+        }
+        #endregion [ Reportes ]
 
         private void ActualizarTurnosPosteriores(Doc_Ticket ticketActual)
         {
