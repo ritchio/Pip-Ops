@@ -5,17 +5,17 @@ namespace HelpDesk.Hubs
 {
     public class NotificacionHub : Hub
     {
-        public override async Task OnConnectedAsync()
-        {
-            var identityName = Context.User?.Identity?.Name ?? "Anónimo";
-            var userIdentifier = Context.UserIdentifier ?? "Sin identificador";
+        //public override async Task OnConnectedAsync()
+        //{
+        //    var identityName = Context.User?.Identity?.Name ?? "Anónimo";
+        //    var userIdentifier = Context.UserIdentifier ?? "Sin identificador";
 
-            Console.WriteLine($"[HUB] Usuario conectado:");
-            Console.WriteLine($"       Identity.Name     : {identityName}");
-            Console.WriteLine($"       UserIdentifier    : {userIdentifier}");
+        //    Console.WriteLine($"[HUB] Usuario conectado:");
+        //    Console.WriteLine($"       Identity.Name     : {identityName}");
+        //    Console.WriteLine($"       UserIdentifier    : {userIdentifier}");
 
-            await base.OnConnectedAsync();
-        }
+        //    await base.OnConnectedAsync();
+        //}
        
     }
 }

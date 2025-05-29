@@ -17,15 +17,16 @@ namespace HelpDesk.Services.Historial.Services
             {
                 //obtenemos todos los registros de acceso
                 var accesos = await _context.Log_Acceso
-                    .Include(u => u.Usuario)
-                    .Select(a => new LogAccesoViewModel
-                    {
-                        Id = a.Id,
-                        Fecha = a.Fecha,
-                        NombreUsuario = a.Usuario.NombreCompleto,
-                        Accion = a.Accion
-                    })
-                    .ToListAsync();
+                .Include(u => u.Usuario)
+                .OrderByDescending(a => a.Fecha)
+                .Select(a => new LogAccesoViewModel
+                {
+                    Id = a.Id,
+                    Fecha = a.Fecha,
+                    NombreUsuario = a.Usuario.NombreCompleto,
+                    Accion = a.Accion
+                })
+                .ToListAsync();
 
                 return accesos;
             }
@@ -41,6 +42,7 @@ namespace HelpDesk.Services.Historial.Services
                 //obtenemos todos los registros de acceso
                 var actividades = await _context.Log_TicketActividad
                     .Include(u => u.Usuario)
+                    .OrderByDescending(a => a.Fecha)
                     .Select(t=> new LogTicketActividadViewModel
                     {
                         Id = t.Id,
