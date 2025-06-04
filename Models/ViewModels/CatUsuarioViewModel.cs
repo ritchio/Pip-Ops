@@ -33,6 +33,9 @@ namespace HelpDesk.Models.ViewModels
         [Display(Name = "Fecha Inactivado")]
         public DateTime? FechaInactivacion { get; set; }
 
+        public bool LockoutEnabled { get; set; } = true;
+
+        public DateTime? LockoutEnd { get; set; }
         // Relaciones
         //Plazas
         public int? IdPlaza { get; set; }

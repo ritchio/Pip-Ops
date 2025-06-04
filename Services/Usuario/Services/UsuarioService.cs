@@ -217,7 +217,7 @@ namespace HelpDesk.Services.Usuario.Services
                 usuario.LockoutEnd = null;
                 usuario.ConcurrencyStamp = Guid.NewGuid().ToString();
                 usuario.IdPlaza = model.IdPlaza ?? 0;
-
+                usuario.CambiarContrasenia = true;
                 var contrasenia = GenerarContraseniaAleatoria(10);
                 // Generar contraseña aleatoria de 10 caracteres  
                 usuario.PasswordHash = _userManager.PasswordHasher.HashPassword(usuario, contrasenia);
@@ -302,10 +302,10 @@ namespace HelpDesk.Services.Usuario.Services
                     {
                         throw new Exception("El correo ya existe en otro usuario activo.");
                     }
-
+                    var fechaInactivacion = usuarioAModificar.FechaInactivacion;
                     var usuarioMapeado = _mapper.Map(model, usuarioAModificar);
                     usuarioMapeado.UserName = usuarioMapeado.Email.ToUpper();
-
+                    usuarioAModificar.FechaInactivacion = fechaInactivacion;
                     await _context.SaveChangesAsync();
 
                     // quitamo la relación de áreas

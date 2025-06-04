@@ -88,7 +88,9 @@ namespace HelpDesk.Controllers
             // Redirigimos al login
             if (respuesta.Exito)
             {
-                return Redirect("/Login");
+                //return RedirectToAction("Index", "Home");
+                return Redirect("~/Identity/Account/Login");
+
             }
             else
             {

@@ -1,13 +1,13 @@
 ﻿async function muestraCrearAutorizacion() {
     await axiosRequest({
-        url: "/CatalogoAutorizaciones/Crear",
+        url: BASE_PATH + "/CatalogoAutorizaciones/Crear",
         funcionCallback: mostrarModalGenerico
     });
 }
 
 async function muestraEditarAutorizacion(idAutorizacion) {
     await axiosRequest({
-        url: "/CatalogoAutorizaciones/Editar",
+        url: BASE_PATH + "/CatalogoAutorizaciones/Editar",
         funcionCallback: mostrarModalGenerico,
         parametros: { idAutorizacion: idAutorizacion }
     });

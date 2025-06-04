@@ -1,7 +1,7 @@
 ﻿async function obtenerPlazaPorId(idPlaza) {
     try {
         const response = await axiosRequest({
-            url: `/CatalogoPlazas/Editar/${idPlaza}`,
+            url: BASE_PATH + `/CatalogoPlazas/Editar/${idPlaza}`,
             funcionCallback: mostrarModalGenerico
         });
         return response;
@@ -15,7 +15,7 @@
 async function obtenerAreaPorId(idArea) {
     try {
         await axiosRequest({
-            url: `/CatalogoAreas/Editar/${idArea}`,
+            url: BASE_PATH + `/CatalogoAreas/Editar/${idArea}`,
             funcionCallback: mostrarModalGenerico
         });
         
@@ -28,7 +28,7 @@ async function obtenerAreaPorId(idArea) {
 async function desactivarArea(idArea) {
     try {
         await axiosRequest({
-            url: `/CatalogoAreas/CambiarEstado/${idArea}`,
+            url: BASE_PATH + `/CatalogoAreas/CambiarEstado/${idArea}`,
             funcionCallback: function (datos) {
                 $("#areaEstado_" + idArea).text(datos);
                 if (datos == "Activo") { $("#botonEstadoArea_" + idArea).html('<i class="ti ti-square-x"></i>'); } else { $("#botonEstadoArea_" + idArea).html('<i class="ti ti-square-check"></i>'); }
@@ -44,7 +44,7 @@ async function desactivarArea(idArea) {
 async function desactivarPlaza(idPlaza) {
     try {
         await axiosRequest({
-            url: `/CatalogoPlazas/CambiarEstado/${idPlaza}`,
+            url: BASE_PATH + `/CatalogoPlazas/CambiarEstado/${idPlaza}`,
             funcionCallback: function (datos) {
                 $("#plazaEstado_" + idPlaza).text(datos);
                 if (datos == "Activo") { $("#botonEstadoPlaza_" + idPlaza).html('<i class="ti ti-square-x"></i>'); } else { $("#botonEstadoPlaza_" + idPlaza).html('<i class="ti ti-square-check"></i>'); }
@@ -60,7 +60,7 @@ async function desactivarPlaza(idPlaza) {
 async function nuevoRegistro() {
     try {
         await axiosRequest({
-            url: "/CatalogoPlazas/Crear",
+            url: BASE_PATH + "/CatalogoPlazas/Crear",
             funcionCallback: mostrarModalGenerico
         });
     } catch (error) {

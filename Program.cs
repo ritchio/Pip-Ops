@@ -24,6 +24,8 @@ using HelpDesk.Services.TipoSoporte.Services;
 using HelpDesk.Services.Usuario.Interfaces;
 using HelpDesk.Services.Usuario.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -54,8 +56,8 @@ builder.Services.AddIdentity<Cat_Usuario, IdentityRole>(options =>
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Login";
-    options.AccessDeniedPath = "/";
+    options.LoginPath = "/Identity/Account/Login";
+    options.AccessDeniedPath = "/Identity/Account/Login";
     //guardamos el log de inicios para no molestar al ide
     options.Events = new CookieAuthenticationEvents
     {
@@ -126,14 +128,14 @@ builder.Services.AddSignalR();//notificaciones
 //builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
 
 
-
 #endregion [ Servicios ]
 
-builder.Services.AddAutoMapper(typeof(Program)); 
+builder.Services.AddAutoMapper(typeof(Program));
 
+var pathBase = builder.Configuration.GetSection("AppSettings")["PathBase"];
 
 var app = builder.Build();
-
+Console.WriteLine($"[DEBUG] PathBase configurado: {pathBase}");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -150,8 +152,34 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+// Leer PathBase desde config
+
+if (!string.IsNullOrEmpty(pathBase))
+{
+    app.UsePathBase(pathBase);
+    app.Use((context, next) =>
+    {
+        context.Request.PathBase = pathBase;
+        return next();
+    });
+    app.Logger.LogDebug("PathBase configurado: {0}", pathBase);
+}
+
+// Configurar redirección HTTPS desde config
+//if (builder.Configuration.GetValue<bool>("HttpsRedirection:Enabled"))
+//{
+//    var httpsPort = builder.Configuration.GetValue<int?>("HttpsRedirection:HttpsPort") ?? 443;
+//    builder.Services.Configure<HttpsRedirectionOptions>(options =>
+//    {
+//        options.HttpsPort = httpsPort;
+//    });
+
+//    app.UseHttpsRedirection();
+//}
+
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapHub<NotificacionHub>("/notificacionesHub");
@@ -162,7 +190,7 @@ app.MapRazorPages();
 
 app.MapGet("/Login", context =>
 {
-    context.Response.Redirect("/Identity/Account/Login");
+    context.Response.Redirect(pathBase+"/Identity/Account/Login");
     return Task.CompletedTask;
 });
 

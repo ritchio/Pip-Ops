@@ -2,7 +2,7 @@
     let fechaInicio = $("#fechaInicioReporte").val();
     let fechaFinal = $("#fechaFinalReporte").val();
     await axiosRequest({
-        url: '/Reportes/Registros',
+        url: BASE_PATH + '/Reportes/Registros',
         parametros: { fechaInicio: fechaInicio, fechaFinal: fechaFinal },
         funcionCallback: cargarTablaRegistros
     });
@@ -31,7 +31,7 @@ async function obtenerDetallesRegistros() {
     let fechaInicio = $("#fechaInicioReporte").val();
     let fechaFinal = $("#fechaFinalReporte").val();
     await axiosRequest({
-        url: '/Reportes/Detalles',
+        url: BASE_PATH + '/Reportes/Detalles',
         parametros: { fechaInicio: fechaInicio, fechaFinal: fechaFinal },
         funcionCallback: cargarTablaDetalles
     });
