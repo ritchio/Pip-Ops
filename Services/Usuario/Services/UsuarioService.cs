@@ -68,7 +68,8 @@ namespace HelpDesk.Services.Usuario.Services
                        IdAreas = u.AreasUsuario.Select(au => au.IdArea).ToList(),
                        IdPlaza = u.IdPlaza,
                        Activo = u.Activo,
-                       FechaActivacion = u.FechaActivacion
+                       FechaActivacion = u.FechaActivacion,
+                       CambiarContrasenia = u.CambiarContrasenia
                    })
                    .FirstOrDefaultAsync();
 

@@ -10,7 +10,7 @@
 <a href="?theme=light" class="dropdown-item hide-theme-light"><i class="ti ti-sun"></i> &nbsp;Modo claro</a>
               
 <a href="#" class="dropdown-item" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings">Preferencias del tema</a>
-<form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Identity/Account/login", new { area = "" })" method="post">
+<form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="~/Identity/Account/login" method="post">
     <button type="submit" class="dropdown-item">Cerrar sesión</button>
 </form>
 @* <a asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" class="dropdown-item">Cerrar sesión</a> *@
