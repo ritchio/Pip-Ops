@@ -52,30 +52,12 @@ namespace HelpDesk.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var success = await _moduloClasificacionService.CrearModuloClasificacionAsync(model);
-                    if (success)
-                    {
-                        var respuesta = new RespuestaGenerica<string>
-                        {
-                            Exito = true,
-                            Mensaje = "El modulo se ha creado correctamente",
+                    var respuesta = await _moduloClasificacionService.CrearModuloClasificacionAsync(model);
 
-                        };
-                        TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
-                        return RedirectToAction("Index", "CatalogoModulos");
-                    }
-                    else
-                    {
+                    TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
 
-                        var respuesta = new RespuestaGenerica<string>
-                        {
-                            Exito = false,
-                            Mensaje = "Error al crear el modulo, falló al insertar."
-                        };
-                        TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
-
-                        return RedirectToAction("Index", "CatalogoModulos");
-                    }
+                    return RedirectToAction("Index", "CatalogoModulos");
+                   
                 }
                 else
                 {
@@ -129,28 +111,10 @@ namespace HelpDesk.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var success =  _moduloClasificacionService.ModificarModuloClasificacion(model);
+                    var respuesta =  _moduloClasificacionService.ModificarModuloClasificacion(model);
 
-                    if(success != null)
-                    {
-                        var respuesta = new RespuestaGenerica<string>
-                        {
-                            Exito = true,
-                            Mensaje = "El modulo se ha actualizado correctamente"
-                        };
-                        TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
-                        return RedirectToAction("Index", "CatalogoModulos");
-                    }
-                    else
-                    {
-                        var respuesta = new RespuestaGenerica<string>
-                        {
-                            Exito = false,
-                            Mensaje = "Error al actualizar el modulo, falló al insertar."
-                        };
-                        TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
-                        return RedirectToAction("Index", "CatalogoModulos");
-                    }
+                    TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                    return RedirectToAction("Index", "CatalogoModulos");
                 }
                 else
                 {

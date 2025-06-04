@@ -88,8 +88,10 @@ namespace HelpDesk.Controllers
 
         public async Task<IActionResult> Crear()
         {
+            var usuario = await _usuarioService.ObtenerUsuarioActual(User);
             var modelo = new TicketViewModel();
 
+            modelo.CorreoElectronico = usuario.CorreoElectronico;
             modelo.TiposSoporte = await _tipoSoporteService.ObtenerTiposSoporteAsync();
             var tipoSoporte = modelo.TiposSoporte.FirstOrDefault();
             modelo.ModulosClasificaciones = await _moduloClasificacionService.ObtenerModulosClasificacionesPorTipoSoporteAsync(tipoSoporte.IdTipoSoporte);
@@ -120,7 +122,7 @@ namespace HelpDesk.Controllers
                     var respuesta = new RespuestaGenerica<string>
                     {
                         Exito = true,
-                        Mensaje = "Ticket guardado exitosamente."
+                        Mensaje = "Ticket generado exitosamente."
                     };
                     TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
                     return RedirectToAction("Index", conto);

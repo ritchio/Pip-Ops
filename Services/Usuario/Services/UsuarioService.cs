@@ -558,7 +558,7 @@ namespace HelpDesk.Services.Usuario.Services
                     else
                     {
                         respuesta.Exito = true;
-                        respuesta.Mensaje = "Permiso quitado con éxito.";
+                        respuesta.Mensaje = "Permiso eliminado con éxito.";
                     }
                     return respuesta;
                 }

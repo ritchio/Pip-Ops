@@ -122,7 +122,7 @@ namespace HelpDesk.Controllers
                 TempData["Notificacion"] = JsonSerializer.Serialize(new RespuestaGenerica<string>
                 {
                     Exito = true,
-                    Mensaje = "Se ha configurado correctamente el mensaje del día."
+                    Mensaje = "Mensaje del día configurado con éxito"
                 });
                 return RedirectToAction("Index");
             }

@@ -142,7 +142,7 @@ namespace HelpDesk.Controllers
 
             var respuesta = new RespuestaGenerica<string> {
                 Exito = true,
-                Mensaje = "Estatus de la plaza cambiado con éxito.",
+                Mensaje = "Estatus de la plaza ha cambiado con éxito.",
                 Datos = plaza?"Activo":"Inactivo"
             };
 
