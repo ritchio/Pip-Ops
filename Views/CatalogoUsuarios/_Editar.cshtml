@@ -48,14 +48,14 @@
 
                 <div class="form-group col-sm-6">
                     <label for="IdPlaza" class="control-label">Plaza</label>
-                    <select asp-for="IdPlaza" class="form-control" asp-items="@(new SelectList(Model.Plazas, "IdPlaza", "Nombre",Model.IdPlaza))" required>
+                    <select asp-for="IdPlaza" class="form-control" asp-items="@(new SelectList(Model.Plazas, "IdPlaza", "Nombre", Model.IdPlaza))" required onchange="obtenerAreasPorPlaza(this.value)">
                     </select>
                     <span asp-validation-for="IdPlaza" class="text-danger"></span>
                 </div>
 
                 <div class="form-group col-sm-6 ">
                         <label for="IdArea" class="control-label">Área</label>
-                        <select asp-for="IdAreas"  class="form-select tom-select" asp-items="@(new SelectList(Model.Areas, "IdArea", "Nombre",Model.IdAreas))" multiple="multiple" required>
+                    <select asp-for="IdAreas" class="form-select tom-select" asp-items="@(new SelectList(Model.Areas, "IdArea", "Nombre", Model.IdAreas))" multiple="multiple" required>
                         </select>
                         <span asp-validation-for="IdAreas" class="text-danger"></span>
                         

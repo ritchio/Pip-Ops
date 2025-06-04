@@ -73,8 +73,10 @@ namespace HelpDesk.Controllers
             };
 
             usuariomodel.Roles = await _context.Roles.ToListAsync();
-            usuariomodel.Plazas = await _plazaService.ObtenerPlazasAsync();
-            usuariomodel.Areas = await _areaService.ObtenerAreasAsync();
+            var plazas = await _plazaService.ObtenerPlazasAsync();
+            usuariomodel.Plazas = plazas.Where(p => p.Activo == true).ToList();
+            var areas = await _areaService.ObtenerAreasAsync();
+            usuariomodel.Areas = areas.Where(a => a.Activo == true && a.IdPlaza == usuariomodel.Plazas.First().IdPlaza).ToList();
 
             var respuesta = new RespuestaGenerica<string>
             {

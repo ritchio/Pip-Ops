@@ -42,9 +42,73 @@ function rellenarSelect({
     } else {
         $select.append('<option value="0">No hay información disponible</option>');
     }
-    //$select.select2({
-    //    theme: 'bootstrap4',
-    //});
-
+    
     $select.trigger("change");
+}
+
+function rellenarTomSelect({
+    datos,
+    idDestino,
+    seleccionado = null,
+    llave = null,
+    valor = null,
+    opcionCero = false
+}) {
+    // Obtener la instancia de Tom Select
+    let selectElement = document.getElementById(idDestino);
+    let tomSelectInstance = selectElement.tomselect;
+
+    if (!tomSelectInstance) {
+        console.error(`No se encontró instancia de Tom Select para #${idDestino}`);
+        return;
+    }
+
+    // Limpiar opciones existentes
+    tomSelectInstance.clearOptions();
+
+    // Si hay datos, los agregamos
+    if (datos && Object.keys(datos).length > 0) {
+        let opciones = [];
+
+        // Opción cero si aplica
+        if (opcionCero) {
+            opciones.push({ value: "0", text: "Seleccione una opción" });
+        }
+
+        if (llave !== null) {
+            datos.forEach(item => {
+                opciones.push({
+                    value: item[llave],
+                    text: item[valor]
+                });
+            });
+        } else {
+            for (let key in datos) {
+                opciones.push({
+                    value: key,
+                    text: datos[key]
+                });
+            }
+        }
+
+        // Agregar las opciones y refrescar
+        opciones.forEach(opcion => {
+            tomSelectInstance.addOption(opcion);
+        });
+
+        tomSelectInstance.refreshOptions(false);
+
+        // Seleccionar si se indicó
+        if (seleccionado !== null) {
+            tomSelectInstance.setValue(seleccionado.toString());
+        } else {
+            tomSelectInstance.clear(true);
+        }
+
+    } else {
+        
+        tomSelectInstance.clear(true);
+        tomSelectInstance.clearOptions();
+
+    }
 }

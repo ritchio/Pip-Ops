@@ -68,3 +68,12 @@ async function asignarPermiso(permiso,idUsuario,checkbox) {
     });
 
 }
+
+async function obtenerAreasPorPlaza(idPlaza) {
+     await axiosRequest({
+        url: BASE_PATH + "/CatalogoAreas/ObtenerPorPlaza/"+idPlaza,
+         funcionCallback: rellenarTomSelect,
+         parametrosCallback: {idDestino:"IdAreas",llave:"idArea", valor:"nombre"}
+    });
+
+}
