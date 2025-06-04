@@ -106,35 +106,58 @@ public async Task<List<CatModuloClasificacionViewModel>> ObtenerModulosClasifica
         }
 
 
-        public Task<bool> CrearModuloClasificacionAsync(CatModuloClasificacionViewModel moduloClasificacion)
+        public async  Task<RespuestaGenerica<bool>> CrearModuloClasificacionAsync(CatModuloClasificacionViewModel moduloClasificacion)
         {
-            //validamos si todas las areas estan seleccionadas
-            if (moduloClasificacion.TodasAreas)
-            {
-                moduloClasificacion.IdAreas = _context.Cat_Area.Select(a => a.IdArea).ToList();
-            }
-            //convertimos el moduloClasificacion a Cat_ModuloClasificacion
-            var nuevoModuloClasificacion = new Cat_ModuloClasificacion
-            {
-                Nombre = moduloClasificacion.Nombre,
-                Activo = true,//albueys
-                IdTipoSoporte = moduloClasificacion.IdTipoSoporte,
-                RelacionAreas = moduloClasificacion.IdAreas.Select(a => new Rel_ModuloClasificacion_Area
-                {
-                    IdArea = a
-                }).ToList()
-            };
+            var respuesta = new RespuestaGenerica<bool>();
+            //verificamos si ya existe un módulo con el mismo nombre y tipo de soporte
+            var moduloExistente = await _context.Cat_ModuloClasificacion
+                .Where(mc => mc.Nombre.ToUpper() == moduloClasificacion.Nombre.ToUpper() 
+                && mc.IdTipoSoporte == moduloClasificacion.IdTipoSoporte)
+                .FirstOrDefaultAsync();
 
-            try
+            if(moduloExistente == null)
             {
-                _context.Cat_ModuloClasificacion.Add(nuevoModuloClasificacion);
-                _context.SaveChanges();
-                return Task.FromResult(true);
+
+                //validamos si todas las areas estan seleccionadas
+                if (moduloClasificacion.TodasAreas)
+                {
+                    moduloClasificacion.IdAreas = _context.Cat_Area.Select(a => a.IdArea).ToList();
+                }
+
+
+                //convertimos el moduloClasificacion a Cat_ModuloClasificacion
+                var nuevoModuloClasificacion = new Cat_ModuloClasificacion
+                {
+                    Nombre = moduloClasificacion.Nombre,
+                    Activo = true,//albueys
+                    IdTipoSoporte = moduloClasificacion.IdTipoSoporte,
+                    RelacionAreas = moduloClasificacion.IdAreas.Select(a => new Rel_ModuloClasificacion_Area
+                    {
+                        IdArea = a
+                    }).ToList()
+                };
+
+                try
+                {
+                    _context.Cat_ModuloClasificacion.Add(nuevoModuloClasificacion);
+                    _context.SaveChanges();
+                    
+                    respuesta.Exito = true;
+                    respuesta.Mensaje = "El módulo se ha creado con éxito";
+                }
+                catch (Exception ex)
+                {
+                    respuesta.Exito = false;
+                    respuesta.Mensaje = "Error al crear el Modulo Clasificacion: " + ex.Message;
+                }
             }
-            catch (Exception ex)
+            else
             {
-                throw new Exception("Error al crear el Modulo Clasificacion", ex);
+                respuesta.Exito = false;
+                respuesta.Mensaje = "Ya existe un Modulo Clasificacion con el mismo nombre y tipo de soporte";
             }
+
+            return respuesta;
         }
 
         public RespuestaGenerica<CatModuloClasificacionViewModel> CambiarEstado(int idModulo)
@@ -156,7 +179,7 @@ public async Task<List<CatModuloClasificacionViewModel>> ObtenerModulosClasifica
                         NombreTipoSoporte = string.Empty
                     };
                     respuesta.Exito = true;
-                    respuesta.Mensaje = "El estado del modulo se ha cambiado correctamente";
+                    respuesta.Mensaje = "El estatus del módulo cambió con éxito";
                 }
                 else
                 {
@@ -207,43 +230,69 @@ public async Task<List<CatModuloClasificacionViewModel>> ObtenerModulosClasifica
             }
         }
 
-        public CatModuloClasificacionViewModel ModificarModuloClasificacion(CatModuloClasificacionViewModel moduloClasificacion)
+        public async Task<RespuestaGenerica<bool>> ModificarModuloClasificacion(CatModuloClasificacionViewModel moduloClasificacion)
         {
-            try
+            var respuesta = new RespuestaGenerica<bool>();
+            //verificamos si ya existe un módulo con el mismo nombre y tipo de soporte
+            var moduloExistente = await _context.Cat_ModuloClasificacion
+                .Where(mc => mc.Nombre.ToUpper() == moduloClasificacion.Nombre.ToUpper() 
+                && mc.IdTipoSoporte == moduloClasificacion.IdTipoSoporte
+                && mc.IdModuloClasificacion != moduloClasificacion.IdModuloClasificacion)
+                .FirstOrDefaultAsync();
+            if (moduloExistente == null)
             {
-                var modulo = _context.Cat_ModuloClasificacion
-                    .Include(p => p.RelacionAreas)
-                    .ThenInclude(ra => ra.Area)
-                    .FirstOrDefault(p => p.IdModuloClasificacion == moduloClasificacion.IdModuloClasificacion);
-                if (modulo != null)
+                try
                 {
-                    modulo.Nombre = moduloClasificacion.Nombre;
-                    modulo.Activo = modulo.Activo;
-                    modulo.IdTipoSoporte = moduloClasificacion.IdTipoSoporte;
-                    // Actualizar las áreas relacionadas
-                    modulo.RelacionAreas.Clear();
-                    if (moduloClasificacion.TodasAreas)
+                    var modulo = _context.Cat_ModuloClasificacion
+                        .Include(p => p.RelacionAreas)
+                        .ThenInclude(ra => ra.Area)
+                        .FirstOrDefault(p => p.IdModuloClasificacion == moduloClasificacion.IdModuloClasificacion);
+                    if (modulo != null)
                     {
-                        modulo.RelacionAreas = _context.Cat_Area.Select(a => new Rel_ModuloClasificacion_Area
+                        modulo.Nombre = moduloClasificacion.Nombre;
+                        modulo.Activo = modulo.Activo;
+                        modulo.IdTipoSoporte = moduloClasificacion.IdTipoSoporte;
+                        // Actualizar las áreas relacionadas
+                        modulo.RelacionAreas.Clear();
+                        if (moduloClasificacion.TodasAreas)
                         {
-                            IdArea = a.IdArea
-                        }).ToList();
+                            modulo.RelacionAreas = _context.Cat_Area.Select(a => new Rel_ModuloClasificacion_Area
+                            {
+                                IdArea = a.IdArea
+                            }).ToList();
+                        }
+                        else
+                        {
+                            modulo.RelacionAreas = moduloClasificacion.IdAreas.Select(a => new Rel_ModuloClasificacion_Area
+                            {
+                                IdArea = a
+                            }).ToList();
+                        }
+                        _context.SaveChanges();
+                        respuesta.Exito = true;
+                        respuesta.Datos = true;
+                        respuesta.Mensaje = "El módulo se ha modificado con éxito";
                     }
                     else
                     {
-                        modulo.RelacionAreas = moduloClasificacion.IdAreas.Select(a => new Rel_ModuloClasificacion_Area
-                        {
-                            IdArea = a
-                        }).ToList();
+                        respuesta.Exito = false;
+                        respuesta.Mensaje = "El Modulo Clasificacion no existe";
                     }
-                    _context.SaveChanges();
+                    
                 }
-                return moduloClasificacion;
+                catch (Exception ex)
+                {
+                    respuesta.Exito = false;
+                    respuesta.Mensaje = "Error al modificar el Modulo Clasificacion: " + ex.Message;
+                }
             }
-            catch (Exception ex)
+            else
             {
-                throw new Exception("Error al modificar el Modulo Clasificacion", ex);
+                respuesta.Exito = false;
+                respuesta.Mensaje = "Ya existe un Modulo Clasificacion con el mismo nombre y tipo de soporte";
+                
             }
+            return respuesta;
         }
     }
 }
