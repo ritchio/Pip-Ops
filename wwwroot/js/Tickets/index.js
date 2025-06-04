@@ -1,6 +1,6 @@
 ﻿async function muestraCrearTicket() {
     await axiosRequest({
-        url: '/Tickets/Crear',
+        url: BASE_PATH + '/Tickets/Crear',
         funcionCallback: mostrarModalGenerico,
         parametrosCallback: {tamanio:"extra"}
     });
@@ -8,7 +8,7 @@
 
 async function obtenerModulosClasificaciones(idTipoSoporte) {
     await axiosRequest({
-        url: '/CatalogoModulos/Obtener',
+        url: BASE_PATH + '/CatalogoModulos/Obtener',
         parametros: { idTipoSoporte: idTipoSoporte, activo: true },
         keyCache: 'modulosClasificaciones_' + idTipoSoporte,
         funcionCallback: rellenarSelect,
@@ -19,7 +19,7 @@ async function obtenerModulosClasificaciones(idTipoSoporte) {
 
 async function obtenerAutorizacion(idModulo) {
     await axiosRequest({
-        url: "/CatalogoAutorizaciones/ObtenerPorModulo",
+        url: BASE_PATH + "/CatalogoAutorizaciones/ObtenerPorModulo",
         parametros: { idModulo: idModulo },
         funcionCallback: function (datos) { $("#requisitos").text(datos.requisitos); console.log(idModulo + " - datos:"); console.log(datos); },
         errorCallback: function(){ $("#requisitos").text("n/a") },
@@ -30,7 +30,7 @@ async function obtenerAutorizacion(idModulo) {
 async function mostrarDetallesTicket(idTicket) {
 
     await axiosRequest({
-        url: "/Tickets/Detalles/" + idTicket,
+        url: BASE_PATH + "/Tickets/Detalles/" + idTicket,
         funcionCallback: mostrarModalGenerico,
         parametrosCallback: {tamanio:"extra"}
     });
@@ -39,7 +39,7 @@ async function mostrarDetallesTicket(idTicket) {
 async function validarTicket(idTicket) {
     if (confirm("¿En realidad desea validar la solución de este ticket?")) {
         await axiosRequest({
-            url: "/Tickets/Validar/" + idTicket,
+            url: BASE_PATH + "/Tickets/Validar/" + idTicket,
             funcionCallback: function () { setTimeout(location.reload(), 1000); }
         });
     }
@@ -48,7 +48,7 @@ async function validarTicket(idTicket) {
 
 async function obtenerCantidadesPorEstado() {
     await axiosRequest({
-        url: "/Tickets/CantidadesPorEstado",
+        url: BASE_PATH + "/Tickets/CantidadesPorEstado",
         funcionCallback: function (datos) {
 
             Object.keys(datos).forEach((item) => {
@@ -75,7 +75,7 @@ async function asignarTicket(idTicket,idUsuario) {
 
 async function mostrarAsignarAgente(idTicket) {
     await axiosRequest({
-        url: `/TicketsSoporte/AsignarAgente/${idTicket}`,
+        url: BASE_PATH + `/TicketsSoporte/AsignarAgente/${idTicket}`,
         funcionCallback: mostrarModalGenerico,
         keyCache : "asignarAgente"
     });

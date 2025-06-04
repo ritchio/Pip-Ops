@@ -265,14 +265,12 @@
         <div class="collapse navbar-collapse" id="sidebar-menu">
             <!-- BEGIN NAVBAR MENU -->
             <ul class="navbar-nav pt-lg-2">
-                @if (Html.TieneAcceso(Permisos.Ticket.Crear))
-                {
+
                     <li class="nav-item">
                         <a onclick="muestraCrearTicket()" class="btn btn-primary">
                             <i class="ti ti-circle-plus"></i> &nbsp;Crear Ticket
                         </a>
                     </li>
-                }
                 <!-- inicio mis tickets-->
                 @if(Html.TieneAcceso(roles: new[] { Roles.Usuario, Roles.Soporte, Roles.Administrador }))
                 {

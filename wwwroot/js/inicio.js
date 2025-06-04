@@ -16,7 +16,7 @@
     });
 
     if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/js/notificacionWorker.js')
+            navigator.serviceWorker.register(BASE_PATH+'/js/notificacionWorker.js')
                 .then(reg => console.log('Service Worker registrado'))
                 .catch(err => console.error('Fallo el registro del SW', err));
     }
@@ -29,7 +29,7 @@
 
     // Crear conexión
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/notificacionesHub") // Ruta al hub
+        .withUrl(BASE_PATH + "/notificacionesHub") // Ruta al hub
         .withAutomaticReconnect()
         .build();
 

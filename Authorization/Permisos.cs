@@ -22,8 +22,6 @@
 
         public static class Ticket
         {
-            [PermisoDescripcion("Crear tickets")]
-            public const string Crear = "Ticket.Crear";
 
             [PermisoDescripcion("Asignar tickets a agentes de soporte")]
             public const string Asignar = "Ticket.Asignar";
@@ -37,15 +35,9 @@
             [PermisoDescripcion("Modificación de Tipo de Soporte y Módulo/Clasificación de un ticket capturado por cualquier usuario")]
             public const string ReClasificar = "Ticket.ReClasificar";
 
-            [PermisoDescripcion("Marcar tickets como resueltos")]
-            public const string Resolver = "Ticket.Resolver";
         }
 
-        public static class Sistema
-        {
-            [PermisoDescripcion("Acceso total al sistema")]
-            public const string AccesoTotal = "Sistema.Administrar";
-        }
+     
     }
 
 }

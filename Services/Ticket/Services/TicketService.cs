@@ -179,11 +179,11 @@ namespace HelpDesk.Services.Ticket.Services
                         estadoTicket = EstadoTicket.PorAutorizar;
                     }
                     //último número de acuerdo al usuario, no total RN-30
-                    var nuevoNumero = ObtenerMaximoTicketPorUsuario(ticketViewModel.IdUsuario) + 1;
+                    var nuevoNumero = ObtenerMaximoTicketPorUsuario(usuario.Id) + 1;
 
                     var nuevoTicket = new Doc_Ticket
                     {
-                        IdUsuario = ticketViewModel.IdUsuario,
+                        IdUsuario = usuario.Id,
                         Asunto = ticketViewModel.Asunto,
                         Cuerpo = ticketViewModel.Cuerpo,
                         CorreoElectronico = ticketViewModel.CorreoElectronico,
@@ -204,7 +204,7 @@ namespace HelpDesk.Services.Ticket.Services
                     {
                         Accion = "CREÓ TICKET",
                         NumeroTicket = ticketViewModel.IdTicket,
-                        IdUsuario = ticketViewModel.IdUsuario
+                        IdUsuario = usuario.Id
                     };
                     _context.Log_TicketActividad.Add(logTicket);
                     _context.SaveChanges();

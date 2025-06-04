@@ -1,6 +1,6 @@
 ﻿async function muestraCrearModulo() {
     await axiosRequest({
-        url: '/CatalogoModulos/Crear',
+        url: BASE_PATH + '/CatalogoModulos/Crear',
         funcionCallback: mostrarModalGenerico
     });
 }
@@ -15,7 +15,7 @@ function deshabilitaAreas(checkbox) {
 
 async function cambiarEstadoModulo(idModulo) {
     await axiosRequest({
-        url: "/CatalogoModulos/CambiarEstado",
+        url: BASE_PATH + "/CatalogoModulos/CambiarEstado",
         parametros: { idModulo: idModulo },
         funcionCallback: actualizaEstadoModulo
     });
@@ -34,7 +34,7 @@ function actualizaEstadoModulo(datos) {
 
 async function mostrarEditarModulo(idModulo) {
     axiosRequest({
-        url: '/CatalogoModulos/Editar',
+        url: BASE_PATH + '/CatalogoModulos/Editar',
         parametros: { idModulo: idModulo },
         funcionCallback: mostrarModalGenerico
     });
