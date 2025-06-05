@@ -231,7 +231,7 @@ namespace HelpDesk.Services.Ticket.Services
                 //sea cual sea el caso, se guarda el archivo si trae
                 if (ticketViewModel.ArchivoAdjunto != null)
                 {
-
+                    ticketViewModel.IdUsuario = usuario.Id;
                     var result = await _ticketAdjuntoService.GuardarAdjunto(ticketViewModel);
                 }
 
