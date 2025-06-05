@@ -52,7 +52,7 @@ public class HomeController(
             {
                 TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
                 await HttpContext.SignOutAsync();
-                return Redirect("/Login");
+                return Redirect("~/Identity/Account/Login");
             }
             else
             {

@@ -272,7 +272,7 @@
                         </a>
                     </li>
                 <!-- inicio mis tickets-->
-                @if(Html.TieneAcceso(roles: new[] { Roles.Usuario, Roles.Soporte, Roles.Administrador }))
+                @if (Html.TieneAcceso(roles: new[] { Roles.Usuario, Roles.Soporte, Roles.Administrador, Roles.AdministradorSupervisor }))
                 {
                     <li class="nav-item">
                         <a class="nav-link dropdown-toggle" href="#navbar-base"

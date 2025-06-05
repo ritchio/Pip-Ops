@@ -69,7 +69,7 @@ async function asignarTicket(idTicket,idUsuario) {
     let mensaje = (idUsuario == "auto") ? "¿Realmente desea asignarse este ticket?" : "¿Realmente desea asignar el agente a este ticket?"
 
     if (confirm(mensaje)) {
-        window.location.href = `/Tickets/Asignar/${idTicket}/${idUsuario}`;
+        window.location.href = `${BASE_PATH}/Tickets/Asignar/${idTicket}/${idUsuario}`;
     }
 }
 

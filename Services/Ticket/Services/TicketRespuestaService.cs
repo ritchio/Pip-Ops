@@ -31,7 +31,8 @@ namespace HelpDesk.Services.Ticket.Services
                 {
                     IdTicket = respuesta.IdTicket,
                     Mensaje = respuesta.Mensaje,
-                    IdUsuario = respuesta.IdUsuario
+                    IdUsuario = respuesta.IdUsuario,
+                    DelSolicitante = respuesta.DelSolicitante
                 };
 
                 _context.Doc_TicketRespuesta.Add(entidadRespuesta);

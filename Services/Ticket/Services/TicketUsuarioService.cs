@@ -4,6 +4,7 @@ using HelpDesk.Data;
 using HelpDesk.Models.ViewModels;
 using HelpDesk.Services.Ticket.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace HelpDesk.Services.Ticket.Services
@@ -21,15 +22,20 @@ namespace HelpDesk.Services.Ticket.Services
 
             try
             {
-                if (usuario.RolNombre == Roles.Soporte || usuario.RolNombre == Roles.Usuario)
+                if (usuario.RolNombre == Roles.Usuario)
                 {
                     var fechaMinima = DateTime.Now.AddDays(-60);
                     var result = _context.Vis_TicketsNuevos.Where(tn => tn.FechaSolicitud > fechaMinima && tn.IdUsuario == usuario.Id).ToList();
                     return _mapper.Map<List<TicketsNuevosViewModel>>(result);
+                } else if(usuario.RolNombre == Roles.Soporte || usuario.RolNombre == Roles.Usuario)
+                {
+                    var fechaMinima = DateTime.Now.AddDays(-60);
+                    var result = _context.Vis_TicketsNuevos.Where(tn => tn.FechaSolicitud > fechaMinima).ToList();
+                    return _mapper.Map<List<TicketsNuevosViewModel>>(result);
                 }
                 else
                 {
-                    var result = _context.Vis_TicketsNuevos.Where(tr => tr.IdUsuario == usuario.Id).ToList();
+                    var result = _context.Vis_TicketsNuevos.ToList();
                     return _mapper.Map<List<TicketsNuevosViewModel>>(result);
                 }
 
@@ -46,15 +52,20 @@ namespace HelpDesk.Services.Ticket.Services
         {
             try
             {
-                if (usuario.RolNombre == Roles.Soporte || usuario.RolNombre == Roles.Usuario)
+                if (usuario.RolNombre == Roles.Usuario)
                 {
                     var fechaMinima = DateTime.Now.AddDays(-60);
                     var result = _context.Vis_TicketsPorAutorizar.Where(ta => ta.FechaSolicitud > fechaMinima && ta.IdUsuario == usuario.Id).ToList();
                     return _mapper.Map<List<TicketsPorAutorizarViewModel>>(result);
+                } else if (usuario.RolNombre == Roles.Soporte)
+                {
+                    var fechaMinima = DateTime.Now.AddDays(-60);
+                    var result = _context.Vis_TicketsPorAutorizar.Where(ta => ta.FechaSolicitud > fechaMinima).ToList();
+                    return _mapper.Map<List<TicketsPorAutorizarViewModel>>(result);
                 }
                 else
                 {
-                    var result = _context.Vis_TicketsPorAutorizar.Where(tr => tr.IdUsuario == usuario.Id).ToList();
+                    var result = _context.Vis_TicketsPorAutorizar.ToList();
                     return _mapper.Map<List<TicketsPorAutorizarViewModel>>(result);
                 }
             }
@@ -112,8 +123,7 @@ namespace HelpDesk.Services.Ticket.Services
                 {
                     //admin sin restricción de fechas
                     var result = _context.Vis_TicketsAbiertos
-                        .Where(tn => tn.IdUsuario == usuario.Id &&
-                        (tn.IdUsuarioAgente == usuario.Id || tn.IdUsuario == usuario.Id))
+                        .Where(tn => tn.IdUsuarioAgente == usuario.Id || tn.IdUsuario == usuario.Id)
                         .ToList();
 
                     return _mapper.Map<List<TicketsAbiertosViewModel>>(result);
@@ -129,11 +139,13 @@ namespace HelpDesk.Services.Ticket.Services
         {
             try
             {
+                var param = new SqlParameter("@IdUsuario", usuario.Id ?? string.Empty);
                 if (usuario.RolNombre == Roles.Usuario)
                 {
                     var fechaMinima = DateTime.Now.AddDays(-60);
-                    var result = _context.Vis_TicketsPendientes
-                        .Where(tn => tn.FechaSolicitud > fechaMinima && tn.IdUsuario == usuario.Id)
+                    var result = _context.Sp_TicketsPendientesPorUsuario
+                        .FromSqlRaw("EXEC Sp_TicketsPendientesPorUsuario @IdUsuario={0}", param)
+                        //.Where(tn => tn.FechaSolicitud > fechaMinima && tn.IdUsuario == usuario.Id)
                         .ToList();
 
                     return _mapper.Map<List<TicketsPendientesViewModel>>(result);
@@ -141,9 +153,10 @@ namespace HelpDesk.Services.Ticket.Services
                 else if (usuario.RolNombre == Roles.Soporte)
                 {
                     var fechaMinima = DateTime.Now.AddDays(-60);
-                    var result = _context.Vis_TicketsPendientes
-                        .Where(tn => tn.FechaSolicitud > fechaMinima &&
-                                     (tn.IdUsuarioAgente == usuario.Id || tn.IdUsuario == usuario.Id))
+                    var result = _context.Sp_TicketsPendientesPorUsuario
+                        .FromSqlRaw("EXEC Sp_TicketsPendientesPorUsuario @IdUsuario={0}", param)
+                        //.Where(tn => tn.FechaSolicitud > fechaMinima &&
+                                     //(tn.IdUsuarioAgente == usuario.Id || tn.IdUsuario == usuario.Id))
                         .ToList();
                     return _mapper.Map<List<TicketsPendientesViewModel>>(result);
                 }
@@ -151,8 +164,7 @@ namespace HelpDesk.Services.Ticket.Services
                 {
                     // admin sin restricción de fechas
                     var result = _context.Vis_TicketsPendientes
-                        .Where(tn => tn.IdUsuario == usuario.Id &&
-                                     (tn.IdUsuarioAgente == usuario.Id || tn.IdUsuario == usuario.Id))
+                        .Where(tn => tn.IdUsuarioAgente == usuario.Id || tn.IdUsuario == usuario.Id)
                         .ToList();
 
                     return _mapper.Map<List<TicketsPendientesViewModel>>(result);
@@ -190,8 +202,7 @@ namespace HelpDesk.Services.Ticket.Services
                 {
                     // admin sin restricción de fechas
                     var result = _context.Vis_TicketsCerrados
-                        .Where(tn => tn.IdUsuario == usuario.Id &&
-                                     (tn.IdUsuarioAgente == usuario.Id || tn.IdUsuario == usuario.Id))
+                        .Where(tn=> tn.IdUsuarioAgente == usuario.Id || tn.IdUsuario == usuario.Id)
                         .ToList();
 
                     return _mapper.Map<List<TicketsCerradosViewModel>>(result);
@@ -229,8 +240,7 @@ namespace HelpDesk.Services.Ticket.Services
                 {
                     // admin sin restricción de fechas
                     var result = _context.Vis_TicketsValidados
-                        .Where(tn => tn.IdUsuario == usuario.Id &&
-                                     (tn.IdUsuarioAgente == usuario.Id || tn.IdUsuario == usuario.Id))
+                        .Where(tn => tn.IdUsuarioAgente == usuario.Id || tn.IdUsuario == usuario.Id)
                         .ToList();
 
                     return _mapper.Map<List<TicketsValidadosViewModel>>(result);
@@ -245,12 +255,13 @@ namespace HelpDesk.Services.Ticket.Services
         {
             try
             {
-
+                var param = new SqlParameter("@IdUsuario", usuario.Id ?? string.Empty);
                 if (usuario.RolNombre == Roles.Usuario)
                 {
                     var fechaMinima = DateTime.Now.AddDays(-60);
-                    var result = _context.Vis_TicketsRespuesta
-                        .Where(tn => tn.FechaSolicitud > fechaMinima && tn.IdUsuario == usuario.Id)
+                    var result = _context.Sp_TicketsRespuestaPorUsuario
+                        .FromSqlRaw("EXEC Sp_TicketsRespuestaPorUsuario @IdUsuario={0}", param)
+                        //.Where(tn => tn.FechaSolicitud > fechaMinima && tn.IdUsuario == usuario.Id)
                         .ToList();
 
                     return _mapper.Map<List<TicketsRespuestaViewModel>>(result);
@@ -258,9 +269,10 @@ namespace HelpDesk.Services.Ticket.Services
                 else if (usuario.RolNombre == Roles.Soporte)
                 {
                     var fechaMinima = DateTime.Now.AddDays(-60);
-                    var result = _context.Vis_TicketsRespuesta
-                        .Where(tn => tn.FechaSolicitud > fechaMinima &&
-                                     (tn.IdUsuarioAgente == usuario.Id || tn.IdUsuario == usuario.Id))
+                    var result = _context.Sp_TicketsRespuestaPorUsuario
+                        .FromSqlRaw("EXEC Sp_TicketsRespuestaPorUsuario @IdUsuario={0}", param)
+                        //.Where(tn => tn.FechaSolicitud > fechaMinima &&
+                        //             (tn.IdUsuarioAgente == usuario.Id || tn.IdUsuario == usuario.Id))
                         .ToList();
                     return _mapper.Map<List<TicketsRespuestaViewModel>>(result);
                 }
@@ -268,8 +280,7 @@ namespace HelpDesk.Services.Ticket.Services
                 {
                     // admin sin restricción de fechas
                     var result = _context.Vis_TicketsRespuesta
-                        .Where(tn => tn.IdUsuario == usuario.Id &&
-                                     (tn.IdUsuarioAgente == usuario.Id || tn.IdUsuario == usuario.Id))
+                        .Where(tn => tn.IdUsuarioAgente == usuario.Id || tn.IdUsuario == usuario.Id)
                         .ToList();
 
                     return _mapper.Map<List<TicketsRespuestaViewModel>>(result);
