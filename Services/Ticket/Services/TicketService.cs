@@ -347,7 +347,7 @@ namespace HelpDesk.Services.Ticket.Services
         {
             try
             {
-                var esAgente = usuario.RolNombre == Roles.Soporte ? 1 : 0;
+                var esAgente = usuario.RolNombre != Roles.Usuario  ? 1 : 0;
                 var param = new[]
                 {
                     new SqlParameter("@IdUsuario", usuario.Id),
@@ -377,6 +377,7 @@ namespace HelpDesk.Services.Ticket.Services
             try
             {
                 var ticket = await _context.Doc_Ticket
+                    .Include(t => t.Usuario)
                     .Include(t => t.Asignacion)
                     .ThenInclude(a => a.Usuario)
                     .FirstOrDefaultAsync(t => t.IdTicket == idTicket);

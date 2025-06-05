@@ -36,6 +36,8 @@ namespace HelpDesk.Profiles
             CreateMap<Vis_TicketsRechazados, TicketsRechazadosViewModel>();
 
             CreateMap<Sp_TicketsCantidadesPorEstado, TicketsCantidadesPorEstadoViewModel>();
+            CreateMap<Sp_TicketsPendientesPorUsuario, TicketsPendientesViewModel>();
+            CreateMap<Sp_TicketsRespuestaPorUsuario, TicketsRespuestaViewModel>();
 
         }
     }

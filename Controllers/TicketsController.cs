@@ -201,9 +201,10 @@ namespace HelpDesk.Controllers
         public async Task<IActionResult> Asignar(int idTicket, string idUsuario)
         {
             var ticket = await _ticketService.ObtenerPorId(idTicket);
+            var usuario = await _usuarioService.ObtenerUsuarioActual(User);
             if (idUsuario == "auto")
             {
-                var usuario = await _usuarioService.ObtenerUsuarioActual(User);
+                
                 idUsuario = usuario.Id;
             }
 
@@ -218,7 +219,16 @@ namespace HelpDesk.Controllers
                     Llamada = "mostrarDetallesTicket"
                 };
                 TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
-                return RedirectToAction("Abiertos", "TicketsSoporte");
+
+                if(usuario.RolNombre == Roles.Usuario || usuario.RolNombre == Roles.Soporte)
+                {
+                    return RedirectToAction("Abiertos", "TicketsUsuario");
+                }
+                else
+                {
+                    return RedirectToAction("Abiertos", "TicketsSoporte");
+                }
+                
             }
             else
             {
@@ -248,7 +258,7 @@ namespace HelpDesk.Controllers
             {
                 //cambiamos estado si está abierto
                 var ticket = await _ticketService.ObtenerPorId(ticketRespuesta.IdTicket);
-                if (ticket != null && ticket.IdEstadoTicket == EstadoTicket.Abierto)
+                if (ticket != null && (ticket.IdEstadoTicket == EstadoTicket.Abierto || ticket.IdEstadoTicket == EstadoTicket.Cerrado))
                 {
                     await _ticketService.CambiarEstado(ticket.IdTicket, EstadoTicket.Pendiente, usuario.Id);
                 }
@@ -261,7 +271,7 @@ namespace HelpDesk.Controllers
                     Datos = ticketRespuesta.IdTicket
                 };
                 TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
-                if (usuario.RolNombre == Roles.Usuario)
+                if (usuario.RolNombre == Roles.Usuario || usuario.RolNombre == Roles.Soporte)
                 {
                     return RedirectToAction("Respuestas", "TicketsUsuario");
                 }
