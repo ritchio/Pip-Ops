@@ -198,7 +198,7 @@
         }
 
    </form>  
-    @if(Model.IdEstadoTicket > EstadoTicket.Nuevo && Model.IdEstadoTicket < EstadoTicket.Validado)
+    @if(Model.IdEstadoTicket > EstadoTicket.Nuevo )
     {
         <hr />
         <h3>Respuestas del ticket</h3>
@@ -224,7 +224,7 @@
             </div>
         }
 
-        @if (Model.EsAgente || Model.EsSolicitante)
+        @if ((Model.EsAgente || Model.EsSolicitante) && Model.IdEstadoTicket < EstadoTicket.Validado)
         {
             <hr />
             <form class="col-12" enctype="multipart/form-data" asp-controller="Tickets" asp-action="GuardarRespuesta" method="post">
@@ -244,7 +244,7 @@
             </form>
         }
 
-        if(Model.EsAgente || Html.TieneAcceso(roles: [Roles.Administrador,Roles.AdministradorSupervisor])){
+        if((Model.EsAgente || Html.TieneAcceso(roles: [Roles.Administrador,Roles.AdministradorSupervisor]))  && Model.IdEstadoTicket < EstadoTicket.Validado){
             <hr />
             <form class="col-12" asp-controller="Tickets" asp-action="CambiarEstado" method="post">
                 <div class="form-group">
