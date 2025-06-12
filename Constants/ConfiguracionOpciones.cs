@@ -15,5 +15,12 @@ namespace HelpDesk.Constants
             public const string Ruta = "Fondo.Ruta";
             public const string Version = "Fondo.Version";
         }
+
+        public static class DescargaAplicacion
+        {
+            public const string Mensaje = "DescargaAplicacion.Mensaje";
+            public const string Enlace = "DescargaAplicacion.Enlace";
+            public const string Contrasenia = "DescargaAplicacion.Contrasenia";
+        }
     }
 }

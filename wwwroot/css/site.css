@@ -51,3 +51,10 @@ label{
    --tblr-progress-height: 1rem !important;
    --tblr-progress-font-size: 0.8rem !important;
 }
+.bg-translucent {
+    background-color: var(--tblr-bg-surface-translucent);
+}
+
+.bg-translucent-40{
+    background-color:var(--tblr-bg-surface-translucent-40)
+}

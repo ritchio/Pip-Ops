@@ -156,7 +156,7 @@ namespace HelpDesk.Controllers
             var respuesta = new RespuestaGenerica<string>
             {
                 Exito = true,
-                Mensaje = "Estatus del area ha cambiado con éxito.",
+                Mensaje = "Estatus del área ha cambiado con éxito.",
                 Datos = area ? "Activo" : "Inactivo"
             };
 

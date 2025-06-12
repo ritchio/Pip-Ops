@@ -13,10 +13,12 @@ namespace HelpDesk.Controllers
 {
     [Authorize]
     public class OpcionesController(
-        IOpcionService opcionesService
+        IOpcionService opcionesService,
+        IConfiguration _configuracion
         ) : Controller
     {
         private readonly IOpcionService _opcionesService = opcionesService;
+
 
         [VerificaPermiso(roles: ["Administrador"])]
         public async Task<IActionResult> Index()
@@ -25,15 +27,31 @@ namespace HelpDesk.Controllers
             {
                 var mensaje = await _opcionesService.ObtenerOpcionAsync(ConfiguracionOpciones.MensajeDelDia.Mensaje);
                 var posicion = await _opcionesService.ObtenerOpcionAsync(ConfiguracionOpciones.MensajeDelDia.Posicion);
+                var descargaMensaje = await _opcionesService.ObtenerOpcionAsync("DescargaAplicacion.Mensaje");
+                var descargaEnlace = await _opcionesService.ObtenerOpcionAsync("DescargaAplicacion.Enlace");
+                var descargaContrasenia = await _opcionesService.ObtenerOpcionAsync("DescargaAplicacion.Contrasenia");
 
-                var opciones = new OpcionesMensajeDelDiaViewModel
+                var mensajeDelDia = new OpcionesMensajeDelDiaViewModel
                 {
                     MensajeDelDia = mensaje?.Valor,
-                    Posicion = posicion?.Valor
+                    Posicion = posicion?.Valor,
+                };
+
+                var descargaAplicacion = new OpcionesDescargaAplicacionViewModel
+                {
+                    Mensaje = descargaMensaje?.Valor,
+                    Enlace = descargaEnlace?.Valor,
+                    Contrasenia = descargaContrasenia?.Valor
+                };
+
+                var opciones = new OpcionesCapturaViewModel
+                {
+                    MensajeDelDia = mensajeDelDia,
+                    DescargaAplicacion = descargaAplicacion
                 };
                 return View(opciones);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 TempData["Notificacion"] = JsonSerializer.Serialize(new RespuestaGenerica<string>
                 {
@@ -43,7 +61,7 @@ namespace HelpDesk.Controllers
                 return View();
             }
 
-            
+
         }
 
         [HttpPost]
@@ -70,21 +88,22 @@ namespace HelpDesk.Controllers
 
                 //guardamos la ruta en la base 
                 var fondoRuta = await _opcionesService.ObtenerOpcionAsync(ConfiguracionOpciones.Fondo.Ruta);
-                if(fondoRuta != null)
+                if (fondoRuta != null)
                 {
-                    fondoRuta.Valor = "/wwwroot/img/fondo.jpg";
+                    var config = _configuracion.GetSection("AppSettings");
+                    fondoRuta.Valor = config["PathBase"] + "/img/fondo.jpg";
                     await _opcionesService.ActualizarAsync(fondoRuta);
                 }
                 //guardamos la version
                 var fondoVersion = await _opcionesService.ObtenerOpcionAsync(ConfiguracionOpciones.Fondo.Version);
-                if(fondoVersion != null)
+                if (fondoVersion != null)
                 {
                     var version = Int32.Parse(fondoVersion.Valor) + 1;
                     fondoVersion.Valor = version.ToString();
 
                     await _opcionesService.ActualizarAsync(fondoVersion);
                 }
-                
+
                 respuesta.Exito = true;
                 respuesta.Mensaje = "El fondo se ha actualizado con éxito.";
                 TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
@@ -99,9 +118,9 @@ namespace HelpDesk.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> ActualizarMensajeDelDia (OpcionesMensajeDelDiaViewModel opciones)
+        public async Task<IActionResult> ActualizarMensajeDelDia(OpcionesMensajeDelDiaViewModel opciones)
         {
-            if(opciones != null)
+            if (opciones != null)
             {
                 var mensajeDelDia = await _opcionesService.ObtenerOpcionAsync(ConfiguracionOpciones.MensajeDelDia.Mensaje);
                 if (mensajeDelDia == null)
@@ -110,7 +129,7 @@ namespace HelpDesk.Controllers
                 }
                 mensajeDelDia.Valor = opciones.MensajeDelDia;
                 await _opcionesService.ActualizarAsync(mensajeDelDia);
-                
+
                 var posicionMensaje = await _opcionesService.ObtenerOpcionAsync(ConfiguracionOpciones.MensajeDelDia.Posicion);
                 if (posicionMensaje == null)
                 {
@@ -140,6 +159,55 @@ namespace HelpDesk.Controllers
             //    await _opcionesService.ActualizarAsync(config);
             //}
             //return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DescargaAplicacion(string descargaMensaje, string descargaEnlace, string descargaContrasenia)
+        {
+            if (descargaMensaje == null || descargaEnlace == null || descargaContrasenia == null)
+            {
+                TempData["Notificacion"] = JsonSerializer.Serialize(new RespuestaGenerica<string>
+                {
+                    Exito = false,
+                    Mensaje = "Los datos de la aplicación no pueden ser nulos."
+                });
+                return RedirectToAction("Index");
+            }
+            else
+            {
+
+                var mensaje = await _opcionesService.ObtenerOpcionAsync(ConfiguracionOpciones.DescargaAplicacion.Mensaje);
+
+                if(mensaje != null)
+                {
+                    mensaje.Valor = descargaMensaje;
+                    await _opcionesService.ActualizarAsync(mensaje);
+                }
+
+                var enlace = await _opcionesService.ObtenerOpcionAsync(ConfiguracionOpciones.DescargaAplicacion.Enlace);
+
+                if(enlace != null)
+                {
+                    enlace.Valor = descargaEnlace;
+                    await _opcionesService.ActualizarAsync(enlace);
+                }
+
+                var contra = await _opcionesService.ObtenerOpcionAsync(ConfiguracionOpciones.DescargaAplicacion.Contrasenia);
+                
+                if(contra != null)
+                {
+                    contra.Valor = descargaContrasenia;
+                    await _opcionesService.ActualizarAsync(contra);
+                }
+                    
+
+                TempData["Notificacion"] = JsonSerializer.Serialize(new RespuestaGenerica<string>
+                {
+                    Exito = true,
+                    Mensaje = "Datos de descarga actualizados con éxito."
+                });
+                return RedirectToAction("Index");
+            }
         }
     }
 }

@@ -1,11 +1,11 @@
 ﻿@model HelpDesk.Models.ViewModels.OpcionesMensajeDelDiaViewModel
-<div class="card @(Model.EsLogin? "col-3 px-0 m-2 position-absolute "+@Model.Posicion: "h-100")">
+<div class="card @(Model.EsLogin ? "col-3 px-0 m-2 bg-translucent position-absolute " + @Model.Posicion : "h-100")">
     
     <div class="card-header "><h4 class="w-100 text-center">Mensaje del día</h4></div>
     <div class="card-body">
         @Model.MensajeDelDia
     </div>
-    <div class="card-footer">
+    <div class="card-footer @(Model.EsLogin ? "bg-transparent": "")">
         Última actualización @Model.FechaModificacion
     </div>
 </div>

@@ -178,8 +178,9 @@ namespace HelpDesk.Services.Ticket.Services
                     {
                         estadoTicket = EstadoTicket.PorAutorizar;
                     }
-                    //último número de acuerdo al usuario, no total RN-30
+                    //último número de acuerdo al usuario, no total RN-28
                     var nuevoNumero = ObtenerMaximoTicketPorUsuario(usuario.Id) + 1;
+                    var nuevoTurno = ObtenerMaximoTurno() + 1;
 
                     var nuevoTicket = new Doc_Ticket
                     {
@@ -191,8 +192,8 @@ namespace HelpDesk.Services.Ticket.Services
                         IdTipoSoporte = ticketViewModel.IdTipoSoporte,
                         IdModuloClasificacion = ticketViewModel.IdModuloClasificacion,
                         IdEstadoTicket = estadoTicket,
-                        Numero = nuevoNumero,
-                        Turno = nuevoNumero,// temporal RN-30
+                        Numero = nuevoNumero,//
+                        Turno = nuevoTurno,// temporal RN-30
                         FechaCreacion = DateTime.Now
                     };
                     _context.Doc_Ticket.Add(nuevoTicket);
@@ -258,6 +259,9 @@ namespace HelpDesk.Services.Ticket.Services
                     .Include(asi => asi.Asignacion)
                     .Include(ar => ar.Respuesta)
                     .ThenInclude(ra=>ra.Adjuntos)
+                    .Include(u => u.Usuario)
+                    .Include(mc=>mc.ModuloClasificacion)
+                    .ThenInclude(ma => ma.Autorizaciones)
                     .FirstOrDefault(t => t.IdTicket == idTicket);
 
                 if (ticket != null)
@@ -303,6 +307,13 @@ namespace HelpDesk.Services.Ticket.Services
             return _context.Doc_Ticket
                 .Where(t => t.IdUsuario == idUsuario)
                 .Select(t => (int?)t.Numero)
+                .Max() ?? 0;
+        }
+
+        private int ObtenerMaximoTurno()
+        {
+            return _context.Doc_Ticket
+                .Select(t => (int?)t.Turno)
                 .Max() ?? 0;
         }
 
@@ -602,7 +613,7 @@ namespace HelpDesk.Services.Ticket.Services
 
 
             var ticketsPosteriores = _context.Doc_Ticket
-                .Where(t => t.IdUsuario == idUsuario && t.Turno > turnoActual && t.IdEstadoTicket == EstadoTicket.Nuevo)
+                .Where(t => t.Turno > turnoActual && t.IdEstadoTicket == EstadoTicket.Nuevo)
                 .OrderBy(t => t.Turno)
                 .ToList();
 

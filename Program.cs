@@ -124,9 +124,11 @@ builder.Services.AddScoped<ITipoSoporteService, TipoSoporteService>();
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<Cat_Usuario>, ApplicationUserClaimsPrincipalFactory>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
-builder.Services.AddSignalR();//notificaciones
-//builder.Services.AddSingleton<IUserIdProvider, NameUserIdProvider>();
+//notificaciones
+builder.Services.AddSignalR();
 
+//servicio en segundo plano
+builder.Services.AddHostedService<TicketAutoValidarService>();
 
 #endregion [ Servicios ]
 

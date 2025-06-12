@@ -1,14 +1,6 @@
 ﻿<div class="row">
     <div class="col-6">
-        <div class="card h-100">
-            <div class="card-header">Hola, @User.FindFirst("NombreCompleto")?.Value</div>
-            <div class="card-body">
-                Para descargar la versión más actualizada del sistema, solicita la contraseña a través del botón "Crear ticket" y da click en el siguiente enlace.
-                <br />
-                <br />
-                <a href="#">Descargar</a>
-            </div>
-        </div>
+        @await Component.InvokeAsync("DescargaAplicacion")
     </div>
 
     <div class="col-6 h-100">

@@ -5,7 +5,7 @@
 <div class="page page-center">
     <div class="container container-tight py-4">
 
-        <div class="card card-md">
+        <div class="card bg-translucent">
             <div class="card-body">
                 <div class="text-center mb-4">
                     <!-- BEGIN NAVBAR LOGO -->
@@ -16,12 +16,12 @@
                     <form id="account" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                         <div class="form-floating mb-3">
-                            <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="nombre123@surx.mx" />
+                            <input asp-for="Input.Email" class="form-control bg-translucent-40" autocomplete="username" aria-required="true" placeholder="nombre123@surx.mx" />
                             <label asp-for="Input.Email" class="form-label">Correo electrónico</label>
                             <span asp-validation-for="Input.Email" class="text-danger"></span>
                         </div>
                         <div class="form-floating mb-3">
-                            <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                            <input asp-for="Input.Password" class="form-control  bg-translucent-40" autocomplete="current-password" aria-required="true" placeholder="password" />
                             <label asp-for="Input.Password" class="form-label">Contraseña</label>
                             <span asp-validation-for="Input.Password" class="text-danger"></span>
                         </div>
