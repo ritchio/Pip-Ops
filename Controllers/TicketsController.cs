@@ -40,7 +40,7 @@ namespace HelpDesk.Controllers
         #endregion [ Atributos ]
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "TicketsUsuario");
         }
 
         [HttpGet("/Tickets/Detalles/{idTicket}")]
@@ -122,7 +122,7 @@ namespace HelpDesk.Controllers
                     var respuesta = new RespuestaGenerica<string>
                     {
                         Exito = true,
-                        Mensaje = "Ticket generado exitosamente."
+                        Mensaje = "Ticket generado con éxito."
                     };
                     TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
                     return RedirectToAction("Index", conto);
@@ -133,7 +133,7 @@ namespace HelpDesk.Controllers
                     var respuesta = new RespuestaGenerica<string>
                     {
                         Exito = false,
-                        Mensaje = "Error al crear el ticket."
+                        Mensaje = "Error al generar el ticket."
                     };
                     TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
                     return RedirectToAction("Index", conto);
@@ -147,7 +147,7 @@ namespace HelpDesk.Controllers
                 var respuesta = new RespuestaGenerica<string>
                 {
                     Exito = false,
-                    Mensaje = "Error al crear el ticket."
+                    Mensaje = "Error al generar el ticket."
                 };
                 TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
 

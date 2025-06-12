@@ -299,14 +299,16 @@ namespace HelpDesk.Services.Usuario.Services
                     //Verifica si el correo que se está modificando ya existe para otro usuariop activo
                     var emailExiste = await _context.Users
                         .FirstOrDefaultAsync(u => u.Email == model.CorreoElectronico && u.Activo == true && u.Id != model.Id);
-                    if(emailExiste != null)
+                    if (emailExiste != null)
                     {
                         throw new Exception("El correo ya existe en otro usuario activo.");
                     }
                     var fechaInactivacion = usuarioAModificar.FechaInactivacion;
+                    var activo = usuarioAModificar.Activo;
                     var usuarioMapeado = _mapper.Map(model, usuarioAModificar);
                     usuarioMapeado.UserName = usuarioMapeado.Email.ToUpper();
                     usuarioAModificar.FechaInactivacion = fechaInactivacion;
+                    usuarioAModificar.Activo = activo;
                     await _context.SaveChangesAsync();
 
                     // quitamo la relación de áreas

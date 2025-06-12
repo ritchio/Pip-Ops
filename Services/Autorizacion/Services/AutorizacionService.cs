@@ -1,5 +1,6 @@
 ﻿using HelpDesk.Data;
 using HelpDesk.Models.Entities;
+using HelpDesk.Models.Utils;
 using HelpDesk.Models.ViewModels;
 using HelpDesk.Services.Autorizacion.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -144,62 +145,111 @@ namespace HelpDesk.Services.Autorizacion.Services
             }
         }
 
-        public async Task<bool> CrearAutorizacionAsync(CatAutorizacionViewModel autorizacion)
+        public async Task<RespuestaGenerica<bool>> CrearAutorizacionAsync(CatAutorizacionViewModel autorizacion)
         {
             try
             {
-                var catAuto = new Cat_Autorizacion
+                //revisamos si existe una autorización con la misma área y módulo
+                var existeAutorizacion = await _context.Cat_Autorizacion
+                    .AnyAsync(a => a.IdArea == autorizacion.IdArea && a.IdModuloClasificacion == autorizacion.IdModuloClasificacion);
+                if (existeAutorizacion)
                 {
-                    IdModuloClasificacion = autorizacion.IdModuloClasificacion,
-                    IdArea = autorizacion.IdArea,
-                    Requisitos = autorizacion.Requisitos,
-                    RelacionAreasAutorizan = autorizacion.IdAreasAutorizan
+                    return new RespuestaGenerica<bool>
+                    {
+                        Exito = false,
+                        Mensaje = "Ya existe una autorización con el mismo área y módulo de clasificación."
+                    };
+                }
+                else
+                {
+                    var catAuto = new Cat_Autorizacion
+                    {
+                        IdModuloClasificacion = autorizacion.IdModuloClasificacion,
+                        IdArea = autorizacion.IdArea,
+                        Requisitos = autorizacion.Requisitos,
+                        RelacionAreasAutorizan = autorizacion.IdAreasAutorizan
                         .Select(idArea => new Rel_Autorizacion_AreaAutoriza
                         {
                             IdArea = idArea,
                         }).ToList()
-                };
+                    };
 
-                _context.Cat_Autorizacion.Add(catAuto);
-                var exito = await _context.SaveChangesAsync();
-                return exito > 0;
+                    _context.Cat_Autorizacion.Add(catAuto);
+                    var exito = await _context.SaveChangesAsync();
+                    return new RespuestaGenerica<bool>
+                    {
+                        Exito = true,
+                        Mensaje = "Autorización creada exitosamente."
+                    };
+                }
+
             }
             catch (Exception ex)
             {
-                throw new Exception("Error al crear la autorización", ex);
+                return new RespuestaGenerica<bool>
+                {
+                    Exito = false,
+                    Mensaje = $"Error al crear la autorización: {ex.Message}"
+                };
             }
         }
 
-        public async Task<bool> ActualizarAutorizacionAsync(CatAutorizacionViewModel autorizacion)
+        public async Task<RespuestaGenerica<bool>> ActualizarAutorizacionAsync(CatAutorizacionViewModel autorizacion)
         {
             try
             {
-                var catAuto = await _context.Cat_Autorizacion
+                //revisamos si existe una autorización con la misma área y módulo, pero diferente ID
+
+                var existeAutorizacion = await _context.Cat_Autorizacion
+                    .AnyAsync(a => a.IdArea == autorizacion.IdArea && a.IdModuloClasificacion == autorizacion.IdModuloClasificacion && a.IdAutorizacion != autorizacion.IdAutorizacion);
+
+                if (existeAutorizacion)
+                {
+                    return new RespuestaGenerica<bool>
+                    {
+                        Exito = false,
+                        Mensaje = "Ya existe una autorización con el mismo área y módulo de clasificación."
+                    };
+                }
+                else
+                {
+                    var catAuto = await _context.Cat_Autorizacion
                     .Include(a => a.RelacionAreasAutorizan)
                     .FirstOrDefaultAsync(a => a.IdAutorizacion == autorizacion.IdAutorizacion);
-                if (catAuto == null)
-                {
-                    throw new Exception("No se encontró la autorización");
-                }
-                catAuto.IdModuloClasificacion = autorizacion.IdModuloClasificacion;
-                catAuto.IdArea = autorizacion.IdArea;
-                catAuto.Requisitos = autorizacion.Requisitos;
-                // Actualizar las áreas que autorizan
-                catAuto.RelacionAreasAutorizan.Clear();
-                foreach (var idArea in autorizacion.IdAreasAutorizan)
-                {
-                    catAuto.RelacionAreasAutorizan.Add(new Rel_Autorizacion_AreaAutoriza
+                    if (catAuto == null)
                     {
-                        IdArea = idArea,
-                    });
+                        throw new Exception("No se encontró la autorización");
+                    }
+                    catAuto.IdModuloClasificacion = autorizacion.IdModuloClasificacion;
+                    catAuto.IdArea = autorizacion.IdArea;
+                    catAuto.Requisitos = autorizacion.Requisitos;
+                    // Actualizar las áreas que autorizan
+                    catAuto.RelacionAreasAutorizan.Clear();
+                    foreach (var idArea in autorizacion.IdAreasAutorizan)
+                    {
+                        catAuto.RelacionAreasAutorizan.Add(new Rel_Autorizacion_AreaAutoriza
+                        {
+                            IdArea = idArea,
+                        });
+                    }
+                    _context.Cat_Autorizacion.Update(catAuto);
+                    var exito = await _context.SaveChangesAsync();
+                    return new RespuestaGenerica<bool>
+                    {
+                        Exito = true,
+                        Mensaje = "Autorización actualizada exitosamente."
+                    };
                 }
-                _context.Cat_Autorizacion.Update(catAuto);
-                var exito = await _context.SaveChangesAsync();
-                return exito > 0;
+
+                    
             }
             catch (Exception ex)
             {
-                throw new Exception("Error al editar la autorización", ex);
+                return new RespuestaGenerica<bool>
+                {
+                    Exito = false,
+                    Mensaje = $"Error al actualizar la autorización: {ex.Message}"
+                };
             }
         }
         #endregion [ Métodos ]

@@ -6,7 +6,7 @@
                 <thead>
                     <tr>
                         <th>Turno</th>
-                        <th>#</th>
+
                         <th>Solicitante</th>
                         <th>Plaza</th>
                         <th>Área</th>
@@ -23,7 +23,6 @@
                         {
                             <tr>
                                 <td>@(ticket.Turno?.ToString("D4") ?? "")</td>
-                                <td>@(ticket.IdTicket?.ToString("D3") ?? "")</td>
                                 <td>@ticket.Solicitante</td>
                                 <td>@ticket.Plaza</td>
                                 <td>@ticket.Area</td>

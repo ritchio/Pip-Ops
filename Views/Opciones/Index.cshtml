@@ -1,4 +1,4 @@
-﻿@model HelpDesk.Models.ViewModels.OpcionesMensajeDelDiaViewModel
+﻿@model HelpDesk.Models.ViewModels.OpcionesCapturaViewModel
 
 <div class="row mb-4">
     <div class="col-8 d-flex justify-content-start">
@@ -20,20 +20,20 @@
             <div class="row">
                 <div class="col-md-6">
                     <h5>Mensaje</h5>
-                    
-                    <textarea class="form-control" rows="10" asp-for="@Model.MensajeDelDia"></textarea>
+
+                        <textarea class="form-control" rows="10" name="MensajeDelDia">@Model.MensajeDelDia.MensajeDelDia</textarea>
                 </div>
                 <div class="col-md-6">
                     <h5>Posición en pantalla</h5>
                     <div class="position-relative h-100">
-                            <input type="radio" name="posicion" id="mensajePosicion1" class="btn-check" value="top-0 start-0" @(Model.Posicion == "top-0 start-0" ? "checked" : "") />
+                            <input type="radio" name="Posicion" id="mensajePosicion1" class="btn-check" value="top-0 start-0" @(Model.MensajeDelDia.Posicion == "top-0 start-0" ? "checked" : "") />
                     <label for="mensajePosicion1" class="btn btn-outline-primary position-absolute top-0 start-0 p-4"></label>
-                            <input type="radio" name="posicion" id="mensajePosicion2" class="btn-check" value="top-0 end-0" @(Model.Posicion == "top-0 end-0" ? "checked" : "") />
+                            <input type="radio" name="Posicion" id="mensajePosicion2" class="btn-check" value="top-0 end-0" @(Model.MensajeDelDia.Posicion == "top-0 end-0" ? "checked" : "") />
                     <label for="mensajePosicion2" class="btn btn-outline-primary position-absolute top-0 end-0 p-4"></label>
-                            <input type="radio" name="posicion" id="mensajePosicion3" class="btn-check" value="bottom-0 start-0" @(Model.Posicion == "bottom-0 start-0" ? "checked" : "") />
+                            <input type="radio" name="Posicion" id="mensajePosicion3" class="btn-check" value="bottom-0 start-0" @(Model.MensajeDelDia.Posicion == "bottom-0 start-0" ? "checked" : "") />
                         <label for="mensajePosicion3" class="btn btn-outline-primary position-absolute bottom-0 start-0 translate-middle-y p-4"></label>
 
-                            <input type="radio" name="posicion" id="mensajePosicion4" class="btn-check" value="bottom-0 end-0" @(Model.Posicion == "bottom-0 end-0" ? "checked" : "") />
+                            <input type="radio" name="Posicion" id="mensajePosicion4" class="btn-check" value="bottom-0 end-0" @(Model.MensajeDelDia.Posicion == "bottom-0 end-0" ? "checked" : "") />
                         <label for="mensajePosicion4" class="btn btn-outline-primary position-absolute bottom-0 end-0 translate-middle-y p-4" ></label>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
         </div>
         <div class="card-body">
             <div class="col-12 mb-4 text-center">
-                <img src="/HelpDesk/img/fondo.jpg?@DateTime.Now.Ticks" style="height:200px" />
+                <img src="~/img/fondo.jpg?@DateTime.Now.Ticks" style="height:200px" />
             </div>
             <form method="post" asp-action="SubirFondo" enctype="multipart/form-data">
                 <div class="form-group">
@@ -62,6 +62,33 @@
                     </div>
                 </div>
                     <div class="form-group d-flex mt-4 justify-content-end">
+                    <button type="submit" value="Actualizar" class="btn btn-primary">Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="card">
+        <div class="card-header">
+            Descarga de aplicación
+        </div>
+        <div class="card-body">
+            <form method="post" asp-action="DescargaAplicacion" >
+                <div class="form-group">
+                    <label for="descargaMensaje">Mensaje</label>
+                    <textarea name="descargaMensaje" id="descargaMensaje" class="form-control">@Model.DescargaAplicacion.Mensaje</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="descargaEnlace">Enlace</label>
+                    <input type="text" name="descargaEnlace" id="descargaEnlace" class="form-control" value="@Model.DescargaAplicacion.Enlace" />
+                </div>
+                <div class="form-group">
+                    <label for="descargaContrasenia">Contraseña</label>
+                    <input type="text" name="descargaContrasenia" id="descargaContrasenia" class="form-control" value="@Model.DescargaAplicacion.Contrasenia" />
+                </div>
+                <div class="form-group d-flex mt-4 justify-content-end">
                     <button type="submit" value="Actualizar" class="btn btn-primary">Actualizar</button>
                 </div>
             </form>

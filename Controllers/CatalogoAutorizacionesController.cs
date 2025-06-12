@@ -49,30 +49,12 @@ namespace HelpDesk.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var success = await _autorizacionService.CrearAutorizacionAsync(modelo);
-                    if (success)
-                    {
-                        var respuesta = new RespuestaGenerica<string>
-                        {
-                            Exito = true,
-                            Mensaje = "Autorización creada con éxito"
-                        };
+                    var respuesta = await _autorizacionService.CrearAutorizacionAsync(modelo);
 
-                        TempData["Notificacion"] = JsonSerializer.Serialize(respuesta); 
+                    TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
 
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        var respuesta = new RespuestaGenerica<string>
-                        {
-                            Exito = false,
-                            Mensaje = "Los datos no son correctos."
-                        };
-
-                        TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
-                        return RedirectToAction("Index");
-                    }
+                    return RedirectToAction("Index");
+                    
                 }
                 else
                 {
@@ -123,27 +105,11 @@ namespace HelpDesk.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var success = await _autorizacionService.ActualizarAutorizacionAsync(modelo);
-                    if (success)
-                    {
-                        var respuesta = new RespuestaGenerica<string>
-                        {
-                            Exito = true,
-                            Mensaje = "Autorización modificada con éxito"
-                        };
-                        TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
-                        return RedirectToAction("Index");
-                    }
-                    else
-                    {
-                        var respuesta = new RespuestaGenerica<string>
-                        {
-                            Exito = false,
-                            Mensaje = "Los datos no son correctos."
-                        };
-                        TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
-                        return RedirectToAction("Index");
-                    }
+                    var respuesta = await _autorizacionService.ActualizarAutorizacionAsync(modelo);
+
+                    TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                    return RedirectToAction("Index");
+                    
                 }
                 else
                 {

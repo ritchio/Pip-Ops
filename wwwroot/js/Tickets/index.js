@@ -7,24 +7,30 @@
 }
 
 async function obtenerModulosClasificaciones(idTipoSoporte) {
-    await axiosRequest({
-        url: BASE_PATH + '/CatalogoModulos/Obtener',
-        parametros: { idTipoSoporte: idTipoSoporte, activo: true },
-        keyCache: 'modulosClasificaciones_' + idTipoSoporte,
-        funcionCallback: rellenarSelect,
-        parametrosCallback: { idDestino: "IdModuloClasificacion", llave: "idModuloClasificacion", valor: "nombre" }
-    });
+    if (typeof idTipoSoporte !== "undefined") {
+        await axiosRequest({
+            url: BASE_PATH + '/CatalogoModulos/Obtener',
+            parametros: { idTipoSoporte: idTipoSoporte, activo: true },
+            keyCache: 'modulosClasificaciones_' + idTipoSoporte,
+            funcionCallback: rellenarSelect,
+            parametrosCallback: { idDestino: "IdModuloClasificacion", llave: "idModuloClasificacion", valor: "nombre" }
+        });
+    }
+    
 
 }
 
 async function obtenerAutorizacion(idModulo) {
-    await axiosRequest({
-        url: BASE_PATH + "/CatalogoAutorizaciones/ObtenerPorModulo",
-        parametros: { idModulo: idModulo },
-        funcionCallback: function (datos) { $("#requisitos").text(datos.requisitos); console.log(idModulo + " - datos:"); console.log(datos); },
-        errorCallback: function(){ $("#requisitos").text("n/a") },
-        keyCache: "autorizacion_"+idModulo
-    })
+    if (typeof idModulo !== "undefined") {
+        await axiosRequest({
+            url: BASE_PATH + "/CatalogoAutorizaciones/ObtenerPorModulo",
+            parametros: { idModulo: idModulo },
+            funcionCallback: function (datos) { $("#requisitos").text(datos.requisitos); console.log(idModulo + " - datos:"); console.log(datos); },
+            errorCallback: function () { $("#requisitos").text("n/a") },
+            keyCache: "autorizacion_" + idModulo
+        })
+    }
+    
 }
 
 async function mostrarDetallesTicket(idTicket) {

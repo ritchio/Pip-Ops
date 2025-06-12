@@ -1,0 +1,16 @@
+﻿@model HelpDesk.Models.ViewModels.OpcionesDescargaAplicacionViewModel
+<div class="card ">
+    
+    <div class="card-header "><h4 class="w-100 text-center">Hola, @User.FindFirst("NombreCompleto")?.Value</h4></div>
+
+    <div class="card-body">
+        <p>@Model.Mensaje</p>
+        <p>
+            <a href="@Model.Enlace" target="_blank">@Model.Enlace</a>
+        </p>
+        <p><b>Contraseña: </b>@Model.Contrasenia</p>
+    </div>
+    <div class="card-footer">
+        Última actualización @Model.FechaModificacion
+    </div>
+</div>
