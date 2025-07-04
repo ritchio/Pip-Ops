@@ -22,7 +22,9 @@ namespace HelpDesk.Services.Area.Services
         {
             try
             {
-                var Areas = await _context.Cat_Area.ToListAsync();
+                var Areas = await _context.Cat_Area
+                    .Include(a => a.Plaza)
+                    .ToListAsync();
                 return Areas.Select(p => new CatAreaViewModel
                 {
                     IdArea = p.IdArea,

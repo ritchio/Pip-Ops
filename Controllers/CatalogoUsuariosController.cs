@@ -187,7 +187,16 @@ namespace HelpDesk.Controllers
         {
             if (id != CatUsuarioViewModel.Id)
             {
-                return NotFound();
+                var respuesta = new RespuestaGenerica<string>
+                {
+                    Exito = false,
+                    Mensaje = "El ID del usuario no coincide con el proporcionado.",
+                    Llamada = "editarUsuario",
+                    Datos = CatUsuarioViewModel.Id
+                };
+
+                TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                return RedirectToAction("Index");
             }
 
             if (ModelState.IsValid)
@@ -196,19 +205,7 @@ namespace HelpDesk.Controllers
                 {
                     var response = await _usuarioService.Modificar(CatUsuarioViewModel);
 
-                    if (response != null)
-                    {
-                        TempData["Notificacion"] = JsonSerializer.Serialize(new RespuestaGenerica<string>
-                        {
-                            Exito = true,
-                            Mensaje = "Usuario actualizado con éxito.",
-                        });
-                    }
-                    TempData["Notificacion"] = JsonSerializer.Serialize(new RespuestaGenerica<string>
-                    {
-                        Exito = true,
-                        Mensaje = "Usuario actualizado con éxito.",
-                    });
+                    TempData["Notificacion"] = JsonSerializer.Serialize(response);
                     return RedirectToAction("Index");
                 }
                 catch (DbUpdateConcurrencyException)

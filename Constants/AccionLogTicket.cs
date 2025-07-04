@@ -8,6 +8,7 @@
         public const string Tomo = "TOMÓ TICKET";
         public const string Cerrar = "CERRÓ TICKET";
         public const string Validar = "VALIDÓ TICKET";
+        public const string Responder = "RESPONDIÓ TICKET";
     
         public static string AccionEstado(int estadoTicket)
         {

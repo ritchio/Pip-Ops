@@ -224,8 +224,9 @@ namespace HelpDesk.Services.Ticket.Services
                             };
 
                             _context.Add(ticketAutorizacion);
-                            _context.SaveChanges();
+                            
                         }
+                        _context.SaveChanges();
                     }
                 }
 
@@ -250,7 +251,7 @@ namespace HelpDesk.Services.Ticket.Services
         {
             try
             {
-                var ticket = _context.Doc_Ticket
+                var ticket = await _context.Doc_Ticket
                     .Include(ad => ad.Adjuntos)
                     .Include(au => au.Autorizacion)
                     .ThenInclude(aru => aru.Area)
@@ -262,7 +263,9 @@ namespace HelpDesk.Services.Ticket.Services
                     .Include(u => u.Usuario)
                     .Include(mc=>mc.ModuloClasificacion)
                     .ThenInclude(ma => ma.Autorizaciones)
-                    .FirstOrDefault(t => t.IdTicket == idTicket);
+                    .ThenInclude(rau => rau.RelacionAreasAutorizan)
+                    .ThenInclude(aa => aa.Area)
+                    .FirstOrDefaultAsync(t => t.IdTicket == idTicket);
 
                 if (ticket != null)
                 {
@@ -383,7 +386,7 @@ namespace HelpDesk.Services.Ticket.Services
             }
         }
 
-        public async Task<bool> Asignar(int idTicket, string idUsuario)
+        public async Task<bool> Asignar(int idTicket, string idUsuario, string idUsuarioActual)
         {
             try
             {
@@ -394,7 +397,7 @@ namespace HelpDesk.Services.Ticket.Services
                     .FirstOrDefaultAsync(t => t.IdTicket == idTicket);
                 if (ticket != null)
                 {
-                    
+
                     //cambio de estado al ticket
                     ticket.IdEstadoTicket = EstadoTicket.Abierto;
                     _context.Update(ticket);
@@ -432,16 +435,17 @@ namespace HelpDesk.Services.Ticket.Services
                     //log
                     var log = new Log_TicketActividad
                     {
-                        Accion = AccionLogTicket.Asignar,
+                        Accion = (idUsuario == idUsuarioActual)? AccionLogTicket.Tomo : AccionLogTicket.Asignar,
                         NumeroTicket = idTicket,
                         IdUsuario = idUsuario
                     };
                     _context.Log_TicketActividad.Add(log);
 
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
 
                     //actualizamos los turnos
-                    ActualizarTurnosPosteriores(ticket);
+                    await ActualizarTurnosPosteriores(idTicket, ticket.Turno??1);
+
                     return true;
                 }
                 else
@@ -605,28 +609,28 @@ namespace HelpDesk.Services.Ticket.Services
         }
         #endregion [ Reportes ]
 
-        private void ActualizarTurnosPosteriores(Doc_Ticket ticketActual)
+        private async Task<bool> ActualizarTurnosPosteriores(int idTicket, int turnoActual)
         {
 
-            var idUsuario = ticketActual.IdUsuario;
-            var turnoActual = ticketActual.Turno;
 
 
-            var ticketsPosteriores = _context.Doc_Ticket
-                .Where(t => t.Turno > turnoActual && t.IdEstadoTicket == EstadoTicket.Nuevo)
+            var ticketsPosteriores = await _context.Doc_Ticket
+                .Where(t => t.Turno >= turnoActual && t.IdEstadoTicket == EstadoTicket.Nuevo && t.IdTicket != idTicket)
                 .OrderBy(t => t.Turno)
-                .ToList();
+                .ToListAsync();
 
             // 3. Recorrer y reasignar Turno
-            int nuevoTurno = turnoActual.Value;
+            
             foreach (var ticket in ticketsPosteriores)
             {
-                ticket.Turno = nuevoTurno;
-                nuevoTurno++;
+                ticket.Turno = turnoActual;
+                turnoActual += 1;
             }
 
             // 4. Guardar cambios
-            _context.SaveChanges();
+            var exito = await _context.SaveChangesAsync();
+
+            return true;
         }
     }
 }

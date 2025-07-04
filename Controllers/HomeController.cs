@@ -1,11 +1,15 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 using HelpDesk.Models.ViewModels;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
 using HelpDesk.Services.Usuario.Interfaces;
-using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using OtpNet;
+using System.Diagnostics;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace HelpDesk.Controllers;
 [Authorize]
@@ -23,14 +27,23 @@ public class HomeController(
 
         //checamos si el usuario tiene que cambiar la contraseña
         var usuario = await _usuarioService.ObtenerUsuarioActual(User);
-        if (usuario.CambiarContrasenia)
+        if(usuario != null)
         {
-            return RedirectToAction("CambiarContrasenia");
+            if (usuario.CambiarContrasenia)
+            {
+                return RedirectToAction("CambiarContrasenia");
+            }
+            else
+            {
+                return View();
+            }
         }
         else
         {
-            return View();
+            await HttpContext.SignOutAsync();
+            return Redirect("~/Identity/Account/Login");
         }
+        
     }
 
    
@@ -67,6 +80,8 @@ public class HomeController(
             return View(model);
         }
     }
+
+    
     public IActionResult Privacy()
     {
         return View();

@@ -161,8 +161,8 @@ namespace HelpDesk.Services.Ticket.Services
                 else
                 {
                     // admin sin restricción de fechas
-                    var result = _context.Vis_TicketsPendientes
-                        .Where(tn => tn.IdUsuarioAgente == usuario.Id || tn.IdUsuario == usuario.Id)
+                    var result = _context.Sp_TicketsPendientesPorUsuario
+                        .FromSqlRaw("EXEC Sp_TicketsPendientesPorUsuario @IdUsuario={0}", param)
                         .ToList();
 
                     return _mapper.Map<List<TicketsPendientesViewModel>>(result);
@@ -238,6 +238,7 @@ namespace HelpDesk.Services.Ticket.Services
                 {
                     // admin sin restricción de fechas
                     var result = _context.Vis_TicketsValidados
+                        .Where(tn => (tn.IdUsuarioAgente == usuario.Id || tn.IdUsuario == usuario.Id))
                         .ToList();
 
                     return _mapper.Map<List<TicketsValidadosViewModel>>(result);
@@ -276,9 +277,10 @@ namespace HelpDesk.Services.Ticket.Services
                 else
                 {
                     // admin sin restricción de fechas
-                    var result = _context.Vis_TicketsRespuesta
-                        .Where(tn => tn.IdUsuarioAgente == usuario.Id || tn.IdUsuario == usuario.Id)
-                        .ToList();
+                    var result = _context.Sp_TicketsRespuestaPorUsuario
+                       .FromSqlRaw("EXEC Sp_TicketsRespuestaPorUsuario @IdUsuario={0}", param)
+
+                       .ToList();
 
                     return _mapper.Map<List<TicketsRespuestaViewModel>>(result);
                 }

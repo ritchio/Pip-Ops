@@ -1,4 +1,6 @@
-﻿namespace HelpDesk.Models.ViewModels
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace HelpDesk.Models.ViewModels
 {
     public class TicketsPorAutorizarViewModel
     {
@@ -14,8 +16,11 @@
         public string? Asunto { get; set; } = string.Empty;
         public string? Cuerpo { get; set; } = string.Empty;
 
-        public int? AutorizacionesPendientes { get; set; }
+        public int? AutorizacionesCompletadas { get; set; }
         public int? AutorizacionesTotales { get; set; }
+        [NotMapped]
+        public int AutorizacionesPendientes => (AutorizacionesTotales ?? 0) - (AutorizacionesCompletadas ?? 0);
+
 
         public string? TipoSoporte { get; set; } = string.Empty;
 

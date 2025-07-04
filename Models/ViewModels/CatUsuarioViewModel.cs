@@ -18,10 +18,17 @@ namespace HelpDesk.Models.ViewModels
         [Display(Name = "Apellido Materno")]
         public string? ApellidoMaterno { get; set; }
 
+        public string? UserName { get; set; }
+
         [Display(Name = "Nombre Completo")]
         public string? NombreCompleto => $"{PrimerNombre} {SegundoNombre} {ApellidoPaterno} {ApellidoMaterno}";
 
         public bool CambiarContrasenia { get; set; }
+
+        //autenticación de doble factor
+        public string? ClaveTOTP { get; set; }
+        public bool TOTPActivo { get; set; }
+        public DateTime? TOTPUltimaVerificacion { get; set; }
 
         // Estado del usuario
         public bool Activo { get; set; }

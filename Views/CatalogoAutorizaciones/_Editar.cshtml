@@ -12,7 +12,7 @@
        <div class="col-md-12">  
            <form asp-action="Editar" class="row">  
                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="IdAutorizacion" />"
+                <input type="hidden" asp-for="IdAutorizacion" />
                <div class="form-group col-sm-6">  
                    <label asp-for="IdArea" class="control-label">Área</label>  
                    <select asp-for="IdArea" class="form-control" asp-items="@(new SelectList(Model.CatalogoAreas, "IdArea", "Nombre"))" required>  

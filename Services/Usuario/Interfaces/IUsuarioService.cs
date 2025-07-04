@@ -13,11 +13,13 @@ namespace HelpDesk.Services.Usuario.Interfaces
         Task<List<CatUsuarioViewModel>> ObtenerUsuariosPorRol(string rol);
         Task<RespuestaGenerica<CatUsuarioViewModel>> ObtenerUsuarioPorId(string id);
         Task<RespuestaGenerica<CatUsuarioViewModel>> Crear(CatUsuarioViewModel model);
-        Task<CatUsuarioViewModel> Modificar(CatUsuarioViewModel model);
+        Task<RespuestaGenerica<string>> Modificar(CatUsuarioViewModel model);
         Task<RespuestaGenerica<Dictionary<string, string>>> CambiarEstado(string idUsuario);
         Task<List<PermisoViewModel>> ObtenerPermisosDeUsuario(string idUsuario);
         Task<RespuestaGenerica<string>> ActualizarPermisoUsuario(string idUsuario, string permiso, bool asignar);
         Task<RespuestaGenerica<string>> CambiarContrasenia(ClaimsPrincipal claim, string nuevaContrasena);
         string GenerarContraseniaAleatoria(int longitud);
+
+        Task<RespuestaGenerica<string>> ActualizarTOTP(CatUsuarioViewModel usuario);
     }
 }

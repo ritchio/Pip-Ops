@@ -17,7 +17,7 @@ namespace HelpDesk.Models.Entities
         public string? Asunto { get; set; } = string.Empty;
         public string? Cuerpo { get; set; } = string.Empty;
 
-        public int? AutorizacionesPendientes { get; set; }
+        public int? AutorizacionesCompletadas { get; set; }
         public int? AutorizacionesTotales { get; set; }
         public string? TipoSoporte { get; set; } = string.Empty;
 
