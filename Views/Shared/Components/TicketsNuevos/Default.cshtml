@@ -2,16 +2,16 @@
 @using HelpDesk.Authorization
 @model List<TicketsNuevosViewModel>
 
-            <table class="display table table-responsive table-striped" id="tablaTicketsNuevos">
+            <table class="table table-striped w-100" id="tablaTicketsNuevos" style="width:100%">
                 <thead>
                     <tr>
                         <th>Turno</th>
-
+                        <th>#</th>
                         <th>Solicitante</th>
                         <th>Plaza</th>
                         <th>Área</th>
                         <th>Asunto</th>
-                        <th class="d-none">Cuerpo</th>
+                        <th>Cuerpo</th>
                         <th>Tipo de Soporte</th>
                         <th>Fecha de Solicitud</th>
                         <th>Acciones</th>
@@ -23,11 +23,12 @@
                         {
                             <tr>
                                 <td>@(ticket.Turno?.ToString("D4") ?? "")</td>
+                                <td>@(ticket.IdTicket?.ToString("D4") ?? "")</td>
                                 <td>@ticket.Solicitante</td>
                                 <td>@ticket.Plaza</td>
                                 <td>@ticket.Area</td>
                                 <td>@ticket.Asunto</td>
-                                <td class="d-none">@ticket.Cuerpo</td>
+                                <td>@ticket.Cuerpo</td>
                                 <td>@ticket.TipoSoporte</td>
                                 <td>@ticket.FechaSolicitud</td>
                                 <td class="text-center">
@@ -57,6 +58,10 @@
             {
                 responsivePriority:1,
                 targets:-1
+            },
+            {
+                visible:false,
+                targets:6
             }
         ],
         language:lenguajeTablaGenerica

@@ -1,4 +1,5 @@
 #region  [ Usings ]
+using HelpDesk.Authorization;
 using HelpDesk.Data;
 using HelpDesk.Hubs;
 using HelpDesk.Models.Entities;
@@ -24,7 +25,9 @@ using HelpDesk.Services.TipoSoporte.Services;
 using HelpDesk.Services.Usuario.Interfaces;
 using HelpDesk.Services.Usuario.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
@@ -123,6 +126,17 @@ builder.Services.AddScoped<ITicketUsuarioService, TicketUsuarioService>();
 builder.Services.AddScoped<ITipoSoporteService, TipoSoporteService>();
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<Cat_Usuario>, ApplicationUserClaimsPrincipalFactory>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddScoped<IUserClaimsPrincipalFactory<Cat_Usuario>, CustomClaimsPrincipalFactory>();
+
+
+//autenticación de doble factor
+builder.Services.AddAuthorization(options =>
+{
+    options.DefaultPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .RequireClaim("Is2FAAuthenticated", "true")
+        .Build();
+});
 
 //notificaciones
 builder.Services.AddSignalR();
@@ -136,8 +150,9 @@ builder.Services.AddAutoMapper(typeof(Program));
 
 var pathBase = builder.Configuration.GetSection("AppSettings")["PathBase"];
 
+
 var app = builder.Build();
-Console.WriteLine($"[DEBUG] PathBase configurado: {pathBase}");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -150,8 +165,6 @@ else
     app.UseHsts();
 }
 
-
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 // Leer PathBase desde config
@@ -164,24 +177,35 @@ if (!string.IsNullOrEmpty(pathBase))
         context.Request.PathBase = pathBase;
         return next();
     });
-    app.Logger.LogDebug("PathBase configurado: {0}", pathBase);
 }
 
-// Configurar redirección HTTPS desde config
-//if (builder.Configuration.GetValue<bool>("HttpsRedirection:Enabled"))
-//{
-//    var httpsPort = builder.Configuration.GetValue<int?>("HttpsRedirection:HttpsPort") ?? 443;
-//    builder.Services.Configure<HttpsRedirectionOptions>(options =>
-//    {
-//        options.HttpsPort = httpsPort;
-//    });
-
-//    app.UseHttpsRedirection();
-//}
+app.UseHttpsRedirection();
 
 app.UseRouting();
 
 app.UseAuthentication();
+
+//middleware para autenticación de doble factor
+app.Use(async (context, next) =>
+{
+    // Ya está autenticado (cookie ok)
+    var user = context.User;
+    var path = context.Request.Path;
+
+    if (user.Identity.IsAuthenticated &&
+        !user.HasClaim(c => c.Type == "Is2FAAuthenticated" && c.Value == "true") &&
+        !path.StartsWithSegments("/Acceso/VerificaTOTP") &&
+        !path.StartsWithSegments("/Acceso/RegistroTOTP") &&
+        !path.StartsWithSegments("/Account/Logout"))
+    {
+        // Redirige al paso de verificación
+        context.Response.Redirect("/Acceso/VerificaTOTP");
+        return;
+    }
+
+    await next();
+});
+
 app.UseAuthorization();
 
 app.MapHub<NotificacionHub>("/notificacionesHub");

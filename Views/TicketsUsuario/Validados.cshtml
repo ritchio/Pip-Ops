@@ -25,7 +25,7 @@
                             <th>Área</th>
                             <th>Agente asignado</th>
                             <th>Asunto</th>
-                            <th class="d-none">Cuerpo</th>
+                            <th>Cuerpo</th>
                             <th>Fecha de Solicitud</th>
                             <th>Acciones</th>
                         </tr>
@@ -42,7 +42,7 @@
                                     <td>@ticket.Area</td>
                                     <td>@ticket.NombreAgente</td>
                                     <td>@ticket.Asunto</td>
-                                    <td class="d-none">@ticket.Cuerpo</td>
+                                    <td>@ticket.Cuerpo</td>
                                     <td>@ticket.FechaSolicitud</td>
                                     <td class="text-center">
                                         <button type="button" class="btn btn-primary" onclick="mostrarDetallesTicket(@ticket.IdTicket)"><i class="ti ti-eye"></i></button>
@@ -62,7 +62,7 @@
                             <th>#</th>
                             <th>Agente asignado</th>
                             <th>Asunto</th>
-                            <th class="d-none">Cuerpo</th>
+                            <th>Cuerpo</th>
                             <th>Fecha de Solicitud</th>
                             <th>Acciones</th>
                         </tr>
@@ -75,7 +75,7 @@
                                     <td>@(ticket.IdTicket?.ToString("D3") ?? "")</td>
                                     <td>@ticket.NombreAgente</td>
                                     <td>@ticket.Asunto</td>
-                                    <td class="d-none">@ticket.Cuerpo</td>
+                                    <td>@ticket.Cuerpo</td>
                                     <td>@ticket.FechaSolicitud</td>
                                     <td class="text-center">
                                         <button type="button" class="btn btn-primary" onclick="mostrarDetallesTicket(@ticket.IdTicket)"><i class="ti ti-eye"></i></button>
@@ -103,6 +103,10 @@
             {
                 responsivePriority:1,
                 targets:-1
+            },
+            {
+                visible:false,
+                targets:-3
             }
         ],
         language:lenguajeTablaGenerica

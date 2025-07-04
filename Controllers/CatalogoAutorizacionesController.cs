@@ -89,7 +89,15 @@ namespace HelpDesk.Controllers
             {
                 return NotFound();
             }
-            modelo.CatalogoAreas = await _areaService.ObtenerAreasAsync();
+            var Areas = await _areaService.ObtenerAreasAsync();
+
+            //concatenamos el nombre del area +  nombre de la plaza
+            foreach (var area in Areas)
+            {
+                area.Nombre = $"{area.Nombre} ({area.NombrePlaza})";
+            }
+
+            modelo.CatalogoAreas = Areas.Where(a=>a.Activo == true).ToList();
             modelo.CatalogoModulosClasificaciones = await _moduloClasificacionService.ObtenerModulosClasificacionesAsync();
             var respuesta = new RespuestaGenerica<string>
             {

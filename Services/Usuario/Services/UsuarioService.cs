@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HelpDesk.Services.Usuario.Services
 {
@@ -43,7 +44,7 @@ namespace HelpDesk.Services.Usuario.Services
             
             if (usuarioActual == null)
             {
-                throw new Exception("Usuario no encontrado.");
+                return null;
             }
             var usuario = await _context.Users
                    .Include(u => u.RolesUsuario)
@@ -69,7 +70,11 @@ namespace HelpDesk.Services.Usuario.Services
                        IdPlaza = u.IdPlaza,
                        Activo = u.Activo,
                        FechaActivacion = u.FechaActivacion,
-                       CambiarContrasenia = u.CambiarContrasenia
+                       CambiarContrasenia = u.CambiarContrasenia,
+                       ClaveTOTP = u.ClaveTOTP,
+                       TOTPActivo = u.TOTPActivo,
+                       TOTPUltimaVerificacion = u.TOTPUltimaVerificacion,
+                       UserName = u.UserName
                    })
                    .FirstOrDefaultAsync();
 
@@ -288,8 +293,12 @@ namespace HelpDesk.Services.Usuario.Services
             }
         }
 
-        public async Task<CatUsuarioViewModel> Modificar(CatUsuarioViewModel model)
+        public async Task<RespuestaGenerica<string>> Modificar(CatUsuarioViewModel model)
         {
+           var respuesta = new RespuestaGenerica<string> { 
+                Datos= model.Id,
+                Llamada = "editarUsuario"
+           };
             try
             {
                 var usuarioAModificar = await _context.Users.FindAsync(model.Id);
@@ -301,7 +310,10 @@ namespace HelpDesk.Services.Usuario.Services
                         .FirstOrDefaultAsync(u => u.Email == model.CorreoElectronico && u.Activo == true && u.Id != model.Id);
                     if (emailExiste != null)
                     {
-                        throw new Exception("El correo ya existe en otro usuario activo.");
+                        respuesta.Exito = false;
+                        respuesta.Mensaje = "El correo electrónico ya está registrado con otro usuario activo.";
+                        
+                        return respuesta;
                     }
                     var fechaInactivacion = usuarioAModificar.FechaInactivacion;
                     var activo = usuarioAModificar.Activo;
@@ -327,7 +339,9 @@ namespace HelpDesk.Services.Usuario.Services
                     var rol = await _roleManager.FindByIdAsync(model.IdRol);
                     if (rol == null)
                     {
-                        throw new Exception("El rol no existe.");
+                        respuesta.Exito = false;
+                        respuesta.Mensaje = "El rol no existe.";
+                        return respuesta;
                     }
 
                     // quitamo los roles
@@ -337,7 +351,9 @@ namespace HelpDesk.Services.Usuario.Services
                         var resultadoEliminacion = await _userManager.RemoveFromRolesAsync(usuarioMapeado, rolesActuales);
                         if (!resultadoEliminacion.Succeeded)
                         {
-                            throw new Exception("No se pudieron eliminar los roles anteriores del usuario.");
+                            respuesta.Exito = false;
+                            respuesta.Mensaje = "No se pudo eliminar los roles del usuario.";
+                            return respuesta;
                         }
                     }
 
@@ -345,21 +361,29 @@ namespace HelpDesk.Services.Usuario.Services
                     var resultadoAsignacion = await _userManager.AddToRoleAsync(usuarioMapeado, rol.Name);
                     if (!resultadoAsignacion.Succeeded)
                     {
-                        throw new Exception("No se pudo asignar el rol al usuario.");
+                        respuesta.Exito = false;
+                        respuesta.Mensaje = "No se pudo asignar el rol al usuario.";
+                        return respuesta;
                     }
 
-                    return model;
+                    respuesta.Exito = true;
+                    respuesta.Mensaje = "Usuario actualizado con éxito.";
+                    return respuesta;
                 }
                 else
                 {
-                    throw new Exception("Usuario no encontrado.");
+                    respuesta.Exito = false;
+                    respuesta.Mensaje = "Usuario no encontrado.";
+                    return respuesta;
                 }
             }
-            catch
+            catch(Exception ex)
             {
-                throw;
-            } 
-            
+                respuesta.Exito = false;
+                respuesta.Mensaje = "Error al modificar el usuario: " + ex.Message;
+                return respuesta;
+            }
+  
         }
 
         public async Task<RespuestaGenerica<Dictionary<string, string>>> CambiarEstado(string idUsuario)
@@ -465,6 +489,70 @@ namespace HelpDesk.Services.Usuario.Services
         
         }
         #endregion [ Contraseña ]
+
+        #region [ TOTP ]
+        public async Task<RespuestaGenerica<string>> ActualizarTOTP(CatUsuarioViewModel usuario)
+        {
+            var respuesta = new RespuestaGenerica<string>();
+
+            try
+            {
+                //traemos los datos del usuario
+                var usuarioExistente = await _context.Users.FindAsync(usuario.Id);
+                if (usuarioExistente == null)
+                {
+                    respuesta.Exito = false;
+                    respuesta.Mensaje = "Usuario no encontrado.";
+                    return respuesta;
+                }
+                else
+                {
+                   if(usuario.ClaveTOTP != null && usuario.ClaveTOTP != string.Empty)
+                    {
+                        //verificamos si el usuario ya tiene TOTP activo
+                        if (usuarioExistente.TOTPActivo)
+                        {
+                            respuesta.Exito = false;
+                            respuesta.Mensaje = "El usuario ya tiene TOTP activo.";
+                           
+                        }
+                        else
+                        {
+                            //actualizamos la clave TOTP y activamos el TOTP
+                            usuarioExistente.ClaveTOTP = usuario.ClaveTOTP;
+                            usuarioExistente.TOTPActivo = true;
+                        }
+                    }
+                    else
+                    {
+                        //desactivamos el TOTP
+                        usuarioExistente.TOTPActivo = false;
+                        usuarioExistente.ClaveTOTP = null;
+                    }
+                    
+                   if(usuario.TOTPUltimaVerificacion != usuarioExistente.TOTPUltimaVerificacion)
+                    {
+                        usuarioExistente.TOTPUltimaVerificacion = usuario.TOTPUltimaVerificacion;
+                    }
+
+                    _context.Users.Update(usuarioExistente);
+                    await _context.SaveChangesAsync();
+                    
+                    respuesta.Exito = true;
+                    respuesta.Mensaje = "TOTP actualizado con éxito.";
+                }
+
+            }
+            catch (Exception ex)
+            {
+                respuesta.Exito = false;
+                respuesta.Mensaje = "Error al actualizar TOTP: " + ex.Message;
+                return respuesta;
+            }
+
+            return respuesta;
+        }
+        #endregion [ TOTP ]
 
         #region [ Permisos ]
         public async Task<List<PermisoViewModel>> ObtenerPermisosDeUsuario(string idUsuario)

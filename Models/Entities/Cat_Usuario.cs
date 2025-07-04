@@ -21,6 +21,10 @@ namespace HelpDesk.Models.Entities
             }
         }
 
+        //autenticación de doble factor
+        public string? ClaveTOTP { get; set; }
+        public bool TOTPActivo { get; set; }
+        public DateTime? TOTPUltimaVerificacion { get; set; }
         // Estado
         public bool Activo { get; set; }
         public DateTime? FechaActivacion { get; set; }

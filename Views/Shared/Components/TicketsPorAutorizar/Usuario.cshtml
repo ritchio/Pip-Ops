@@ -6,7 +6,7 @@
         <tr>
             <th>#</th>
             <th>Asunto</th>
-            <th class="d-none">Cuerpo</th>
+            <th>Cuerpo</th>
             <th>Autorizaciones pendientes</th>
             <th>Fecha de Solicitud</th>
             <th>Acciones</th>
@@ -19,8 +19,8 @@
                 <tr>
                     <td>@(ticket.Numero?.ToString("D3") ?? "")</td>
                     <td>@ticket.Asunto</td>
-                    <td class="d-none">@ticket.Cuerpo</td>
-                    <td class="text-center">@ticket.AutorizacionesPendientes?.ToString("D2") / @ticket.AutorizacionesTotales?.ToString("D2")</td>
+                    <td>@ticket.Cuerpo</td>
+                    <td class="text-center">@ticket.AutorizacionesPendientes.ToString("D2") / @ticket.AutorizacionesTotales?.ToString("D2")</td>
                     <td>@ticket.FechaSolicitud</td>
                     <td class="text-center"><button type="button" class="btn btn-primary" onclick="mostrarDetallesTicket(@ticket.IdTicket)"><i class="ti ti-eye"></i></button></td>
                 </tr>
@@ -38,6 +38,10 @@
             {
                 responsivePriority:1,
                 targets:-1
+            },
+            {
+                visible:false,
+                targets:2
             }
         ],
         language:lenguajeTablaGenerica

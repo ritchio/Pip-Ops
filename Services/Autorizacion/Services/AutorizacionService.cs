@@ -1,4 +1,5 @@
-﻿using HelpDesk.Data;
+﻿using HelpDesk.Constants;
+using HelpDesk.Data;
 using HelpDesk.Models.Entities;
 using HelpDesk.Models.Utils;
 using HelpDesk.Models.ViewModels;
@@ -234,6 +235,47 @@ namespace HelpDesk.Services.Autorizacion.Services
                     }
                     _context.Cat_Autorizacion.Update(catAuto);
                     var exito = await _context.SaveChangesAsync();
+
+                    //actualizamos los tickets con las nuevas autorizaciones
+                    //primero traemos los tickets que tienen esta autorización
+                    var ticket = await _context.Doc_Ticket
+                        .Where(t => t.IdModuloClasificacion == autorizacion.IdModuloClasificacion && t.IdEstadoTicket == EstadoTicket.PorAutorizar)
+                        .ToListAsync();
+
+                    //quitamos todas las autorizaciones
+
+                    foreach (var t in ticket)
+                    {
+                        var autorizacionTicket = await _context.Doc_TicketAutorizacion
+                            .Where(ta => ta.IdTicket == t.IdTicket)
+                            .ToListAsync();
+
+                        if (autorizacionTicket.Any())
+                        {
+                            //eliminamos las autorizaciones existentes
+                            _context.Doc_TicketAutorizacion.RemoveRange(autorizacionTicket);
+                        }
+
+                    }
+                    _context.SaveChanges();
+
+                    //agregamos las nuevas autorizaciones
+
+
+                    foreach (var t in ticket)
+                    {
+                        foreach (var idArea in autorizacion.IdAreasAutorizan)
+                        {
+                            _context.Doc_TicketAutorizacion.Add(new Doc_TicketAutorizacion
+                            {
+                                IdTicket = t.IdTicket,
+                                IdArea = idArea,
+                                IdEstadoAutorizacion = EstadoAutorizacion.PorAutorizar
+                            });
+                        }
+                    }
+                    _context.SaveChanges();
+
                     return new RespuestaGenerica<bool>
                     {
                         Exito = true,

@@ -23,6 +23,7 @@ namespace HelpDesk.ViewComponents
             var usuario = await _usuarioService.ObtenerUsuarioActual(HttpContext.User);
 
             //if (usuario.RolNombre == Roles.Usuario)
+
             if(usuario.RolNombre == Roles.Soporte || usuario.RolNombre == Roles.Administrador || usuario.RolNombre == Roles.AdministradorSupervisor)
                 {
                 var respuesta = _ticketSoporteService.ObtenerPorAutorizar(usuario);

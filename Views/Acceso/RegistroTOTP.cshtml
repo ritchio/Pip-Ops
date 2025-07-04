@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Registro TOTP";
+    Layout = "~/Views/Shared/_LayoutLimpio.cshtml";
+}
+<div class="card col-sm-6 m-auto bg-translucent py-3">
+    <div class="card-header">Hola @User.FindFirst("NombreCompleto")?.Value</div>
+    <div class="card-body">
+        <h3>Para acceder a la plataforma debe activar la verificación de dos pasos</h3>
+        <p>Escanee el código QR con la aplicación de autenticación de su preferencia</p>
+        @await Component.InvokeAsync("MostrarQRTOTP")
+        
+    </div>
+    <div class="card-footer">
+        <a class="btn btn-primary" asp-action="VerificaTOTP" asp-controller="Acceso">He escaneado el código</a>
+    </div>
+</div>

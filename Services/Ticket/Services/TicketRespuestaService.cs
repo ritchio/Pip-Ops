@@ -96,7 +96,18 @@ namespace HelpDesk.Services.Ticket.Services
                       );
                 }
 
-                    return true;
+                //log 
+                var log = new Log_TicketActividad
+                {
+                    Accion =  AccionLogTicket.Responder,
+                    NumeroTicket = respuesta.IdTicket,
+                    IdUsuario = respuesta.IdUsuario
+                };
+                _context.Log_TicketActividad.Add(log);
+
+                _context.SaveChanges();
+
+                return true;
             }
             catch (Exception ex)
             {

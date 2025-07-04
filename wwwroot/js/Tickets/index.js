@@ -83,6 +83,6 @@ async function mostrarAsignarAgente(idTicket) {
     await axiosRequest({
         url: BASE_PATH + `/TicketsSoporte/AsignarAgente/${idTicket}`,
         funcionCallback: mostrarModalGenerico,
-        keyCache : "asignarAgente"
+        keyCache : "asignarAgente_"+idTicket
     });
 }

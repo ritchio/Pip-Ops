@@ -208,7 +208,7 @@ namespace HelpDesk.Controllers
                 idUsuario = usuario.Id;
             }
 
-            var result = await _ticketService.Asignar(idTicket, idUsuario);
+            var result = await _ticketService.Asignar(idTicket, idUsuario,usuario.Id);
             if (result)
             {
                 var respuesta = new RespuestaGenerica<int>

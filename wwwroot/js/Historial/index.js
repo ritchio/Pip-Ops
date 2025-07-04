@@ -1,6 +1,7 @@
 ﻿$(function () {
     $("#tablaAccesos").DataTable({
         language: lenguajeTablaGenerica,
+        order: false,
         buttons: [
             {
                 extend: 'excelHtml5',
@@ -22,6 +23,7 @@
 
     $("#tablaTicketsActividades").DataTable({
         language: lenguajeTablaGenerica,
+        order: false,
          buttons: [
                 {
                     extend: 'excelHtml5',
