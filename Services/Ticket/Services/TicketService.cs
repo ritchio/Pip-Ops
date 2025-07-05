@@ -27,6 +27,32 @@ namespace HelpDesk.Services.Ticket.Services
         private readonly ICorreoService _correoService = correoService;
         private readonly IHubContext<NotificacionHub> _hubContext = hubContext;
         private readonly IMapper _mapper = mapper;
+
+        public async Task<List<TicketViewModel>> Busqueda(string? busqueda)
+        {
+            try
+            {
+                var busquedaLower = busqueda?.ToLower() ?? string.Empty;
+                var query = _context.Doc_Ticket
+                    .Include(t => t.Usuario)
+                    .Include(ta => ta.Asignacion)
+                    .ThenInclude(tau => tau.Usuario)
+                    .Where(t =>
+                        t.IdTicket.ToString().ToLower().Contains(busquedaLower) ||
+                        (t.Usuario.PrimerNombre + " " + t.Usuario.SegundoNombre + " " + t.Usuario.ApellidoPaterno + " " + t.Usuario.ApellidoMaterno).ToLower().Contains(busquedaLower) ||
+                        (t.Asignacion.FirstOrDefault().Usuario.PrimerNombre + " " + t.Asignacion.FirstOrDefault().Usuario.SegundoNombre + " " + t.Asignacion.FirstOrDefault().Usuario.ApellidoPaterno 
+                        + " " + t.Asignacion.FirstOrDefault().Usuario.ApellidoMaterno).ToLower().Contains(busquedaLower) ||
+                        (t.Asunto ?? "").ToLower().Contains(busquedaLower)
+                    );
+
+                var tickets = await query.ToListAsync();
+                return _mapper.Map<List<TicketViewModel>>(tickets);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al realizar la búsqueda de tickets", ex);
+            }
+        }
         public async Task<bool> GuardarTicket(TicketViewModel ticketViewModel,CatUsuarioViewModel usuario)
         {
             try
@@ -135,7 +161,7 @@ namespace HelpDesk.Services.Ticket.Services
                                 //agregamos las nuevas autorizaciones
                                 if (areasAutorizacion.Count > 0)
                                 {
-                                    foreach (var auto in areasAutorizacion)
+                                    foreach (var auto in areasAutorizacion[0].RelacionAreasAutorizan)
                                     {
                                         var ticketAutorizacion = new Doc_TicketAutorizacion
                                         {
@@ -214,7 +240,7 @@ namespace HelpDesk.Services.Ticket.Services
 
                     if (areasAutorizacion.Count > 0)
                     {
-                        foreach (var auto in areasAutorizacion)
+                        foreach (var auto in areasAutorizacion[0].RelacionAreasAutorizan)
                         {
                             var ticketAutorizacion = new Doc_TicketAutorizacion
                             {
