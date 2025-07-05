@@ -39,6 +39,7 @@ public class ApplicationDbContext
     //Logs
     public DbSet<Log_Acceso> Log_Acceso { get; set; }
     public DbSet<Log_TicketActividad> Log_TicketActividad { get; set; }
+    public DbSet<Log_TicketAutorizacion> Log_TicketAutorizacion { get; set; }
     //Relaciones
     public DbSet<Rel_Autorizacion_AreaAutoriza> Rel_Autorizacion_AreaAutoriza { get; set; }
     public DbSet<Rel_ModuloClasificacion_Area> Rel_ModuloClasificacion_Area { get; set; }

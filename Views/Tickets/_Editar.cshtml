@@ -127,7 +127,7 @@
 
         <div class="form-group col-sm-12">  
             <label asp-for="Asunto" class="control-label">Asunto</label>
-            <input asp-for="Asunto" class="form-control" readonly="@(Model.Editable?null:"true")" />
+            <input asp-for="Asunto" class="form-control" readonly="@(Model.Editable?null:"true")" required/>
             <span asp-validation-for="Asunto" class="text-danger"></span>  
         </div>  
 
@@ -141,7 +141,7 @@
 
         <div class="form-group col-sm-12">  
             <label asp-for="Cuerpo" class="control-label">Descripción</label>
-            <textarea asp-for="Cuerpo" class="form-control" readonly="@(Model.Editable?null:"true")"></textarea>
+            <textarea asp-for="Cuerpo" class="form-control" readonly="@(Model.Editable?null:"true")" required></textarea>
             <span asp-validation-for="Cuerpo" class="text-danger"></span>  
         </div>  
         @if (Model.Editable)
@@ -184,13 +184,14 @@
 
         </div>
 
-        @if (Model.Editable)
+        @if (Model.Editable && Model.EsSolicitante)
         {
             
             <div class="form-group mt-4">
                 <input type="submit" value="Solicitar ticket" class="btn btn-primary" />
             </div>
-        }else if((Html.TieneAcceso(Permisos.Ticket.ReClasificar) && Html.TieneAcceso(roles: [Roles.Administrador, Roles.Administrador])))
+        }
+        @if(Model.IdEstadoTicket != EstadoTicket.Validado && (!Model.EsSolicitante || !Model.Editable) && (Html.TieneAcceso(Permisos.Ticket.ReClasificar) && Html.TieneAcceso(roles: [Roles.Administrador, Roles.Administrador, Roles.Soporte])))
         {
             <div class="form-group mt-4">
                 <input type="submit" value="Guardar Re-Clasificacion" class="btn btn-primary" />

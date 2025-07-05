@@ -3,7 +3,7 @@
     public class ReporteDetalladoViewModel
     {
         public int? IdTicket { get; set; }
-        public string? Numero { get; set; }
+        public int? Numero { get; set; }
         public string? NombreSolicitante { get; set; }
         public string? NombreAgente { get; set; }
         public string? Plaza { get; set; }
