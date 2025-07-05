@@ -404,26 +404,34 @@ namespace HelpDesk.Services.Ticket.Services
 
                     //quitamos la asignación previa si existe
                     var asignacionExistente = _context.Doc_TicketAsignacion.Where(a => a.IdTicket == idTicket && a.Activo == true);
+                    var nuevoAgente = "";
                     if(asignacionExistente.Any())
                     {
                         foreach (var asignacion in asignacionExistente)
                         {
                             asignacion.Activo = false; // desactivamos la asignación previa
                         }
+                        //traemos los datos del nuevo usuario agente
+                        var agente = _context.Cat_Usuario.Where(ag => ag.Id == idUsuario).FirstOrDefault();
+                        nuevoAgente = agente.NombreCompleto;
                     }
-                    //asignación del ticket
-                    var ticketAsignacion = new Doc_TicketAsignacion
+                    else
                     {
-                        IdTicket = idTicket,
-                        IdUsuario = idUsuario,
-                        FechaAsignacion = DateTime.Now
-                    };
+                        nuevoAgente = ticket.Asignacion.FirstOrDefault(a => a.Activo == true).Usuario.NombreCompleto;
+                    }
+                        //asignación del ticket
+                        var ticketAsignacion = new Doc_TicketAsignacion
+                        {
+                            IdTicket = idTicket,
+                            IdUsuario = idUsuario,
+                            FechaAsignacion = DateTime.Now
+                        };
                     _context.Doc_TicketAsignacion.Add(ticketAsignacion);
 
                     //correo
                     var asunto = "Centro de soporte";
                     var cuerpo = $"Estimado/a {ticket.Usuario.NombreCompleto}<br><br>"
-                        + $"El ticket #{idTicket} será atendido por el agente {ticket.Asignacion.FirstOrDefault(a => a.Activo == true).Usuario.NombreCompleto}"
+                        + $"El ticket #{idTicket} será atendido por el agente {nuevoAgente}"
                         + " para su pronta atención."
                         + "<br><br>Para seguimiento ingresar al ticket en la página."
                         + "<br><br>No responder a este correo."
@@ -431,6 +439,16 @@ namespace HelpDesk.Services.Ticket.Services
                     var destinatario = ticket.Usuario.Email;
 
                     var correo = await _correoService.EnviarCorreoAsync(destinatario, asunto, cuerpo);
+
+                    //notificacion
+                    await _hubContext.Clients.User(ticket.Usuario.Id).SendAsync(
+                         "RecibirNotificacion",
+                         "Centro de Soporte",
+                         $"Estimado/a {ticket.Usuario.NombreCompleto}\n"
+                         + $"El ticket #{idTicket} será atendido por el agente {nuevoAgente}"
+                        + " para su pronta atención."
+                        + $"\n{DateTime.Now}"
+                     );
 
                     //log
                     var log = new Log_TicketActividad

@@ -29,7 +29,7 @@ namespace HelpDesk.Services.Plaza.Services
                     Nombre = p.Nombre,
                     Activo = p.Activo,
                     Estado = p.Activo? "Activo" : "Inactivo"
-                }).ToList();
+                }).OrderBy(p=>p.Nombre).ToList();
             }
             catch (Exception ex)
             {

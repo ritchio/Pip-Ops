@@ -33,7 +33,7 @@ namespace HelpDesk.Services.Area.Services
                     Estado = p.Activo? "Activo" : "Inactivo",
                     IdPlaza = p.IdPlaza,
                     NombrePlaza = p.Plaza?.Nombre
-                }).ToList();
+                }).OrderBy(a=>a.Nombre).ToList();
             }
             catch (Exception ex)
             {

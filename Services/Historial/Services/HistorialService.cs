@@ -37,22 +37,42 @@ namespace HelpDesk.Services.Historial.Services
         }
         public async Task<List<LogTicketActividadViewModel>> ObtenerTicketsActividadesAsync()
         {
+
             try
             {
-                //obtenemos todos los registros de acceso
+                // Consulta de actividades de tickets
                 var actividades = await _context.Log_TicketActividad
                     .Include(u => u.Usuario)
                     .OrderByDescending(a => a.Fecha)
-                    .Select(t=> new LogTicketActividadViewModel
+                    .Select(t => new LogTicketActividadViewModel
                     {
                         Id = t.Id,
                         Fecha = t.Fecha,
                         NombreUsuario = t.Usuario.NombreCompleto,
                         Accion = t.Accion,
-                        NumeroTicket = t.NumeroTicket
+                        NumeroTicket = t.NumeroTicket,
                     })
                     .ToListAsync();
-                return actividades;
+
+                // Consulta de logs de autorizaciones
+                var autorizaciones = await _context.Log_TicketAutorizacion
+                    .OrderByDescending(a => a.Fecha)
+                    .Select(a => new LogTicketActividadViewModel
+                    {
+                        Id = a.Id,
+                        Fecha = a.Fecha,
+                        NombreUsuario = a.NombreUsuario,
+                        Accion = a.Accion,
+                        NumeroTicket = a.NumeroTicket,
+                    })
+                    .ToListAsync();
+
+                // Unir ambas listas
+                var resultado = actividades.Concat(autorizaciones)
+                    .OrderByDescending(x => x.Fecha)
+                    .ToList();
+
+                return resultado;
             }
             catch (Exception ex)
             {
