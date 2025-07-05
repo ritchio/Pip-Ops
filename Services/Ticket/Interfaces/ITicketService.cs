@@ -1,10 +1,12 @@
 ﻿using HelpDesk.Models.Entities;
 using HelpDesk.Models.ViewModels;
+using System.Threading.Tasks;
 
 namespace HelpDesk.Services.Ticket.Interfaces
 {
     public interface ITicketService
     {
+        Task<List<TicketViewModel>> Busqueda(string? busqueda);
         Task<bool> GuardarTicket(TicketViewModel ticketViewModel, CatUsuarioViewModel usuario);
         Task<TicketViewModel> ObtenerPorId(int idTicket);
         Task<List<Cat_EstadoTicket>> ObtenerEstadosTicket();

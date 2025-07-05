@@ -85,6 +85,24 @@ namespace HelpDesk.Controllers
             return Ok(respuesta);
 
         }
+        [HttpPost]
+        public async Task<IActionResult> Buscar(string busqueda)
+        {
+            try
+            {
+                var resultado = await _ticketService.Busqueda(busqueda);
+                return View(resultado);
+            }
+            catch (Exception ex)
+            {
+                var respuesta = new RespuestaGenerica<string>
+                {
+                    Exito = false,
+                    Mensaje = "Error al buscar tickets: " + ex.Message
+                };
+                return BadRequest(respuesta);
+            }
+        }
 
         public async Task<IActionResult> Crear()
         {
@@ -115,7 +133,7 @@ namespace HelpDesk.Controllers
             if (ModelState.IsValid)
             {
 
-                var conto = (usuario.RolNombre == Roles.Usuario) ? "TicketsUsuario" : "TicketsSoporte";
+                
                 var success = await _ticketService.GuardarTicket(ticketModel,usuario);
                 if (success)
                 {
@@ -125,7 +143,7 @@ namespace HelpDesk.Controllers
                         Mensaje = "Ticket generado con éxito."
                     };
                     TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
-                    return RedirectToAction("Index", conto);
+                    return RedirectToAction("Index", "Home");
                 }
                 else
                 {
@@ -136,13 +154,13 @@ namespace HelpDesk.Controllers
                         Mensaje = "Error al generar el ticket."
                     };
                     TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
-                    return RedirectToAction("Index", conto);
+                    return RedirectToAction("Index", "Home");
 
                 }
             }
             else
             {
-                var conto = (usuario.RolNombre == Roles.Usuario) ? "TicketsUsuario" : "TicketsSoporte";
+                
 
                 var respuesta = new RespuestaGenerica<string>
                 {
@@ -151,7 +169,7 @@ namespace HelpDesk.Controllers
                 };
                 TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
 
-                return RedirectToAction("Index",conto);
+                return RedirectToAction("Index","Home");
             }
         }
 
