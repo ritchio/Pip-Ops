@@ -1,5 +1,5 @@
-﻿//const BASE_PATH = "/HelpDesk";
-const BASE_PATH = "";
+﻿const BASE_PATH = "/HelpDesk";
+//const BASE_PATH = "";
 
 $(function () {
     // tooltips

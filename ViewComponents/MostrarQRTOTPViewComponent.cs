@@ -19,16 +19,16 @@ namespace HelpDesk.ViewComponents
             var usuario = await _usuarioService.ObtenerUsuarioActual(HttpContext.User);
 
             // Genera secreto si no existe
-            if (!usuario.TOTPActivo)
+            if (!usuario.TOTPActivo && (usuario.ClaveTOTP == null || usuario.ClaveTOTP == string.Empty))
             {
                 var key = KeyGeneration.GenerateRandomKey(20);
                 string base32Secret = Base32Encoding.ToString(key);
                 usuario.ClaveTOTP = base32Secret;
                 //Console.WriteLine($"Clave: {usuario.ClaveTOTP}");
-                usuario.TOTPActivo = true; //se activa al generar el TOTP
+                //usuario.TOTPActivo = true; //se activa al generar el TOTP
                 var respuesta = await _usuarioService.ActualizarTOTP(usuario);//se guarda en la BD
             }
-            Console.WriteLine($"Clave recién creada: {usuario.ClaveTOTP}");
+            //Console.WriteLine($"Clave recién creada: {usuario.ClaveTOTP}");
             var config = _appSettings.GetSection("Security:Totp");
             string issuer = config["Issuer"];
             string accountName = usuario.CorreoElectronico;

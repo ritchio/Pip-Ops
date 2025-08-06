@@ -6,7 +6,7 @@ namespace HelpDesk.Services.Ticket.Interfaces
 {
     public interface ITicketService
     {
-        Task<List<TicketViewModel>> Busqueda(string? busqueda);
+        Task<List<TicketsBuscarViewModel>> Busqueda(string? busqueda, CatUsuarioViewModel usuario);
         Task<bool> GuardarTicket(TicketViewModel ticketViewModel, CatUsuarioViewModel usuario);
         Task<TicketViewModel> ObtenerPorId(int idTicket);
         Task<List<Cat_EstadoTicket>> ObtenerEstadosTicket();

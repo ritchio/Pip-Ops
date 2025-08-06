@@ -12,6 +12,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore; 
 using System.Linq.Expressions;
 using System.Security.Claims;
+using static HelpDesk.Authorization.Permisos;
 
 namespace HelpDesk.Services.Ticket.Services
 {
@@ -28,29 +29,52 @@ namespace HelpDesk.Services.Ticket.Services
         private readonly IHubContext<NotificacionHub> _hubContext = hubContext;
         private readonly IMapper _mapper = mapper;
 
-        public async Task<List<TicketViewModel>> Busqueda(string? busqueda)
+        public async Task<List<TicketsBuscarViewModel>> Busqueda(string? busqueda,CatUsuarioViewModel usuario)
         {
             try
             {
                 var busquedaLower = busqueda?.ToLower() ?? string.Empty;
-                var query = _context.Doc_Ticket
-                    .Include(t => t.Usuario)
-                    .Include(ta => ta.Asignacion)
-                    .ThenInclude(tau => tau.Usuario)
-                    .Where(t =>
-                        t.IdTicket.ToString().ToLower().Contains(busquedaLower) ||
-                        (t.Usuario.PrimerNombre + " " + t.Usuario.SegundoNombre + " " + t.Usuario.ApellidoPaterno + " " + t.Usuario.ApellidoMaterno).ToLower().Contains(busquedaLower) ||
-                        (t.Asignacion.FirstOrDefault().Usuario.PrimerNombre + " " + t.Asignacion.FirstOrDefault().Usuario.SegundoNombre + " " + t.Asignacion.FirstOrDefault().Usuario.ApellidoPaterno 
-                        + " " + t.Asignacion.FirstOrDefault().Usuario.ApellidoMaterno).ToLower().Contains(busquedaLower) ||
-                        (t.Asunto ?? "").ToLower().Contains(busquedaLower)
-                    );
+                var fechaInicial = DateTime.Now.AddDays(-60);
 
-                var tickets = await query.ToListAsync();
-                return _mapper.Map<List<TicketViewModel>>(tickets);
+                if (usuario.RolNombre == Roles.Usuario)
+                {
+
+
+                    var tickets = await _context.Sp_TicketsBuscar.FromSqlRaw("EXEC dbo.Sp_TicketsBuscar @IdUsuario, @FechaInicial, @Busqueda",
+                        new SqlParameter("@IdUsuario", usuario.Id),
+                        new SqlParameter("@FechaInicial", fechaInicial),
+                        new SqlParameter("@Busqueda", busqueda)
+                    )
+                    .ToListAsync();
+
+                    return _mapper.Map<List<TicketsBuscarViewModel>>(tickets);
+                } else if(usuario.RolNombre == Roles.Soporte)//todos los tickets pero con restricción de fecha
+                {
+                    var tickets = await _context.Sp_TicketsBuscar.FromSqlRaw("EXEC dbo.Sp_TicketsBuscar @IdUsuario, @FechaInicial, @Busqueda",
+                        new SqlParameter("@IdUsuario", DBNull.Value),
+                        new SqlParameter("@FechaInicial", fechaInicial),
+                        new SqlParameter("@Busqueda", busqueda)
+                    )
+                    .ToListAsync();
+
+                    return _mapper.Map<List<TicketsBuscarViewModel>>(tickets);
+                }
+                else//todos los tickets 
+                {
+                    var tickets = await _context.Sp_TicketsBuscar.FromSqlRaw("EXEC dbo.Sp_TicketsBuscar @IdUsuario, @FechaInicial, @Busqueda",
+                        new SqlParameter("@IdUsuario", DBNull.Value),
+                        new SqlParameter("@FechaInicial", DBNull.Value),
+                        new SqlParameter("@Busqueda", busqueda)
+                    )
+                    .ToListAsync();
+
+                    return _mapper.Map<List<TicketsBuscarViewModel>>(tickets);
+                }
+                   
             }
             catch (Exception ex)
             {
-                throw new Exception("Error al realizar la búsqueda de tickets", ex);
+                return new List<TicketsBuscarViewModel>();
             }
         }
         public async Task<bool> GuardarTicket(TicketViewModel ticketViewModel,CatUsuarioViewModel usuario)
@@ -89,7 +113,15 @@ namespace HelpDesk.Services.Ticket.Services
                                 
                             }else if (ticket.IdEstadoTicket == EstadoTicket.Rechazado)
                             {
-                                ticket.IdEstadoTicket = EstadoTicket.PorAutorizar;
+                                if(areasAutorizacion.Count > 0)
+                                {
+                                    ticket.IdEstadoTicket = EstadoTicket.PorAutorizar;
+                                }
+                                else
+                                {
+                                    ticket.IdEstadoTicket = EstadoTicket.Nuevo;
+                                }
+                                
                             }
 
                             ticket.IdTipoSoporte = ticketViewModel.IdTipoSoporte;
@@ -141,6 +173,7 @@ namespace HelpDesk.Services.Ticket.Services
                             var limpiarAutorizaciones = (ticket.IdModuloClasificacion != ticketViewModel.IdModuloClasificacion);
                             ticket.IdTipoSoporte = ticketViewModel.IdTipoSoporte;
                             ticket.IdModuloClasificacion = ticketViewModel.IdModuloClasificacion;
+
                             _context.SaveChanges();
                             if(limpiarAutorizaciones)
                             {
@@ -174,6 +207,14 @@ namespace HelpDesk.Services.Ticket.Services
                                         _context.SaveChanges();
                                     }
                                 }
+                                else
+                                {
+                                    //hack para salir del hueco
+                                    var ticketAModificar = _context.Doc_Ticket.FirstOrDefault(t => t.IdTicket == ticketViewModel.IdTicket);
+                                    ticketAModificar.IdEstadoTicket = EstadoTicket.Nuevo;
+                                    _context.SaveChanges();
+                                }
+                                
                             }
                         }
 
@@ -280,17 +321,18 @@ namespace HelpDesk.Services.Ticket.Services
                 var ticket = await _context.Doc_Ticket
                     .Include(ad => ad.Adjuntos)
                     .Include(au => au.Autorizacion)
-                    .ThenInclude(aru => aru.Area)
+                        .ThenInclude(aru => aru.Area)
                     .Include(au => au.Autorizacion)
-                    .ThenInclude(a => a.EstadoAutorizacion)
-                    .Include(asi => asi.Asignacion)
+                        .ThenInclude(a => a.EstadoAutorizacion)
+                    .Include(asi => asi.Asignacion.Where(a => a.Activo)) // Solo asignaciones activas
+                        .ThenInclude(a => a.Usuario)
                     .Include(ar => ar.Respuesta)
-                    .ThenInclude(ra=>ra.Adjuntos)
+                        .ThenInclude(ra => ra.Adjuntos)
                     .Include(u => u.Usuario)
-                    .Include(mc=>mc.ModuloClasificacion)
-                    .ThenInclude(ma => ma.Autorizaciones)
-                    .ThenInclude(rau => rau.RelacionAreasAutorizan)
-                    .ThenInclude(aa => aa.Area)
+                    .Include(mc => mc.ModuloClasificacion)
+                        .ThenInclude(ma => ma.Autorizaciones)
+                            .ThenInclude(rau => rau.RelacionAreasAutorizan)
+                                .ThenInclude(aa => aa.Area)
                     .FirstOrDefaultAsync(t => t.IdTicket == idTicket);
 
                 if (ticket != null)
@@ -428,25 +470,21 @@ namespace HelpDesk.Services.Ticket.Services
                     ticket.IdEstadoTicket = EstadoTicket.Abierto;
                     _context.Update(ticket);
 
-                    //quitamos la asignación previa si existe
-                    var asignacionExistente = _context.Doc_TicketAsignacion.Where(a => a.IdTicket == idTicket && a.Activo == true);
-                    var nuevoAgente = "";
-                    if(asignacionExistente.Any())
+                    //desactivamo todas las asignaciones previas
+                    var asignacionesPrevias = _context.Doc_TicketAsignacion.Where(a => a.IdTicket == idTicket && a.Activo).ToList();
+                    foreach (var asignacion in asignacionesPrevias)
                     {
-                        foreach (var asignacion in asignacionExistente)
-                        {
-                            asignacion.Activo = false; // desactivamos la asignación previa
-                        }
-                        //traemos los datos del nuevo usuario agente
-                        var agente = _context.Cat_Usuario.Where(ag => ag.Id == idUsuario).FirstOrDefault();
-                        nuevoAgente = agente.NombreCompleto;
+                        asignacion.Activo = false;
+                        asignacion.FechaDesasignacion = DateTime.Now;
+                        _context.Doc_TicketAsignacion.Update(asignacion);
                     }
-                    else
-                    {
-                        nuevoAgente = ticket.Asignacion.FirstOrDefault(a => a.Activo == true).Usuario.NombreCompleto;
-                    }
-                        //asignación del ticket
-                        var ticketAsignacion = new Doc_TicketAsignacion
+                    await _context.SaveChangesAsync();
+
+                    //traemos los datos del nuevo usuario agente
+                    var agente = _context.Cat_Usuario.Where(ag => ag.Id == idUsuario).FirstOrDefault();
+                    var nuevoAgente = agente.NombreCompleto;
+                    //asignación del ticket
+                    var ticketAsignacion = new Doc_TicketAsignacion
                         {
                             IdTicket = idTicket,
                             IdUsuario = idUsuario,

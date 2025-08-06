@@ -30,7 +30,7 @@
                 </div>
                <div class="form-group col-sm-12">
                    <label asp-for="IdAreas" class="control-label">Área</label>
-                    <select asp-for="IdAreas" class="form-control" asp-items="@(new SelectList(Model.Areas, "IdArea", "Nombre","multiple"))">
+                    <select asp-for="IdAreas" class="form-control" asp-items="@(new SelectList(Model.Areas, "IdArea", "NombreAreaPlaza","multiple"))">
                    </select>
                    <span asp-validation-for="IdAreas" class="text-danger"></span>
                </div>

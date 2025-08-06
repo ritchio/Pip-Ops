@@ -26,23 +26,26 @@ namespace HelpDesk.Services.Autorizacion.Services
             {
                 var autorizaciones = await _context.Cat_Autorizacion
                     .Include(a => a.AreaPertenece)
+                    .ThenInclude(pl => pl.Plaza)
                     .Include(a => a.ModuloClasificacion)
                     .Include(a => a.RelacionAreasAutorizan)
                         .ThenInclude(r => r.Area)
+                        .ThenInclude(rp => rp.Plaza)
                     .Select(a => new CatAutorizacionViewModel
                     {
                         IdAutorizacion = a.IdAutorizacion,
                         IdArea = a.IdArea,
-                        NombreAreaPertenece = a.AreaPertenece.Nombre,
+                        NombreAreaPertenece = a.AreaPertenece.Nombre+ $" ({a.AreaPertenece.Plaza.Nombre})",
                         NombreModuloClasificacion = a.ModuloClasificacion.Nombre,
                         IdModuloClasificacion = a.IdModuloClasificacion,
                         Requisitos = a.Requisitos,
                         IdAreasAutorizan = a.RelacionAreasAutorizan.Select(r => r.IdArea).ToList(),
                         AreasAutorizan = a.RelacionAreasAutorizan.Select(r => new CatAreaViewModel
                         {
-                            IdPlaza = 0,
+                            IdPlaza = r.Area.IdPlaza,
                             IdArea = r.Area.IdArea,
-                            Nombre = r.Area.Nombre
+                            Nombre = r.Area.Nombre + $" ({r.Area.Plaza.Nombre})",
+                            NombrePlaza = r.Area.Plaza.Nombre
                         }).ToList()
                     })
                     .ToListAsync();

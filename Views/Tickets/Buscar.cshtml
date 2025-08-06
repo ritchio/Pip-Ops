@@ -1,6 +1,6 @@
 ﻿@using HelpDesk.Authorization
 @using HelpDesk.Models.ViewModels
-@model List<TicketViewModel>
+@model List<TicketsBuscarViewModel>
 <div class="row">
     <div class="col-12 d-flex justify-content-start">
         <i class="ti ti-search title-icon"></i>
@@ -27,6 +27,7 @@
                         <th>Cuerpo</th>
                         <th>Tipo de Soporte</th>
                         <th>Agente</th>
+                        <th>Estatus</th>
                         <th>Fecha de Solicitud</th>
                         <th>Acciones</th>
                     </tr>
@@ -38,14 +39,15 @@
                             <tr>
                                 <td>@(ticket.Turno.ToString("D4") ?? "")</td>
                                 <td>@(ticket.IdTicket.ToString("D3") ?? "")</td>
-                                <td>@ticket.Usuario.NombreCompleto</td>
-                                <td>@ticket.Usuario.PlazaNombre</td>
-                                <td>@ticket.Usuario.AreaNombre</td>
+                                <td>@ticket.Solicitante</td>
+                                <td>@ticket.Plaza</td>
+                                <td>@ticket.Area</td>
                                 <td>@ticket.Asunto</td>
                                 <td>@ticket.Cuerpo</td>
-                                <td>@ticket.NombreTipoSoporte</td>
-                                <td>@ticket.Asignacion?.FirstOrDefault()?.Usuario.NombreCompleto</td>
-                                <td>@ticket.FechaCreacion</td>
+                                <td>@ticket.TipoSoporte</td>
+                                <td>@ticket.Agente</td>
+                                <td>@ticket.Estatus</td>
+                                <td>@ticket.FechaSolicitud</td>
                                 <td class="text-center">
                                     <button type="button" class="btn btn-primary" onclick="mostrarDetallesTicket(@ticket.IdTicket)"><i class="ti ti-eye"></i></button>
                                     @if (Html.TieneAcceso(roles: [Roles.Administrador, Roles.AdministradorSupervisor]))

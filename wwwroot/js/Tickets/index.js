@@ -11,7 +11,6 @@ async function obtenerModulosClasificaciones(idTipoSoporte) {
         await axiosRequest({
             url: BASE_PATH + '/CatalogoModulos/Obtener',
             parametros: { idTipoSoporte: idTipoSoporte, activo: true },
-            keyCache: 'modulosClasificaciones_' + idTipoSoporte,
             funcionCallback: rellenarSelect,
             parametrosCallback: { idDestino: "IdModuloClasificacion", llave: "idModuloClasificacion", valor: "nombre" }
         });
@@ -26,8 +25,7 @@ async function obtenerAutorizacion(idModulo) {
             url: BASE_PATH + "/CatalogoAutorizaciones/ObtenerPorModulo",
             parametros: { idModulo: idModulo },
             funcionCallback: function (datos) { $("#requisitos").text(datos.requisitos); console.log(idModulo + " - datos:"); console.log(datos); },
-            errorCallback: function () { $("#requisitos").text("n/a") },
-            keyCache: "autorizacion_" + idModulo
+            errorCallback: function () { $("#requisitos").text("n/a") }
         })
     }
     
@@ -82,7 +80,6 @@ async function asignarTicket(idTicket,idUsuario) {
 async function mostrarAsignarAgente(idTicket) {
     await axiosRequest({
         url: BASE_PATH + `/TicketsSoporte/AsignarAgente/${idTicket}`,
-        funcionCallback: mostrarModalGenerico,
-        keyCache : "asignarAgente_"+idTicket
+        funcionCallback: mostrarModalGenerico
     });
 }

@@ -22,6 +22,7 @@ namespace HelpDesk.Services.ModuloClasificacion.Services
                 var modulos = await _context.Cat_ModuloClasificacion
                     .Include(p => p.RelacionAreas)
                     .ThenInclude(ra => ra.Area)
+                    .ThenInclude(pl => pl.Plaza)
                     .Include(p => p.TipoSoporte)
                     .Select(p => new CatModuloClasificacionViewModel
                     {
@@ -32,9 +33,10 @@ namespace HelpDesk.Services.ModuloClasificacion.Services
                         Areas = p.RelacionAreas.Select(a => new CatAreaViewModel
                         {
                             IdArea = a.Area.IdArea,
-                            Nombre = a.Area.Nombre,
+                            Nombre = a.Area.Nombre + $" ({a.Area.Plaza.Nombre})",
                             Activo = a.Area.Activo,
                             IdPlaza = a.Area.IdPlaza,
+                            NombrePlaza = a.Area.Plaza.Nombre
 
                         }).ToList(),
                         IdTipoSoporte = p.IdTipoSoporte,

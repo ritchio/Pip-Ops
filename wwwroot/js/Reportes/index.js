@@ -13,6 +13,7 @@
 function cargarTablaRegistros(datos) {
     if (datos.length > 0) {
         let divRegistro = $("#registrosAtendidos");
+        divRegistro.empty();
         Object.keys(datos).forEach((key) => {
             let porcentaje = (100 / datos[key].total) * datos[key].atendido;
             divRegistro.append(
@@ -41,6 +42,7 @@ async function obtenerDetallesRegistros() {
 
 function cargarTablaDetalles(datos) {
     $("#tablaReporteDetalles").DataTable({
+        destroy:true,
         data: datos,
         columns: [
             { data:"idTicket", title:"TICKET"},

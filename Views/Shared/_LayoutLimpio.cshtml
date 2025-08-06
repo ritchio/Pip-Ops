@@ -40,7 +40,7 @@
     @* <link href="~/css/tabler.css" rel="stylesheet"> *@
     <!-- END CUSTOM FONT -->
 </head>
-<body style="background-image:url('@await Component.InvokeAsync("FondoImagen")'); background-repeat:no-repeat;background-size:cover;">
+<body style="background-image:url('@Url.Action("ObtenerFondo", "Acceso")'); background-repeat:no-repeat;background-size:cover;">
     <!-- BEGIN GLOBAL THEME SCRIPT -->
     <script src="~/js/tabler-theme.min.js?1744111186" integrity="sha384-xCA/37z74Ws4TlN18VkTDQ/T5bWJpvhV8k5y5Qp8qMKqKMHSHdAOcQ9qGPn0pUJj"></script>
     <!-- END GLOBAL THEME SCRIPT -->

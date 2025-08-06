@@ -15,7 +15,7 @@
                 <input type="hidden" asp-for="IdAutorizacion" />
                <div class="form-group col-sm-6">  
                    <label asp-for="IdArea" class="control-label">Área</label>  
-                   <select asp-for="IdArea" class="form-control" asp-items="@(new SelectList(Model.CatalogoAreas, "IdArea", "Nombre"))" required>  
+                   <select asp-for="IdArea" class="form-control" asp-items="@(new SelectList(Model.CatalogoAreas, "IdArea", "NombreAreaPlaza"))" required>  
                    </select>  
                    <span asp-validation-for="IdArea" class="text-danger"></span>  
                </div>  

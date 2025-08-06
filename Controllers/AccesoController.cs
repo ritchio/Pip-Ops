@@ -1,7 +1,9 @@
-﻿using HelpDesk.Models.Entities;
+﻿using HelpDesk.Constants;
+using HelpDesk.Models.Entities;
 using HelpDesk.Models.Utils;
 using HelpDesk.Models.ViewModels;
 using HelpDesk.Services.Correo.Interfaces;
+using HelpDesk.Services.Opcion.Interfaces;
 using HelpDesk.Services.Usuario.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -20,7 +22,8 @@ namespace HelpDesk.Controllers
         UserManager<Cat_Usuario> userManager,
         IUsuarioService usuarioService,
         ICorreoService correoService,
-        IConfiguration appSettings
+        IConfiguration appSettings,
+        IOpcionService opcionesService 
         ) : Controller
     {
 
@@ -29,6 +32,7 @@ namespace HelpDesk.Controllers
         private readonly IUsuarioService _usuarioService = usuarioService;
         private readonly ICorreoService _correoService = correoService;
         private readonly IConfiguration _appSettings = appSettings;
+        private readonly IOpcionService _opcionesService = opcionesService;
 
         public IActionResult ReiniciarContrasenia()
         {
@@ -150,8 +154,9 @@ namespace HelpDesk.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> VerificaTOTP()
+        public async Task<IActionResult> VerificaTOTP(int? scan)
         {
+
             var is2fa = User.HasClaim("Is2FAAuthenticated", "true");
 
             //revisamos si ya se verificó el 2FA
@@ -159,9 +164,18 @@ namespace HelpDesk.Controllers
             {
                 //verificamos si el usuario tiene activo el TOTP
                 var usuario = await _userManager.GetUserAsync(User);
-                if (string.IsNullOrEmpty(usuario.ClaveTOTP) || !usuario.TOTPActivo)
+                if (string.IsNullOrEmpty(usuario.ClaveTOTP) || !usuario.TOTPActivo || usuario.TOTPUltimaVerificacion == null)
                 {
-                    return RedirectToAction("RegistroTOTP", "Acceso");
+                    if(scan.HasValue && scan.Value == 1)
+                    {
+                        return View();
+                    }
+                    else
+                    {
+                       
+                        return RedirectToAction("RegistroTOTP", "Acceso");
+                    }
+                        
                 }
                 else
                 {
@@ -209,6 +223,7 @@ namespace HelpDesk.Controllers
 
             string currentCode = totp.ComputeTotp();
             //Console.WriteLine($"🔑 Código esperado en servidor AHORA: {currentCode}");
+            //Console.WriteLine($"🔑 Código esperado enviado: {codigoTOTP}");
 
             
 
@@ -219,7 +234,12 @@ namespace HelpDesk.Controllers
 
             if (!esValido)
             {
-                ModelState.AddModelError(string.Empty, "Código inválido. Intenta de nuevo.");
+                var respuesta = new RespuestaGenerica<string>
+                {
+                    Exito = false,
+                    Mensaje = "Código TOTP inválido. Por favor, inténtelo de nuevo."
+                };
+                TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
                 return View();
             }
 
@@ -241,7 +261,16 @@ namespace HelpDesk.Controllers
             return View();
         }
 
-
+        public async Task<IActionResult> ObtenerFondo()
+        {
+            var fondo = await _opcionesService.ObtenerOpcionAsync(ConfiguracionOpciones.Fondo.Archivo);
+            if (fondo == null || string.IsNullOrEmpty(fondo.Valor))
+            {
+                return NotFound();
+            }
+            var bytes = Convert.FromBase64String(fondo.Valor);
+            return File(bytes, "image/jpeg");
+        }
 
         private async Task SesionCon2FAA(Cat_Usuario usuario)
         {
