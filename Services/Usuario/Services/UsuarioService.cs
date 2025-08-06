@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HelpDesk.Services.Usuario.Services
@@ -224,6 +225,7 @@ namespace HelpDesk.Services.Usuario.Services
                 usuario.ConcurrencyStamp = Guid.NewGuid().ToString();
                 usuario.IdPlaza = model.IdPlaza ?? 0;
                 usuario.CambiarContrasenia = true;
+                usuario.NumeroUsuario = await ObtenerNumeroUsuario();
                 var contrasenia = GenerarContraseniaAleatoria(10);
                 // Generar contraseña aleatoria de 10 caracteres  
                 usuario.PasswordHash = _userManager.PasswordHasher.HashPassword(usuario, contrasenia);
@@ -520,7 +522,7 @@ namespace HelpDesk.Services.Usuario.Services
                         {
                             //actualizamos la clave TOTP y activamos el TOTP
                             usuarioExistente.ClaveTOTP = usuario.ClaveTOTP;
-                            usuarioExistente.TOTPActivo = true;
+                            usuarioExistente.TOTPActivo = false;
                         }
                     }
                     else
@@ -533,6 +535,7 @@ namespace HelpDesk.Services.Usuario.Services
                    if(usuario.TOTPUltimaVerificacion != usuarioExistente.TOTPUltimaVerificacion)
                     {
                         usuarioExistente.TOTPUltimaVerificacion = usuario.TOTPUltimaVerificacion;
+                        usuarioExistente.TOTPActivo = true;
                     }
 
                     _context.Users.Update(usuarioExistente);
@@ -695,6 +698,14 @@ namespace HelpDesk.Services.Usuario.Services
             return new string(contraseña.OrderBy(c => random.Next()).ToArray());
         }
 
+        private async Task<int> ObtenerNumeroUsuario()
+        {
+            // Consulta el valor máximo de NumeroUsuario en la tabla Cat_Usuario
+            var maxNumeroUsuario = await _context.Cat_Usuario
+                .Where(u => u.NumeroUsuario.HasValue)
+                .MaxAsync(u => (int?)u.NumeroUsuario) ?? 0;
+            return maxNumeroUsuario+1;
+        }
         #endregion [ Auxiliares ]
 
     }

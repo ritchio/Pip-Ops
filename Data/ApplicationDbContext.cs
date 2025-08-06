@@ -59,6 +59,7 @@ public class ApplicationDbContext
     public DbSet<Sp_TicketsCantidadesPorEstado> Sp_TicketsCantidadesPorEstado { get; set; }
     public DbSet<Sp_TicketsPendientesPorUsuario> Sp_TicketsPendientesPorUsuario { get; set; }
     public DbSet<Sp_TicketsRespuestaPorUsuario> Sp_TicketsRespuestaPorUsuario { get; set; }
+    public DbSet<Sp_TicketsBuscar> Sp_TicketsBuscar { get; set; }
     public DbSet<ReporteDetalladoViewModel> Sp_ReporteDetallado { get; set; }
 
     #endregion [ Entidades ]
@@ -280,6 +281,10 @@ public class ApplicationDbContext
             .HasNoKey()
             .ToView(null);
         builder.Entity<Sp_TicketsRespuestaPorUsuario>()
+            .HasNoKey()
+            .ToView(null);
+
+        builder.Entity<Sp_TicketsBuscar>()
             .HasNoKey()
             .ToView(null);
 

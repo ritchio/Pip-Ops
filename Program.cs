@@ -194,12 +194,17 @@ app.Use(async (context, next) =>
 
     if (user.Identity.IsAuthenticated &&
         !user.HasClaim(c => c.Type == "Is2FAAuthenticated" && c.Value == "true") &&
+        !path.StartsWithSegments("/Home/CambiarContrasenia") &&
         !path.StartsWithSegments("/Acceso/VerificaTOTP") &&
         !path.StartsWithSegments("/Acceso/RegistroTOTP") &&
-        !path.StartsWithSegments("/Account/Logout"))
+        !path.StartsWithSegments("/Acceso/Logout") &&
+        !path.StartsWithSegments("/Acceso/Login") &&
+        !path.StartsWithSegments("/Identity/Account/Login") && 
+        !path.StartsWithSegments("/Identity/Account/Logout") && 
+        !path.StartsWithSegments("/Login"))
     {
         // Redirige al paso de verificación
-        context.Response.Redirect("/Acceso/VerificaTOTP");
+        context.Response.Redirect(pathBase + "/Acceso/VerificaTOTP");
         return;
     }
 

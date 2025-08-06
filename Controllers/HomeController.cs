@@ -69,7 +69,7 @@ public class HomeController(
             }
             else
             {
-                ModelState.AddModelError("", respuesta.Mensaje);
+                TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
                 return View(model);
             }
 

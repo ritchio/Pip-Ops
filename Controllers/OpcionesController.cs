@@ -30,6 +30,7 @@ namespace HelpDesk.Controllers
                 var descargaMensaje = await _opcionesService.ObtenerOpcionAsync("DescargaAplicacion.Mensaje");
                 var descargaEnlace = await _opcionesService.ObtenerOpcionAsync("DescargaAplicacion.Enlace");
                 var descargaContrasenia = await _opcionesService.ObtenerOpcionAsync("DescargaAplicacion.Contrasenia");
+                var fondoArchivo = await _opcionesService.ObtenerOpcionAsync(ConfiguracionOpciones.Fondo.Archivo);
 
                 var mensajeDelDia = new OpcionesMensajeDelDiaViewModel
                 {
@@ -44,11 +45,19 @@ namespace HelpDesk.Controllers
                     Contrasenia = descargaContrasenia?.Valor
                 };
 
+                var fondo = new OpcionesFondoViewModel
+                {
+                    Archivo = fondoArchivo?.Valor
+                };
+
                 var opciones = new OpcionesCapturaViewModel
                 {
                     MensajeDelDia = mensajeDelDia,
-                    DescargaAplicacion = descargaAplicacion
+                    DescargaAplicacion = descargaAplicacion,
+                    Fondo = fondo
                 };
+
+               
                 return View(opciones);
             }
             catch (Exception ex)
@@ -77,21 +86,33 @@ namespace HelpDesk.Controllers
                 return RedirectToAction("Index");
             }
 
-            var rutaDestino = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "fondo.jpg");
+            //var rutaDestino = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "fondo.jpg");
 
             try
             {
-                using (var stream = new FileStream(rutaDestino, FileMode.Create))
+                //using (var stream = new FileStream(rutaDestino, FileMode.Create))
+                //{
+                //    await fondo.CopyToAsync(stream);
+                //}
+                //guardamos la imagen en la base 
+                var fondoArchivo = await _opcionesService.ObtenerOpcionAsync(ConfiguracionOpciones.Fondo.Archivo);
+                if (fondoArchivo != null)
                 {
-                    await fondo.CopyToAsync(stream);
+                    
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await fondo.CopyToAsync(memoryStream);
+                        var bytes = memoryStream.ToArray();
+                        fondoArchivo.Valor = Convert.ToBase64String(bytes);
+                        await _opcionesService.ActualizarAsync(fondoArchivo);
+                    }
                 }
-
                 //guardamos la ruta en la base 
                 var fondoRuta = await _opcionesService.ObtenerOpcionAsync(ConfiguracionOpciones.Fondo.Ruta);
                 if (fondoRuta != null)
                 {
                     var config = _configuracion.GetSection("AppSettings");
-                    fondoRuta.Valor = config["PathBase"] + "/img/fondo.jpg";
+                    fondoRuta.Valor = config["PathBase"] + "/Opciones/ObtenerFondo";
                     await _opcionesService.ActualizarAsync(fondoRuta);
                 }
                 //guardamos la version
@@ -117,6 +138,8 @@ namespace HelpDesk.Controllers
 
             return RedirectToAction("Index");
         }
+
+       
 
         public async Task<IActionResult> ActualizarMensajeDelDia(OpcionesMensajeDelDiaViewModel opciones)
         {

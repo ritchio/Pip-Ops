@@ -13,6 +13,7 @@ namespace HelpDesk.Constants
         public static class Fondo 
         {
             public const string Ruta = "Fondo.Ruta";
+            public const string Archivo = "Fondo.Archivo";
             public const string Version = "Fondo.Version";
         }
 

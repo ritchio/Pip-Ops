@@ -15,6 +15,8 @@ namespace HelpDesk.Profiles
             .ForMember(dest => dest.Adjuntos, opt => opt.MapFrom(src => src.Adjuntos != null ? src.Adjuntos : null))
             .ForMember(dest => dest.Respuestas, opt => opt.MapFrom(src => src.Respuesta != null ? src.Respuesta : null))
             .ForMember(dest => dest.Asignacion, opt => opt.MapFrom(src => src.Asignacion != null ? src.Asignacion : null))
+            .ForMember(dest => dest.NombreTipoSoporte, opt => opt.MapFrom(src => src.TipoSoporte != null ? src.TipoSoporte.Nombre : null))
+
             .ForMember(dest=>dest.Requisitos, opt => opt.MapFrom(src => src.ModuloClasificacion!= null? src.ModuloClasificacion.Autorizaciones.FirstOrDefault().Requisitos : null));
 
             CreateMap<Doc_TicketAdjunto, TicketAdjuntoViewModel>()
@@ -39,6 +41,7 @@ namespace HelpDesk.Profiles
             CreateMap<Sp_TicketsCantidadesPorEstado, TicketsCantidadesPorEstadoViewModel>();
             CreateMap<Sp_TicketsPendientesPorUsuario, TicketsPendientesViewModel>();
             CreateMap<Sp_TicketsRespuestaPorUsuario, TicketsRespuestaViewModel>();
+            CreateMap<Sp_TicketsBuscar, TicketsBuscarViewModel>();
 
         }
     }

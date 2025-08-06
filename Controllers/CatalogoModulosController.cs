@@ -30,7 +30,9 @@ namespace HelpDesk.Controllers
         {
             var modelo = new CatModuloClasificacionViewModel();
 
-            modelo.Areas = await _areaService.ObtenerAreasAsync();
+            var areas = await _areaService.ObtenerAreasAsync();
+            modelo.Areas = areas.Where(a => a.Activo == true).ToList();
+
             modelo.TiposSoporte = await _moduloClasificacionService.ObtenerTiposSoporteAsync();
 
 

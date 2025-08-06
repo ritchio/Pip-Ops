@@ -10,7 +10,7 @@
         @await Component.InvokeAsync("MostrarQRTOTP")
         
     </div>
-    <div class="card-footer">
-        <a class="btn btn-primary" asp-action="VerificaTOTP" asp-controller="Acceso">He escaneado el código</a>
+    <div class="card-footer bg-transparent">
+        <a class="btn btn-primary" asp-action="VerificaTOTP" asp-controller="Acceso" asp-route-scan="1">He escaneado el código</a>
     </div>
 </div>

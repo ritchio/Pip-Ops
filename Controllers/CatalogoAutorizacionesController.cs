@@ -30,7 +30,8 @@ namespace HelpDesk.Controllers
         public async Task<IActionResult> Crear()
         {
             var modelo = new CatAutorizacionViewModel();
-            modelo.CatalogoAreas = await _areaService.ObtenerAreasAsync();
+            var areas = await _areaService.ObtenerAreasAsync();
+            modelo.CatalogoAreas = areas.Where(a => a.Activo == true).ToList();
             modelo.CatalogoModulosClasificaciones = await _moduloClasificacionService.ObtenerModulosClasificacionesAsync();
 
             var respuesta = new RespuestaGenerica<string>

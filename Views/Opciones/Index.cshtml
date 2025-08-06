@@ -53,7 +53,7 @@
         </div>
         <div class="card-body">
             <div class="col-12 mb-4 text-center">
-                <img src="~/img/fondo.jpg?@DateTime.Now.Ticks" style="height:200px" />
+                <img src="data:image/png;base64,@Model.Fondo.Archivo" style="height:200px" />
             </div>
             <form method="post" asp-action="SubirFondo" enctype="multipart/form-data">
                 <div class="form-group">

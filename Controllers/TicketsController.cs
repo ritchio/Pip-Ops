@@ -90,7 +90,8 @@ namespace HelpDesk.Controllers
         {
             try
             {
-                var resultado = await _ticketService.Busqueda(busqueda);
+                var usuario = await _usuarioService.ObtenerUsuarioActual(User);
+                var resultado = await _ticketService.Busqueda(busqueda,usuario);
                 return View(resultado);
             }
             catch (Exception ex)
@@ -98,9 +99,12 @@ namespace HelpDesk.Controllers
                 var respuesta = new RespuestaGenerica<string>
                 {
                     Exito = false,
-                    Mensaje = "Error al buscar tickets: " + ex.Message
+                    Mensaje = "Error al buscar tickets revise su texto de búsqueda"
                 };
-                return BadRequest(respuesta);
+                TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+
+                var resultado = new List<TicketsBuscarViewModel>();
+                return View(resultado);
             }
         }
 
