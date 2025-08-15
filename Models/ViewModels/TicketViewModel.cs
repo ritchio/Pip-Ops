@@ -36,6 +36,8 @@ namespace HelpDesk.Models.ViewModels
         public string Cuerpo { get; set; } = string.Empty;
 
         public DateTime FechaCreacion { get; set; }
+        public DateTime FechaValidado { get; set; }
+        public DateTime FechaCerrado { get; set; }
 
         public IFormFile? ArchivoAdjunto { get; set; }
 

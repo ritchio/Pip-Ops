@@ -35,6 +35,7 @@ namespace HelpDesk.Models.Entities
 
         public DateTime? FechaCreacion { get; set; }
         public DateTime? FechaCerrado { get; set; }
+        public DateTime? FechaValidado { get; set; }
 
         // Relaciones de navegación
         [ForeignKey(nameof(IdTipoSoporte))]
