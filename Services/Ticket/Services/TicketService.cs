@@ -397,6 +397,7 @@ namespace HelpDesk.Services.Ticket.Services
                 {
                     //ticket
                     ticket.IdEstadoTicket = EstadoTicket.Validado;
+                    ticket.FechaValidado = DateTime.Now;
                     _context.Update(ticket);
                     _context.SaveChanges();
 
@@ -557,7 +558,11 @@ namespace HelpDesk.Services.Ticket.Services
                     if(nuevoEstado == EstadoTicket.Cerrado)
                     {
                         ticket.FechaCerrado = DateTime.Now;
+                    }else if(nuevoEstado == EstadoTicket.Validado)
+                    {
+                        ticket.FechaValidado = DateTime.Now;
                     }
+
                     _context.Update(ticket);
                     await _context.SaveChangesAsync();
 
@@ -630,8 +635,6 @@ namespace HelpDesk.Services.Ticket.Services
         {
             try
             {
-              
-                
 
                 //traer los el total de tickets capturados
                 var totalTickets = await _context.Doc_Ticket
