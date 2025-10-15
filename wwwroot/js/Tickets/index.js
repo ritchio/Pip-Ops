@@ -69,11 +69,11 @@ async function obtenerCantidadesPorEstado() {
     });
 }
 
-async function asignarTicket(idTicket,idUsuario) {
+async function asignarTicket(idTicket,idUsuario,reasignado = false) {
     let mensaje = (idUsuario == "auto") ? "¿Realmente desea asignarse este ticket?" : "¿Realmente desea asignar el agente a este ticket?"
 
     if (confirm(mensaje)) {
-        window.location.href = `${BASE_PATH}/Tickets/Asignar/${idTicket}/${idUsuario}`;
+        window.location.href = `${BASE_PATH}/Tickets/Asignar/${idTicket}/${idUsuario}/${reasignado}`;
     }
 }
 

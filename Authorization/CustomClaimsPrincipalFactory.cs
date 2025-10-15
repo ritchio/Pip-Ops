@@ -21,6 +21,7 @@ namespace HelpDesk.Authorization
 
             // doble factor
             identity.AddClaim(new Claim("Is2FAAuthenticated", "false"));
+            identity.AddClaim(new Claim("NombreCompleto", user.NombreCompleto));
 
             return identity;
         }
