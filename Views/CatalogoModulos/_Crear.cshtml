@@ -1,0 +1,61 @@
+﻿@using HelpDesk.Models.ViewModels
+@model CatModuloClasificacionViewModel
+
+<div class="modal-header">
+   <h4 class="modal-title">Nuevo Módulo / Clasificación</h4>
+</div>
+<div class="modal-body">
+   <div class="row">
+       <div class="col-md-12">
+           <form asp-action="Crear" method="post" class="row">
+               <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+               <div class="form-group col-12 mb-2">
+                   <label asp-for="Nombre" class="control-label"></label>
+                   <input asp-for="Nombre" class="form-control" />
+                   <span asp-validation-for="Nombre" class="text-danger"></span>
+               </div>
+
+               <div class="form-group col-12 ">
+                   <label asp-for="IdTipoSoporte" class="control-label">Tipo de Soporte</label>
+                   <select asp-for="IdTipoSoporte" class="form-control" asp-items="@(new SelectList(Model.TiposSoporte, "IdTipoSoporte", "Nombre"))">
+                   </select>
+                   <span asp-validation-for="IdTipoSoporte" class="text-danger"></span>
+               </div>
+                <div class="form-group col-sm-12 text-center m-4">
+                    
+                    <input asp-for="TodasAreas" type="checkbox" class="form-check-input" onchange="deshabilitaAreas(this)"/>
+                    <label asp-for="TodasAreas" class="control-label">Todas las áreas</label>
+                    <span asp-validation-for="TodasAreas" class="text-danger"></span>
+                </div>
+               <div class="form-group col-sm-12">
+                   <label asp-for="IdAreas" class="control-label">Área</label>
+                    <select asp-for="IdAreas" class="form-control" asp-items="@(new SelectList(Model.Areas, "IdArea", "NombreAreaPlaza","multiple"))">
+                   </select>
+                   <span asp-validation-for="IdAreas" class="text-danger"></span>
+               </div>
+
+               <div class="form-group mt-4">
+                   <input type="submit" value="Guardar" class="btn btn-primary" />
+               </div>
+           </form>
+       </div>
+   </div>
+</div>
+<div class="modal-footer">
+   <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+</div>
+<script>
+
+    new TomSelect('select[name="IdAreas"]', {
+        plugins: ['remove_button'],
+        maxItems: null,
+        create: false,
+        persist: false,
+        allowEmptyOption: true,
+    });
+
+</script>
+@section Scripts {
+   @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

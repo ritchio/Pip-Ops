@@ -18,7 +18,12 @@ namespace HelpDesk.Models.Entities
         [ForeignKey("IdPlaza")]
         public virtual Cat_Plaza? Plaza { get; set; }
 
-        //public virtual ICollection<Rel_UsuarioArea>? UsuarioAreas { get; set; }  
+        //navegacion
+
+        public virtual ICollection<Cat_Autorizacion>? Autorizaciones { get; set; }
+        public virtual ICollection<Rel_ModuloClasificacion_Area>? ModuloClasificacionAreas { get; set; }
+        public virtual ICollection<Rel_Autorizacion_AreaAutoriza>? AutorizacionAreas { get; set; }
+        public virtual ICollection<Doc_TicketAutorizacion>? TicketAutorizacion { get; set; } 
     }
 
 }

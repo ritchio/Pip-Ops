@@ -15,9 +15,11 @@ using System.Text.Json;
 using HelpDesk.Services.Plaza.Interfaces;
 using HelpDesk.Services.Area.Interfaces;
 using HelpDesk.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HelpDesk.Controllers
 {
+    [Authorize]
     public class CatalogoUsuariosController(
         ApplicationDbContext context,
         IUsuarioService usuarioService,
@@ -33,7 +35,7 @@ namespace HelpDesk.Controllers
         #endregion [ Atributos ]
 
 
-        // GET: CatalogoUsuarios
+        [VerificaPermiso("Usuario.Ver")]
         public async Task<IActionResult> Index()
         {
             var usuarios = await _usuarioService.ObtenerUsuarios();
@@ -48,20 +50,20 @@ namespace HelpDesk.Controllers
                 return NotFound();
             }
 
-            var aspNetUsersViewModel = await _context.Users
+            var CatUsuarioViewModel = await _context.Users
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (aspNetUsersViewModel == null)
+            if (CatUsuarioViewModel == null)
             {
                 return NotFound();
             }
 
-            return View(aspNetUsersViewModel);
+            return View(CatUsuarioViewModel);
         }
 
-        // GET: CatalogoUsuarios/Create  
+        [VerificaPermiso("Usuario.Crear")]  
         public async Task<IActionResult> Crear()
         {
-            var usuariomodel = new AspNetUsersViewModel
+            var usuariomodel = new CatUsuarioViewModel
             {
                 CorreoElectronico = "",
                 PrimerNombre = "",
@@ -71,8 +73,10 @@ namespace HelpDesk.Controllers
             };
 
             usuariomodel.Roles = await _context.Roles.ToListAsync();
-            usuariomodel.Plazas = await _plazaService.ObtenerPlazasAsync();
-            usuariomodel.Areas = await _areaService.ObtenerAreasAsync();
+            var plazas = await _plazaService.ObtenerPlazasAsync();
+            usuariomodel.Plazas = plazas.Where(p => p.Activo == true).ToList();
+            var areas = await _areaService.ObtenerAreasAsync();
+            usuariomodel.Areas = areas.Where(a => a.Activo == true && a.IdPlaza == usuariomodel.Plazas.First().IdPlaza).ToList();
 
             var respuesta = new RespuestaGenerica<string>
             {
@@ -88,14 +92,14 @@ namespace HelpDesk.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Crear(AspNetUsersViewModel aspNetUsersViewModel)
+        public async Task<IActionResult> Crear(CatUsuarioViewModel CatUsuarioViewModel)
         {
             if (ModelState.IsValid)
             {
-                //_context.Add(aspNetUsersViewModel);
+                //_context.Add(CatUsuarioViewModel);
                 //await _context.SaveChangesAsync();
                 //return RedirectToAction(nameof(Index));
-                var usuarioCreado = await _usuarioService.Crear(aspNetUsersViewModel);
+                var usuarioCreado = await _usuarioService.Crear(CatUsuarioViewModel);
                 if(usuarioCreado.Exito)
                 {
                     var respuesta = new RespuestaGenerica<string>
@@ -105,7 +109,7 @@ namespace HelpDesk.Controllers
 
                     };
 
-                    TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                    TempData["Notificacion"] = JsonSerializer.Serialize(usuarioCreado);
                     return RedirectToAction("Index");
                 }
                 else
@@ -142,6 +146,7 @@ namespace HelpDesk.Controllers
                 
         }
 
+        [VerificaPermiso("Usuario.Editar")]
         public async Task<IActionResult> Editar(string id)
         {
             if (id == null)
@@ -178,37 +183,34 @@ namespace HelpDesk.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Editar(string id, AspNetUsersViewModel aspNetUsersViewModel)
+        public async Task<IActionResult> Editar(string id, CatUsuarioViewModel CatUsuarioViewModel)
         {
-            if (id != aspNetUsersViewModel.Id)
+            if (id != CatUsuarioViewModel.Id)
             {
-                return NotFound();
+                var respuesta = new RespuestaGenerica<string>
+                {
+                    Exito = false,
+                    Mensaje = "El ID del usuario no coincide con el proporcionado.",
+                    Llamada = "editarUsuario",
+                    Datos = CatUsuarioViewModel.Id
+                };
+
+                TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                return RedirectToAction("Index");
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var response = await _usuarioService.Modificar(aspNetUsersViewModel);
+                    var response = await _usuarioService.Modificar(CatUsuarioViewModel);
 
-                    if (response != null)
-                    {
-                        TempData["Notificacion"] = JsonSerializer.Serialize(new RespuestaGenerica<string>
-                        {
-                            Exito = true,
-                            Mensaje = "Usuario actualizado con éxito.",
-                        });
-                    }
-                    TempData["Notificacion"] = JsonSerializer.Serialize(new RespuestaGenerica<string>
-                    {
-                        Exito = true,
-                        Mensaje = "Usuario actualizado con éxito.",
-                    });
+                    TempData["Notificacion"] = JsonSerializer.Serialize(response);
                     return RedirectToAction("Index");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AspNetUsersViewModelExists(aspNetUsersViewModel.Id))
+                    if (!CatUsuarioViewModelExists(CatUsuarioViewModel.Id))
                     {
                         return NotFound();
                     }
@@ -235,7 +237,8 @@ namespace HelpDesk.Controllers
                 return Ok(errores);
             }
         }
-        
+
+        [VerificaPermiso("Usuario.Desactivar")]
         public async Task<IActionResult> CambiarEstado(string id)
         {
             if (id == null)
@@ -248,6 +251,8 @@ namespace HelpDesk.Controllers
             
         }
 
+        [VerificaPermiso("Usuario.Permisos")]
+       
         public async Task<IActionResult> ObtenerPermisosUsuario(string idUsuario)
         {
             if (idUsuario == null)
@@ -299,7 +304,7 @@ namespace HelpDesk.Controllers
         }
 
         #region [ Privadas ]
-        private bool AspNetUsersViewModelExists(string id)
+        private bool CatUsuarioViewModelExists(string id)
         {
             return _context.Users.Any(e => e.Id == id);
         }

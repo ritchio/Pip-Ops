@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Verificación de autenticación de doble factor";
+    Layout = "~/Views/Shared/_LayoutLimpio.cshtml";
+}
+
+<div class="card col-sm-6 m-auto bg-translucent py-3">
+    <div class="card-header">Hola @User.FindFirst("NombreCompleto")?.Value</div>
+    <div class="card-body">
+        <h5>Para acceder a la plataforma, debe ingresar el código de verificación</h5>
+        <form method="post" asp-action="VerificaTOTP">
+            <div class="col-12 mb-3">
+                <label for="codigoTOTP" class="form-label">Código de 6 cifras</label>
+                <input name="codigoTOTP" id="CodigoTOTP" class="form-control bg-translucent" type="text" maxlength="6" pattern="\d{6}" required />
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Verificar</button>
+            </div>
+        </form>
+    </div>
+</div>

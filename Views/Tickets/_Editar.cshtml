@@ -1,0 +1,289 @@
+﻿@using HelpDesk.Authorization
+@using HelpDesk.Constants
+@model HelpDesk.Models.ViewModels.TicketViewModel  
+@{ var colorCirculo = "#ffffff";}
+
+<div class="modal-header">  
+    <div class="col-8">
+        @if(Model.IdEstadoTicket == EstadoTicket.PorAutorizar)
+        {
+            colorCirculo = "#ebd234";
+        }
+        else if(Model.IdEstadoTicket == EstadoTicket.Rechazado)
+        {
+            colorCirculo = "#d6184e";
+        }
+        else if(Model.IdEstadoTicket == EstadoTicket.Cerrado)
+        {
+            colorCirculo = "#cacaca";
+        }
+        else 
+        {
+            colorCirculo = "#34d618";
+        }
+        <h4 class="modal-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="@colorCirculo" class="bi bi-circle-fill" viewBox="0 0 16 16">
+                <circle cx="8" cy="8" r="8" />
+            </svg>&nbsp;Ticket #@(Model.IdTicket.ToString("D3") ?? "")
+        </h4>
+    </div>
+    <div class="col-4 d-flex justify-content-end">
+        @if (Html.TieneAcceso( roles: [Roles.Soporte, Roles.Administrador, Roles.AdministradorSupervisor]) && Model.IdEstadoTicket == EstadoTicket.Nuevo)
+        {
+            if (Html.TieneAcceso(Permisos.Ticket.Asignar))
+            {
+                <button class="btn btn-primary" onclick="mostrarAsignarAgente(@Model.IdTicket)">Asignar Ticket</button>
+            }else if (Html.TieneAcceso(Permisos.Ticket.AutoAsignar))
+            {
+                <button class="btn btn-primary" onclick="asignarTicket(@Model.IdTicket,'auto')">Asignar Ticket</button>
+            }
+
+        }else if(Model.IdEstadoTicket > EstadoTicket.Nuevo && Model.IdEstadoTicket < EstadoTicket.Cerrado)
+        {
+            if(Html.TieneAcceso(Permisos.Ticket.ReAsignar) && Html.TieneAcceso(roles: [Roles.Administrador, Roles.AdministradorSupervisor]))
+            {
+                <button class="btn btn-primary" onclick="mostrarAsignarAgente(@Model.IdTicket)">Reasignar Ticket</button>
+            }
+        }
+    </div>
+</div>  
+<div class="modal-body">  
+    <form asp-action="Crear" method="post" class="row" enctype="multipart/form-data">  
+        <input asp-for="IdTicket" type="hidden"/>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>  
+        @if(Html.TieneAcceso(Permisos.Ticket.ReClasificar) && Html.TieneAcceso(roles: [Roles.Administrador,Roles.Administrador]))
+        {
+            <div class="form-group col-sm-4">  
+                <label asp-for="IdTipoSoporte" class="control-label">Tipo de Soporte</label>  
+                <select asp-for="IdTipoSoporte" class="form-control" asp-items="@(new SelectList(Model.TiposSoporte, "IdTipoSoporte", "Nombre"))" onchange="obtenerModulosClasificaciones(this.value)" ></select>
+                <span asp-validation-for="IdTipoSoporte" class="text-danger"></span>  
+            </div>  
+
+            <div class="form-group col-sm-5">  
+                <label asp-for="IdModuloClasificacion" class="control-label">Módulo Clasificación</label>
+                <select asp-for="IdModuloClasificacion" class="form-control" asp-items="@(new SelectList(Model.ModulosClasificaciones, "IdModuloClasificacion", "Nombre"))" onchange="obtenerAutorizacion(this.value)"></select>
+                <span asp-validation-for="IdModuloClasificacion" class="text-danger"></span>  
+            </div>
+        }
+        else
+        {
+            <div class="form-group col-sm-4">  
+                <label asp-for="IdTipoSoporte" class="control-label">Tipo de Soporte</label>  
+                <select asp-for="IdTipoSoporte" class="form-control" asp-items="@(new SelectList(Model.TiposSoporte, "IdTipoSoporte", "Nombre"))" onchange="obtenerModulosClasificaciones(this.value)" readonly="@(Model.Editable?null:"true")"></select>
+                <span asp-validation-for="IdTipoSoporte" class="text-danger"></span>  
+            </div>  
+
+            <div class="form-group col-sm-5">  
+                <label asp-for="IdModuloClasificacion" class="control-label">Módulo Clasificación</label>
+                <select asp-for="IdModuloClasificacion" class="form-control" asp-items="@(new SelectList(Model.ModulosClasificaciones, "IdModuloClasificacion", "Nombre"))" onchange="obtenerAutorizacion(this.value)" readonly="@(Model.Editable?null:"true")"></select>
+                <span asp-validation-for="IdModuloClasificacion" class="text-danger"></span>  
+            </div>
+        }
+          
+        <div class="col-sm-3">
+            <p>Autorizaciones pendientes</p>
+            <div class="form-control">
+                
+                    @foreach(var auto in Model.Autorizaciones)
+                    {
+                        @if(auto.IdEstadoAutorizacion == EstadoAutorizacion.PorAutorizar)
+                        {
+                            colorCirculo = "#ebd234";
+                        }
+                        else if(auto.IdEstadoAutorizacion == EstadoAutorizacion.Autorizado)
+                        {
+                            colorCirculo = "#34d618";
+                        }
+                        else
+                        {
+                            colorCirculo = "#d6184e";
+                        }
+                        <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="@colorCirculo" class="bi bi-circle-fill" viewBox="0 0 16 16">
+                                    <circle cx="8" cy="8" r="8" />
+                                </svg>&nbsp;@auto.NombreArea
+                        </div>
+                    }
+                
+            </div>
+        </div>
+
+        <div class="form-group col-sm-6">  
+            <label asp-for="CorreoElectronico" class="control-label">Correo Electrónico</label>
+            <input asp-for="CorreoElectronico" class="form-control" readonly="@(Model.Editable?null:"true")" />
+            <span asp-validation-for="CorreoElectronico" class="text-danger"></span>  
+        </div>  
+
+        <div class="form-group col-sm-6">  
+            <label asp-for="Telefono" class="control-label">Teléfono</label>
+            <input asp-for="Telefono" class="form-control" readonly="@(Model.Editable?null:"true")" />
+            <span asp-validation-for="Telefono" class="text-danger"></span>  
+        </div>  
+
+        <div class="form-group col-sm-12">  
+            <label for="requisitos" class="control-label">Requisitos</label>  
+            <textarea id="requisitos" name="requisitos" class="form-control" disabled>@Model.Requisitos</textarea>  
+        </div>  
+
+        <div class="form-group col-sm-12">  
+            <label asp-for="Asunto" class="control-label">Asunto</label>
+            <input asp-for="Asunto" class="form-control" readonly="@(Model.Editable?null:"true")" required/>
+            <span asp-validation-for="Asunto" class="text-danger"></span>  
+        </div>  
+
+        <div class="col-12 d-flex justify-content-start">
+            <i class="ti ti-user title-icon"></i>
+            <div>
+                <div>@Model.Usuario.NombreCompleto</div>
+                <div>@Model.FechaCreacion - @Model.Usuario.PlazaNombre - @Model.Usuario.AreaNombre</div>
+            </div>
+        </div>
+
+        <div class="form-group col-sm-12">  
+            <label asp-for="Cuerpo" class="control-label">Descripción</label>
+            <textarea asp-for="Cuerpo" class="form-control" readonly="@(Model.Editable?null:"true")" required></textarea>
+            <span asp-validation-for="Cuerpo" class="text-danger"></span>  
+        </div>  
+        @if (Model.Editable)
+        {
+            <div class="form-group col-sm-12">
+                <label for="ArchivoAdjunto" class="control-label">Subir Archivo</label>
+                <i class="blockquote-footer">Máximo 1 MB</i>
+                <input tupe="file" name="ArchivoAdjunto" id="ArchivoAdjunto" type="file" class="form-control" accept=".jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx,.pdf" readonly="@(Model.Editable?null:"true")" />
+            </div>
+        }
+        else
+        {
+            <div class="col-sm-12">
+                <label>Ver archivo</label>
+                <div class="form-control">
+                    @foreach (var archivo in Model.Adjuntos)
+                    {
+                        <a asp-controller="Tickets" asp-action="Adjunto" asp-route-hash="@archivo.Hash" target="_blank">@archivo.Nombre</a>
+                    }
+                    <a href="#"></a>
+                </div>
+            </div>
+        }
+
+        <div class="col-sm-12">
+            <hr />
+            <h3>Respuestas de autorizaciones</h3>
+            @foreach (var autorizacion in Model.Autorizaciones)
+            {
+                @if(autorizacion.Observacion != null)
+                {
+                    <div class="form-control">
+                        <p>@autorizacion.NombreArea</p>
+                        <p>@autorizacion.NombreEstado</p>
+                        <p>@autorizacion.Observacion</p>
+                    </div>
+                }
+                
+            }
+
+        </div>
+
+        @if (Model.Editable && Model.EsSolicitante)
+        {
+            
+            <div class="form-group mt-4">
+                <input type="submit" value="Solicitar ticket" class="btn btn-primary" />
+            </div>
+        }
+        @if(Model.IdEstadoTicket != EstadoTicket.Validado && (!Model.EsSolicitante || !Model.Editable) && (Html.TieneAcceso(Permisos.Ticket.ReClasificar) && Html.TieneAcceso(roles: [Roles.Administrador, Roles.Administrador, Roles.Soporte])))
+        {
+            <div class="form-group mt-4">
+                <input type="submit" value="Guardar Re-Clasificacion" class="btn btn-primary" />
+            </div>
+        }
+
+   </form>  
+    @if(Model.IdEstadoTicket > EstadoTicket.Nuevo )
+    {
+        <hr />
+        <h3>Respuestas del ticket</h3>
+        @foreach (var respuesta in Model.Respuestas)
+        {
+            <div class="form-control mt-4">
+                @if (respuesta.DelSolicitante) {
+                    <i>Solicitante -- </i>
+                } else { 
+                    <i>Agente de Soporte -- </i>
+                }
+                    
+                <i>@respuesta.Fecha</i>
+                <p>@respuesta.Mensaje</p>
+                @if(respuesta.Adjuntos.Count > 0)
+                {
+                    @foreach(var adjunto in respuesta.Adjuntos)
+                    {
+                        <a asp-controller="Tickets" asp-action="AdjuntoRespuesta" asp-route-hash="@adjunto.Hash" target="_blank">@adjunto.Nombre</a>
+                    }
+                    
+                }
+            </div>
+        }
+
+        @if ((Model.EsAgente || Model.EsSolicitante) && Model.IdEstadoTicket < EstadoTicket.Validado)
+        {
+            <hr />
+            <form class="col-12" enctype="multipart/form-data" asp-controller="Tickets" asp-action="GuardarRespuesta" method="post">
+                <div class="form-group">
+                    <label>Respuesta</label>
+                    <textarea name="Mensaje" class="form-control" placeholder="Escriba detalladamente su respuesta"></textarea>
+                    <input type="hidden" name="IdTicket" value="@Model.IdTicket"/>
+                </div>
+                <div class="form-group">
+                    <label>Adjuntar archivo</label>
+                    <i class="blockquote-footer block">Máximo 1 MB</i>
+                    <input type="file" name="ArchivoAdjunto" id="ArchivoAdjunto" class="form-control" accept=".jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx,.pdf" />
+                </div>
+                <div class="form-group mt-4">
+                    <input type="submit" value="Enviar respuesta" class="btn btn-primary" />
+                </div>
+            </form>
+        }
+
+        if((Model.EsAgente || Html.TieneAcceso(roles: [Roles.Administrador,Roles.AdministradorSupervisor]))  && Model.IdEstadoTicket < EstadoTicket.Validado){
+            <hr />
+            <form class="col-12" asp-controller="Tickets" asp-action="CambiarEstado" method="post">
+                <div class="form-group">
+                    <input type="hidden" name="IdTicket" value="@Model.IdTicket"/>
+                    <label>Cambiar estatus</label>
+                    <select asp-for="IdEstadoTicket" class="form-control" asp-items="@(new SelectList(Model.EstadosTicket, "IdEstadoTicket", "Nombre"))"></select>
+
+                </div>
+                <div class="form-group mt-4">
+                    <input type="submit" class="btn btn-primary" value="Guardar cambio de estatus"/>
+                </div>
+            </form>
+        }
+    } 
+</div>  
+<div class="modal-footer">  
+   <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>  
+</div>  
+
+<script>  
+   $(function(){  
+       obtenerAutorizacion($("#IdModulolCasificacion").val());  
+   });  
+
+   $("#ArchivoAdjunto").on("change",function(e){
+         if(this.files[0].size > 1048576) {
+            mostrarNotificacion({
+                datos :null,
+                mensaje: "El archivo es demasiado grande. <br/>Solo tiene un límite de 1MB por archivo.",
+                exito: false
+            });
+        this.value = "";
+     }
+   });
+</script>  
+
+@section Scripts {  
+   @{  
+       await Html.RenderPartialAsync("_ValidationScriptsPartial");  
+   }  
+}

@@ -1,8 +1,51 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<div class="row">
+    <div class="col-6">
+        @await Component.InvokeAsync("DescargaAplicacion")
+    </div>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <div class="col-6 h-100">
+        @await Component.InvokeAsync("MensajeDelDia")
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 mt-4">
+
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs nav-fill" data-bs-toggle="tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a href="#ticketsNuevos" class="nav-link active" data-bs-toggle="tab" aria-selected="true" role="tab">Tickets Nuevos (<span id="numeroTicketsNuevos"></span>)</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a href="#ticketsPorAutorizar" class="nav-link" data-bs-toggle="tab" aria-selected="false" tabindex="-1" role="tab">Por Autorizar (<span id="numeroTicketsPorAutorizar"></span>)</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a href="#ticketsRechazados" class="nav-link" data-bs-toggle="tab" aria-selected="false" tabindex="-1" role="tab">Rechazados (<span id="numeroTicketsRechazados"></span>)</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content">
+                    <div class="tab-pane active show" id="ticketsNuevos" role="tabpanel">
+                        <div class="col-12 h-100">
+                            @await Component.InvokeAsync("TicketsNuevos")
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="ticketsPorAutorizar" role="tabpanel">
+                        <div class="col-12 h-100">
+                            @await Component.InvokeAsync("TicketsPorAutorizar")
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="ticketsRechazados" role="tabpanel">
+                        <div class="col-12 h-100">
+                            @await Component.InvokeAsync("TicketsRechazados")
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>

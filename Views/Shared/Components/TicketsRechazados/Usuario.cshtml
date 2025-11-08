@@ -1,0 +1,50 @@
+﻿@using HelpDesk.Models.ViewModels
+@model List<TicketsRechazadosViewModel>
+
+<table class="display table table-responsive table-striped" id="tablaTicketsRechazadosUsuario">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Asunto</th>
+            <th class="d-none">Cuerpo</th>
+            <th>Fecha de Solicitud</th>
+            <th>Acciones</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            foreach (var ticket in Model)
+            {
+                <tr>
+                    <td>@(ticket.IdTicket?.ToString("D3") ?? "")</td>
+                    <td>@ticket.Asunto</td>
+                    <td class="d-none">@ticket.Cuerpo</td>
+                    <td>@ticket.FechaSolicitud</td>
+                    <td class="text-center"><button type="button" class="btn btn-primary" onclick="mostrarDetallesTicket(@ticket.IdTicket)"><i class="ti ti-eye"></i></button></td>
+
+                </tr>
+            }
+        }
+    </tbody>
+
+</table>
+
+<script>
+    $(function(){
+    $("#tablaTicketsRechazadosUsuario").DataTable({
+        responsive: true,
+         columnDefs:[
+            {
+                responsivePriority:1,
+                targets:-1
+            }
+        ],
+        language:lenguajeTablaGenerica
+    });
+
+    $("#numeroTicketsRechazados").text('@Model.Count()')
+    });
+
+
+</script>

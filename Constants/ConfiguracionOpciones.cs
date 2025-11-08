@@ -1,0 +1,27 @@
+﻿using Newtonsoft.Json.Serialization;
+
+namespace HelpDesk.Constants
+{
+    public class ConfiguracionOpciones
+    {
+        public static class MensajeDelDia
+        {
+            public const string Mensaje = "MensajeDelDia.Mensaje";
+            public const string Posicion = "MensajeDelDia.Posicion";
+        }
+
+        public static class Fondo 
+        {
+            public const string Ruta = "Fondo.Ruta";
+            public const string Archivo = "Fondo.Archivo";
+            public const string Version = "Fondo.Version";
+        }
+
+        public static class DescargaAplicacion
+        {
+            public const string Mensaje = "DescargaAplicacion.Mensaje";
+            public const string Enlace = "DescargaAplicacion.Enlace";
+            public const string Contrasenia = "DescargaAplicacion.Contrasenia";
+        }
+    }
+}

@@ -81,7 +81,13 @@
                 //sin genericResponse
                 return resp;
             } else {
-                //mostrarNotificacion(resp);
+                if (errorCallback && typeof errorCallback === 'function') {
+                    errorCallback();
+                } else {
+                    mostrarNotificacion(resp);
+                }
+
+                
                
                 return resp.datos;
             }

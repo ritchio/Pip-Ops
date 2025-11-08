@@ -2,29 +2,29 @@
    if (ViewData["titulo"] == null)  
    {  
        ViewData["titulo"] = "HelpDesk";  
-   }  
+   } 
 }  
 
 <!doctype html>
 <html lang="en">
 <head>  
    <meta charset="utf-8" />  
-   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />  
+   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
    <meta http-equiv="X-UA-Compatible" content="ie=edge" />  
    <title>@ViewData["titulo"]</title>
    <!-- BEGIN PAGE LEVEL STYLES -->  
    <link href="~/lib/jsvectormap/dist/jsvectormap.css?1744111186" rel="stylesheet" />  
    <!-- END PAGE LEVEL STYLES -->  
    <!-- BEGIN GLOBAL MANDATORY STYLES -->  
-   <link href="/css/tabler.min.css?1744111186" rel="stylesheet" integrity="sha384-pAQE2kJ68M5BfDVCRPdGdaXrZagu/B50dMc4ukkjzgoAyoY+U92JUlEG9N8NsMZh" />  
+   <link href="~/css/tabler.min.css?1744111186" rel="stylesheet" />  
    <!-- END GLOBAL MANDATORY STYLES -->  
    <!-- BEGIN PLUGINS STYLES -->  
-   <link href="/css/tabler-flags.min.css?1744111186" rel="stylesheet" integrity="sha384-J4S9gTOgB6a60d8OIMRu7vveDJCqxLAcDfzDN24CQxXmfi1iIFoU3uelSShCMfAD" />  
-   <link href="/css/tabler-socials.min.css?1744111186" rel="stylesheet" integrity="sha384-M/p2rVRhhVGWQaE5B4+/uWqFtmb6ag3/NXG8E3SL2MAROPCfB5YJvDHmS5Rms" />  
-   <link href="/css/tabler-payments.min.css?1744111186" rel="stylesheet" integrity="sha384-YnhOMEPyU5QfErzSK9sD18FMXdRCn/HB4a+88mFXbd45fFRNWKWeARptNw1k16+/" />  
-   <link href="/css/tabler-vendors.min.css?1744111186" rel="stylesheet" integrity="sha384-cFz/XfWTmyCb5jkPFO3b51Vgc16vyrRzL3LLD2Ah7yFnpVjxN6nalaCc02Xg2vh4" />  
-   <link href="/css/tabler-marketing.min.css?1744111186" rel="stylesheet" integrity="sha384-/IK/eDAkWg4gzAdp6tVmpjq6GEQGamdwbnfsuK0PNDDQPsD9ytW0gIXSK/dZWgAK" />  
-   <link href="/css/tabler-themes.min.css?1744111186" rel="stylesheet" integrity="sha384-Bj8pP2O3iJP6JH/ZdDBnxIH/3XOJF8DSyYUUHs8wTxb0PRUe5DU01llAmog5ybpg" />  
+   <link href="~/css/tabler-flags.min.css?1744111186" rel="stylesheet" />  
+   <link href="~/css/tabler-socials.min.css?1744111186" rel="stylesheet"  />  
+   <link href="~/css/tabler-payments.min.css?1744111186" rel="stylesheet"/>  
+   <link href="~/css/tabler-vendors.min.css?1744111186" rel="stylesheet" />  
+   <link href="~/css/tabler-marketing.min.css?1744111186" rel="stylesheet"/>  
+   <link href="~/css/tabler-themes.min.css?1744111186" rel="stylesheet"  />  
    <!-- END PLUGINS STYLES -->  
    <!-- BEGIN DEMO STYLES -->  
    <!--link href="./preview/css/demo.min.css?1744111186" rel="stylesheet" integrity="sha384-BUDq2P684xwRBf0GDlySvob+KJg4ko8y2K7njgvYBscmEuqoVVqJ75zcTDozwkFA" />  
@@ -32,21 +32,32 @@
    <!-- BEGIN CUSTOM FONT -->  
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/&#64;tabler/icons-webfont@latest/tabler-icons.min.css">  
    <link href="https://rsms.me/inter/inter.css" rel="stylesheet">  
-   <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css">  
+    
    <link href="~/css/site.css" rel="stylesheet">  
-   <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />  
-   <!-- END CUSTOM FONT -->  
+   <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css">
+    <!-- END CUSTOM FONT -->  
    <script src="~/lib/jquery/dist/jquery.min.js"></script>  
    <script src="https://cdn.jsdelivr.net/npm/&#64;popperjs/core@2.9.2/dist/umd/popper.min.js"></script>  
    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>  
    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>  
-   <script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>  
-   <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>  
+   @* <script src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>   *@
+    
+   <!--inicio datatables-->
+    <link href="https://cdn.datatables.net/v/bs5/jszip-3.10.1/dt-2.3.0/b-3.2.3/b-colvis-3.2.3/b-html5-3.2.3/b-print-3.2.3/date-1.5.5/r-3.0.4/sp-2.3.3/sl-3.0.0/datatables.min.css" rel="stylesheet" integrity="sha384-GPtfEeSXux2EEsr5CodqtVXoso18ArMUKnJEhF+wSHn/tjljAFtyVRNqrdFmNjoh" crossorigin="anonymous">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js" integrity="sha384-VFQrHzqBh5qiJIU0uGU5CIW3+OWpdGGJM9LBnGbuIH2mkICcFZ7lPd/AAtI7SNf7" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js" integrity="sha384-/RlQG9uf0M2vcTw3CX7fbqgbj/h8wKxw7C3zu9/GxcBPRKOEcESxaxufwRXqzq6n" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/v/bs5/jszip-3.10.1/dt-2.3.0/b-3.2.3/b-colvis-3.2.3/b-html5-3.2.3/b-print-3.2.3/date-1.5.5/r-3.0.4/sp-2.3.3/sl-3.0.0/datatables.min.js" integrity="sha384-3w/TKhaHJjmxK5/x/H5mOJL1LX9OVI1WbatvtLhHVPtr2BFMDz2pvXoGdyZ9KBWU" crossorigin="anonymous"></script>
+   <!-- fin datatables-->
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
    @* <script src="https://cdnjs.cloudflare.com/ajax/libs/push.js/1.0.12/push.min.js"></script>   *@
 </head>
 <body>
         <!-- BEGIN GLOBAL THEME SCRIPT -->
-    <script src="~/js/tabler-theme.min.js?1744111186" integrity="sha384-xCA/37z74Ws4TlN18VkTDQ/T5bWJpvhV8k5y5Qp8qMKqKMHSHdAOcQ9qGPn0pUJj"></script>
+    <script src="~/js/tabler-theme.min.js?1744111186"></script>
     <!-- END GLOBAL THEME SCRIPT -->
     <div class="page">
       <!--  BEGIN SIDEBAR  -->
@@ -63,7 +74,18 @@
                     <div class="row row-deck row-cards">
                         
                         @RenderBody()
-                        
+                        @* <script>
+                            function enviarNotificacionPrueba() {
+                                if (Notification.permission === "granted") {
+                                    new Notification("Ticket actualizado", {
+                                        body: "Tu ticket ha cambiado de estado",
+                                        icon: "/icon.png"
+                                    });
+                                }
+                            }
+                        </script>
+
+                        <button onclick="enviarNotificacionPrueba()">Probar notificación</button> *@
                     </div>
                 </div>
             </div>
@@ -71,16 +93,12 @@
             <!--  BEGIN FOOTER  -->
             <footer class="footer footer-transparent d-print-none">
                 <div class="container-xl">
-                    <div class="row text-center align-items-center flex-row-reverse">
-                            &copy; 2025 - HelpDesk - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </div>
+                    
                 </div>
             </footer>
             <!--  END FOOTER  -->
         </div>
-            
-    <script src="~/js/site.js" asp-append-version="true"></script>
-        <script src="~/js/Shared/axiosRequest.js"></script>
+    
     @await RenderSectionAsync("Scripts", required: false)
     </div>
 
@@ -92,25 +110,13 @@
     <!-- END PAGE LIBRARIES -->
     <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
     @* <script src="~/js/tabler.min.js"  integrity="sha384-uSpys8fjyVTPrXxPMi+NhnEMIp1YSGFZSCDrRHjYIUVdInIvlHft8JHLm6Oiw3vA"></script> *@
-    <script>
-
-        @if (TempData["Notificacion"] != null)
-        {
-            var json = System.Text.Json.JsonSerializer.Serialize(TempData["Notificacion"]);
-            <text>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        mostrarNotificacion(@Html.Raw(json))
-                    });
-            </text>
-        }
-    </script>
+   
     <!-- END GLOBAL MANDATORY SCRIPTS -->
     <!-- Inicio notificaciones -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
         <div class="toast" id="notificacionToast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">
             
-            <div class="toast-header bg-info">
-                
+            <div class="toast-header bg-info" id="notificacionCabecera">                
                 <strong class="me-auto text-light" id="notificacionTitulo">Notificación</strong>
 
                 <button type="button" class="ms-2 btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
@@ -138,326 +144,28 @@
         </div>
     </div>
     <!-- fin pantalla de espera -->
-    <!--Inicio Configuración del tema-->
-    <div class="settings">
-        <a href="#" class="btn btn-floating btn-icon btn-primary" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings">
-            <!-- Download SVG icon from http://tabler.io/icons/icon/brush -->
-            <svg xmlns="http://www.w3.org/2000/svg"
-                 width="24"
-                 height="24"
-                 viewBox="0 0 24 24"
-                 fill="none"
-                 stroke="currentColor"
-                 stroke-width="2"
-                 stroke-linecap="round"
-                 stroke-linejoin="round"
-                 class="icon icon-1">
-                <path d="M3 21v-4a4 4 0 1 1 4 4h-4" />
-                <path d="M21 3a16 16 0 0 0 -12.8 10.2" />
-                <path d="M21 3a16 16 0 0 1 -10.2 12.8" />
-                <path d="M10.6 9a9 9 0 0 1 4.4 4.4" />
-            </svg>
-        </a>
-        <form class="offcanvas offcanvas-start offcanvas-narrow" tabindex="-1" id="offcanvasSettings">
-            <div class="offcanvas-header">
-                <h2 class="offcanvas-title">Preferencias del tema</h2>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
-            </div>
-            <div class="offcanvas-body d-flex flex-column">
-                <div>
-                    <div class="mb-4">
-                        <label class="form-label">Modo de color</label>
-                        <p class="form-hint">Seleccione el modo de color de la aplicación.</p>
-                        <label class="form-check">
-                            <div class="form-selectgroup-item">
-                                <input type="radio" name="theme" value="light" class="form-check-input" checked />
-                                <div class="form-check-label">Modo claro</div>
-                            </div>
-                        </label>
-                        <label class="form-check">
-                            <div class="form-selectgroup-item">
-                                <input type="radio" name="theme" value="dark" class="form-check-input" />
-                                <div class="form-check-label">Modo oscuro</div>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label">Esquema de colores</label>
-                        <p class="form-hint">Elija el esquema de color que prefiera.</p>
-                        <div class="row g-2">
-                            <div class="col-auto">
-                                <label class="form-colorinput">
-                                    <input name="theme-primary" type="radio" value="blue" class="form-colorinput-input" />
-                                    <span class="form-colorinput-color bg-blue"></span>
-                                </label>
-                            </div>
-                            <div class="col-auto">
-                                <label class="form-colorinput">
-                                    <input name="theme-primary" type="radio" value="azure" class="form-colorinput-input" />
-                                    <span class="form-colorinput-color bg-azure"></span>
-                                </label>
-                            </div>
-                            <div class="col-auto">
-                                <label class="form-colorinput">
-                                    <input name="theme-primary" type="radio" value="indigo" class="form-colorinput-input" />
-                                    <span class="form-colorinput-color bg-indigo"></span>
-                                </label>
-                            </div>
-                            <div class="col-auto">
-                                <label class="form-colorinput">
-                                    <input name="theme-primary" type="radio" value="purple" class="form-colorinput-input" />
-                                    <span class="form-colorinput-color bg-purple"></span>
-                                </label>
-                            </div>
-                            <div class="col-auto">
-                                <label class="form-colorinput">
-                                    <input name="theme-primary" type="radio" value="pink" class="form-colorinput-input" />
-                                    <span class="form-colorinput-color bg-pink"></span>
-                                </label>
-                            </div>
-                            <div class="col-auto">
-                                <label class="form-colorinput">
-                                    <input name="theme-primary" type="radio" value="red" class="form-colorinput-input" />
-                                    <span class="form-colorinput-color bg-red"></span>
-                                </label>
-                            </div>
-                            <div class="col-auto">
-                                <label class="form-colorinput">
-                                    <input name="theme-primary" type="radio" value="orange" class="form-colorinput-input" />
-                                    <span class="form-colorinput-color bg-orange"></span>
-                                </label>
-                            </div>
-                            <div class="col-auto">
-                                <label class="form-colorinput">
-                                    <input name="theme-primary" type="radio" value="yellow" class="form-colorinput-input" />
-                                    <span class="form-colorinput-color bg-yellow"></span>
-                                </label>
-                            </div>
-                            <div class="col-auto">
-                                <label class="form-colorinput">
-                                    <input name="theme-primary" type="radio" value="lime" class="form-colorinput-input" />
-                                    <span class="form-colorinput-color bg-lime"></span>
-                                </label>
-                            </div>
-                            <div class="col-auto">
-                                <label class="form-colorinput">
-                                    <input name="theme-primary" type="radio" value="green" class="form-colorinput-input" />
-                                    <span class="form-colorinput-color bg-green"></span>
-                                </label>
-                            </div>
-                            <div class="col-auto">
-                                <label class="form-colorinput">
-                                    <input name="theme-primary" type="radio" value="teal" class="form-colorinput-input" />
-                                    <span class="form-colorinput-color bg-teal"></span>
-                                </label>
-                            </div>
-                            <div class="col-auto">
-                                <label class="form-colorinput">
-                                    <input name="theme-primary" type="radio" value="cyan" class="form-colorinput-input" />
-                                    <span class="form-colorinput-color bg-cyan"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label">Fuentes</label>
-                        <p class="form-hint">Elija la fuente que desee.</p>
-                        <div>
-                            <label class="form-check">
-                                <div class="form-selectgroup-item">
-                                    <input type="radio" name="theme-font" value="sans-serif" class="form-check-input" checked />
-                                    <div class="form-check-label">Sans-serif</div>
-                                </div>
-                            </label>
-                            <label class="form-check">
-                                <div class="form-selectgroup-item">
-                                    <input type="radio" name="theme-font" value="serif" class="form-check-input" />
-                                    <div class="form-check-label">Serif</div>
-                                </div>
-                            </label>
-                            <label class="form-check">
-                                <div class="form-selectgroup-item">
-                                    <input type="radio" name="theme-font" value="monospace" class="form-check-input" />
-                                    <div class="form-check-label">Monospace</div>
-                                </div>
-                            </label>
-                            <label class="form-check">
-                                <div class="form-selectgroup-item">
-                                    <input type="radio" name="theme-font" value="comic" class="form-check-input" />
-                                    <div class="form-check-label">Comic</div>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label">Tema base</label>
-                        <p class="form-hint">Elija los tonos de gris para la aplicación.</p>
-                        <div>
-                            <label class="form-check">
-                                <div class="form-selectgroup-item">
-                                    <input type="radio" name="theme-base" value="slate" class="form-check-input" />
-                                    <div class="form-check-label">Pizarra</div>
-                                </div>
-                            </label>
-                            <label class="form-check">
-                                <div class="form-selectgroup-item">
-                                    <input type="radio" name="theme-base" value="gray" class="form-check-input" checked />
-                                    <div class="form-check-label">Gris</div>
-                                </div>
-                            </label>
-                            <label class="form-check">
-                                <div class="form-selectgroup-item">
-                                    <input type="radio" name="theme-base" value="zinc" class="form-check-input" />
-                                    <div class="form-check-label">Zinc</div>
-                                </div>
-                            </label>
-                            <label class="form-check">
-                                <div class="form-selectgroup-item">
-                                    <input type="radio" name="theme-base" value="neutral" class="form-check-input" />
-                                    <div class="form-check-label">Neutral</div>
-                                </div>
-                            </label>
-                            <label class="form-check">
-                                <div class="form-selectgroup-item">
-                                    <input type="radio" name="theme-base" value="stone" class="form-check-input" />
-                                    <div class="form-check-label">Piedra</div>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label">Bordes redondeados</label>
-                        <p class="form-hint">Elija el radio de los bordes.</p>
-                        <div>
-                            <label class="form-check">
-                                <div class="form-selectgroup-item">
-                                    <input type="radio" name="theme-radius" value="0" class="form-check-input" />
-                                    <div class="form-check-label">0</div>
-                                </div>
-                            </label>
-                            <label class="form-check">
-                                <div class="form-selectgroup-item">
-                                    <input type="radio" name="theme-radius" value="0.5" class="form-check-input" />
-                                    <div class="form-check-label">0.5</div>
-                                </div>
-                            </label>
-                            <label class="form-check">
-                                <div class="form-selectgroup-item">
-                                    <input type="radio" name="theme-radius" value="1" class="form-check-input" checked />
-                                    <div class="form-check-label">1</div>
-                                </div>
-                            </label>
-                            <label class="form-check">
-                                <div class="form-selectgroup-item">
-                                    <input type="radio" name="theme-radius" value="1.5" class="form-check-input" />
-                                    <div class="form-check-label">1.5</div>
-                                </div>
-                            </label>
-                            <label class="form-check">
-                                <div class="form-selectgroup-item">
-                                    <input type="radio" name="theme-radius" value="2" class="form-check-input" />
-                                    <div class="form-check-label">2</div>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-auto space-y">
-                    <button type="button" class="btn w-100" id="reset-changes">
-                        <!-- Download SVG icon from http://tabler.io/icons/icon/rotate -->
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             width="24"
-                             height="24"
-                             viewBox="0 0 24 24"
-                             fill="none"
-                             stroke="currentColor"
-                             stroke-width="2"
-                             stroke-linecap="round"
-                             stroke-linejoin="round"
-                             class="icon icon-1">
-                            <path d="M19.95 11a8 8 0 1 0 -.5 4m.5 5v-5h-5" />
-                        </svg>
-                        Deshacer cambios
-                    </button>
-                    <a href="#" class="btn btn-primary w-100" data-bs-dismiss="offcanvas">
-                        <!-- Download SVG icon from http://tabler.io/icons/icon/settings -->
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             width="24"
-                             height="24"
-                             viewBox="0 0 24 24"
-                             fill="none"
-                             stroke="currentColor"
-                             stroke-width="2"
-                             stroke-linecap="round"
-                             stroke-linejoin="round"
-                             class="icon icon-1">
-                            <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" />
-                            <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
-                        </svg>
-                        Guardar configuración
-                    </a>
-                </div>
-            </div>
-        </form>
-    </div>
-    <!--Fin configuración del tema-->
-    <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
-    @* <script src="~/js/tabler.min.js?1744111152" defer integrity="sha384-uSpys8fjyVTPrXxPMi+NhnEMIp1YSGFZSCDrRHjYIUVdInIvlHft8JHLm6Oiw3vA"></script> *@
-    <!-- END GLOBAL MANDATORY SCRIPTS -->
-
-    <!-- BEGIN PAGE SCRIPTS -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-          var themeConfig = {
-            theme: "light",
-            "theme-base": "gray",
-            "theme-font": "sans-serif",
-            "theme-primary": "blue",
-            "theme-radius": "1",
-          };
-          var url = new URL(window.location);
-          var form = document.getElementById("offcanvasSettings");
-          var resetButton = document.getElementById("reset-changes");
-          var checkItems = function () {
-            for (var key in themeConfig) {
-              var value = window.localStorage["tabler-" + key] || themeConfig[key];
-              if (!!value) {
-                var radios = form.querySelectorAll(`[name="${key}"]`);
-                if (!!radios) {
-                  radios.forEach((radio) => {
-                    radio.checked = radio.value === value;
-                  });
-                }
-              }
-            }
-          };
-          form.addEventListener("change", function (event) {
-            var target = event.target,
-              name = target.name,
-              value = target.value;
-            for (var key in themeConfig) {
-              if (name === key) {
-                document.documentElement.setAttribute("data-bs-" + key, value);
-                window.localStorage.setItem("tabler-" + key, value);
-                url.searchParams.set(key, value);
-              }
-            }
-            window.history.pushState({}, "", url);
-          });
-          resetButton.addEventListener("click", function () {
-            for (var key in themeConfig) {
-              var value = themeConfig[key];
-              document.documentElement.removeAttribute("data-bs-" + key);
-              window.localStorage.removeItem("tabler-" + key);
-              url.searchParams.delete(key);
-            }
-            checkItems();
-            window.history.pushState({}, "", url);
-          });
-          checkItems();
-        });
-    </script>
-    <!-- END PAGE SCRIPTS -->
+   <partial name="_ConfiguracionTema" />
     @* <button type="button" class="btn btn-primary" onclick="crearNotificacion()">asd asd asd asdasd asda sasdasdas dasd asda asd asd aasdnotificar</button> *@
 </body>
+<!-- inicio script personalizados-->
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script src="~/js/Shared/fechaUtils.js"></script>
+<script src="~/js/Shared/formUtils.js"></script>
+<script src="~/js/Shared/axiosRequest.js"></script>
+<script src="~/js/Tickets/index.js"></script>
+<script src="~/js/inicio.js"></script>
+
+<script>
+
+    @if (TempData["Notificacion"] != null)
+    {
+            var json = System.Text.Json.JsonSerializer.Serialize(TempData["Notificacion"]);
+            <text>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        mostrarNotificacion(@Html.Raw(json))
+                    });
+            </text>
+    }
+</script>
+<!-- fin script personalizados-->
 </html>

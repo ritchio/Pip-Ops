@@ -12,7 +12,19 @@ namespace HelpDesk.Models.Entities
         public string? SegundoNombre { get; set; }
         public required string ApellidoPaterno { get; set; }
         public string? ApellidoMaterno { get; set; }
+        public bool CambiarContrasenia { get; set; }
+        public string? NombreCompleto
+        {
+            get
+            {
+                return $"{PrimerNombre} {SegundoNombre} {ApellidoPaterno} {ApellidoMaterno}";
+            }
+        }
 
+        //autenticación de doble factor
+        public string? ClaveTOTP { get; set; }
+        public bool TOTPActivo { get; set; }
+        public DateTime? TOTPUltimaVerificacion { get; set; }
         // Estado
         public bool Activo { get; set; }
         public DateTime? FechaActivacion { get; set; }
@@ -31,7 +43,12 @@ namespace HelpDesk.Models.Entities
 
         //Areas
         public virtual ICollection<Rel_UsuarioArea> AreasUsuario { get; set; } = new List<Rel_UsuarioArea>();
-
+        
+        //tickets
+        public  ICollection<Doc_Ticket> Tickets { get; set; }
+        public  ICollection<Doc_TicketAdjunto> TicketAdjuntos { get; set; }
+        public  ICollection<Doc_TicketAsignacion> TicketAsignacion { get; set; }
+        public  ICollection<Doc_TicketRespuesta> TicketRespuesta { get; set; }
     }
 
 }

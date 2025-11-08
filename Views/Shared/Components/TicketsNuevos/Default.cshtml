@@ -1,0 +1,73 @@
+﻿@using HelpDesk.Models.ViewModels
+@using HelpDesk.Authorization
+@model List<TicketsNuevosViewModel>
+
+            <table class="table table-striped w-100" id="tablaTicketsNuevos" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Turno</th>
+                        <th>#</th>
+                        <th>Solicitante</th>
+                        <th>Plaza</th>
+                        <th>Área</th>
+                        <th>Asunto</th>
+                        <th>Cuerpo</th>
+                        <th>Tipo de Soporte</th>
+                        <th>Fecha de Solicitud</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var ticket in Model)
+                        {
+                            <tr>
+                                <td>@(ticket.Turno?.ToString("D4") ?? "")</td>
+                                <td>@(ticket.IdTicket?.ToString("D4") ?? "")</td>
+                                <td>@ticket.Solicitante</td>
+                                <td>@ticket.Plaza</td>
+                                <td>@ticket.Area</td>
+                                <td>@ticket.Asunto</td>
+                                <td>@ticket.Cuerpo</td>
+                                <td>@ticket.TipoSoporte</td>
+                                <td>@ticket.FechaSolicitud</td>
+                                <td class="text-center">
+                                <button type="button" class="btn btn-primary" onclick="mostrarDetallesTicket(@ticket.IdTicket)"><i class="ti ti-eye"></i></button>
+                                @if (Html.TieneAcceso(roles: [Roles.Administrador, Roles.AdministradorSupervisor]))
+                                {
+                                    <button type="button" class="btn btn-primary" onclick="mostrarAsignarAgente(@ticket.IdTicket)"><i class="ti ti-hand-stop"></i></button>
+                                }
+                                else if (Html.TieneAcceso(roles: [Roles.Soporte]))
+                                {
+                                    <button type="button" class="btn btn-primary" onclick="asignarTicket(@ticket.IdTicket,'auto')"><i class="ti ti-hand-stop"></i></button>
+                                }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+
+            </table>
+
+
+<script>
+    $(function(){
+    $("#tablaTicketsNuevos").DataTable({
+        responsive: true,
+        columnDefs:[
+            {
+                responsivePriority:1,
+                targets:-1
+            },
+            {
+                visible:false,
+                targets:6
+            }
+        ],
+        language:lenguajeTablaGenerica
+    });
+    $("#numeroTicketsNuevos").text('@Model.Count()')
+
+    });
+
+</script>

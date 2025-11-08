@@ -13931,6 +13931,8 @@ body[data-bs-theme=dark] .navbar[data-bs-theme=light] {
   color-scheme: light;
   --tblr-spacer: var(--tblr-spacer-2);
   --tblr-bg-surface: var(--tblr-bg-surface-primary);
+  --tblr-bg-surface-translucent:rgba(255,255,255,0.6);
+  --tblr-bg-surface-translucent-40:rgba(255,255,255,0.4);
   --tblr-bg-surface-primary: var(--tblr-white);
   --tblr-bg-surface-secondary: var(--tblr-gray-50);
   --tblr-bg-surface-tertiary: var(--tblr-gray-50);
@@ -15775,6 +15777,8 @@ Navbar vertical
   --tblr-emphasis-color-rgb: 255, 255, 255;
   --tblr-bg-forms: var(--tblr-gray-900);
   --tblr-bg-surface: var(--tblr-gray-800);
+  --tblr-bg-surface-translucent: rgba(0,0,0,0.6);
+  --tblr-bg-surface-translucent-40: rgba(0,0,0,0.4);
   --tblr-bg-surface-inverted: var(--tblr-gray-100);
   --tblr-bg-surface-secondary: var(--tblr-gray-900);
   --tblr-bg-surface-tertiary: var(--tblr-gray-800);

@@ -1,0 +1,93 @@
+﻿@using HelpDesk.Authorization
+@using HelpDesk.Models.ViewModels
+@model List<TicketsBuscarViewModel>
+<div class="row">
+    <div class="col-12 d-flex justify-content-start">
+        <i class="ti ti-search title-icon"></i>
+        <div>
+            <h2 class="page-title">Búsqueda</h2>
+            <div class="page-pretitle">Resultados de la búsqueda general de tickets</div>
+        </div>
+    </div>
+</div>
+<div class="col-12">
+    <div class="card">
+        <div class="card-header"></div>
+        <div class="card-body">
+
+            <table class="display table table-responsive table-striped" id="tablaResultadoBusqueda" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Turno</th>
+                        <th>#</th>
+                        <th>Solicitante</th>
+                        <th>Plaza</th>
+                        <th>Área</th>
+                        <th>Asunto</th>
+                        <th>Cuerpo</th>
+                        <th>Tipo de Soporte</th>
+                        <th>Agente</th>
+                        <th>Estatus</th>
+                        <th>Fecha de Solicitud</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var ticket in Model)
+                        {
+                            <tr>
+                                <td>@(ticket.Turno.ToString("D4") ?? "")</td>
+                                <td>@(ticket.IdTicket.ToString("D3") ?? "")</td>
+                                <td>@ticket.Solicitante</td>
+                                <td>@ticket.Plaza</td>
+                                <td>@ticket.Area</td>
+                                <td>@ticket.Asunto</td>
+                                <td>@ticket.Cuerpo</td>
+                                <td>@ticket.TipoSoporte</td>
+                                <td>@ticket.Agente</td>
+                                <td>@ticket.Estatus</td>
+                                <td>@ticket.FechaSolicitud</td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-primary" onclick="mostrarDetallesTicket(@ticket.IdTicket)"><i class="ti ti-eye"></i></button>
+                                    @if (Html.TieneAcceso(roles: [Roles.Administrador, Roles.AdministradorSupervisor]))
+                                    {
+                                        <button type="button" class="btn btn-primary" onclick="mostrarAsignarAgente(@ticket.IdTicket)"><i class="ti ti-hand-stop"></i></button>
+                                    }
+                                    else if (Html.TieneAcceso(roles: [Roles.Soporte]))
+                                    {
+                                        <button type="button" class="btn btn-primary" onclick="asignarTicket(@ticket.IdTicket,'auto')"><i class="ti ti-hand-stop"></i></button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+        <div class="card-footer"></div>
+    </div>
+</div>
+
+<script>
+    $(function(){
+    $("#tablaResultadoBusqueda").DataTable({
+        responsive: true,
+         columnDefs:[
+            {
+                responsivePriority:1,
+                targets:-1
+            },
+
+            {
+                visible:false,
+                targets:6
+            }
+        ],
+        language:lenguajeTablaGenerica
+    });
+    });
+
+</script>

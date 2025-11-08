@@ -14,5 +14,7 @@ namespace HelpDesk.Models.ViewModels
 
         public string? NombrePlaza { get; set; }
 
+        public string? NombreAreaPlaza => $"{Nombre} ({NombrePlaza})";
+
     }
 }

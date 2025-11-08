@@ -1,5 +1,5 @@
 ﻿@using HelpDesk.Models.ViewModels
-@model AspNetUsersViewModel
+@model CatUsuarioViewModel
 
 @{
     ViewData["Title"] = "Registro de usuario";
@@ -51,7 +51,7 @@
 
                 <div class="form-group col-sm-6">
                     <label for="IdPlaza" class="control-label">Plaza</label>
-                    <select asp-for="IdPlaza" class="form-control" asp-items="@(new SelectList(Model.Plazas, "IdPlaza", "Nombre"))" required>
+                    <select asp-for="IdPlaza" class="form-control" asp-items="@(new SelectList(Model.Plazas, "IdPlaza", "Nombre"))" required onchange="obtenerAreasPorPlaza(this.value)">
                     </select>
                     <span asp-validation-for="IdPlaza" class="text-danger"></span>
                 </div>

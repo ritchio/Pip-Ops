@@ -1,7 +1,7 @@
 ﻿async function nuevoUsuario() {
     try {
         await axiosRequest({
-            url: "/CatalogoUsuarios/Crear",
+            url: BASE_PATH + "/CatalogoUsuarios/Crear",
             funcionCallback: mostrarModalGenerico,
             parametrosCallback: { tamanio: "extra" }
         });
@@ -14,7 +14,7 @@
 async function editarUsuario(id) {
     try {
         await axiosRequest({
-            url: "/CatalogoUsuarios/Editar",
+            url: BASE_PATH + "/CatalogoUsuarios/Editar",
             funcionCallback: mostrarModalGenerico,
             parametrosCallback: { tamanio: "extra" },
             parametros: { id:id }
@@ -28,7 +28,7 @@ async function editarUsuario(id) {
 async function cambiarEstadoUsuario(id) {
     try {
         await axiosRequest({
-            url: "/CatalogoUsuarios/CambiarEstado",
+            url: BASE_PATH + "/CatalogoUsuarios/CambiarEstado",
             parametros: { id: id },
             funcionCallback: mostrarCambioEstado,
             parametrosCallback: {id:id}
@@ -48,7 +48,7 @@ function mostrarCambioEstado({ datos, id }) {
 async function mostrarPermisos(id) {
     try {
         await axiosRequest({
-            url: "/CatalogoUsuarios/ObtenerPermisosUsuario",
+            url: BASE_PATH + "/CatalogoUsuarios/ObtenerPermisosUsuario",
             funcionCallback: mostrarModalGenerico,
             parametrosCallback: { tamanio: "extra" },
             parametros: { idUsuario: id }
@@ -62,9 +62,18 @@ async function mostrarPermisos(id) {
 async function asignarPermiso(permiso,idUsuario,checkbox) {
     let seleccionado = $(checkbox).is(':checked');
     await axiosRequest({
-        url: "/CatalogoUsuarios/AsignarPermiso",
+        url: BASE_PATH + "/CatalogoUsuarios/AsignarPermiso",
         funcionCallback: mostrarNotificacion,
         parametros: { idUsuario: idUsuario, permiso: permiso, asignar: seleccionado }
+    });
+
+}
+
+async function obtenerAreasPorPlaza(idPlaza) {
+     await axiosRequest({
+        url: BASE_PATH + "/CatalogoAreas/ObtenerPorPlaza/"+idPlaza,
+         funcionCallback: rellenarTomSelect,
+         parametrosCallback: {idDestino:"IdAreas",llave:"idArea", valor:"nombre"}
     });
 
 }

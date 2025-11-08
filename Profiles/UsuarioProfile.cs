@@ -9,12 +9,12 @@ namespace HelpDesk.Profiles
         public UsuarioProfile()
         {
             // pa'delante
-            CreateMap<Cat_Usuario, AspNetUsersViewModel>()
+            CreateMap<Cat_Usuario, CatUsuarioViewModel>()
                 .ForMember(dest => dest.CorreoElectronico, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.NumeroUsuario, opt => opt.Ignore());
 
             //pa'trás
-            CreateMap<AspNetUsersViewModel, Cat_Usuario>()
+            CreateMap<CatUsuarioViewModel, Cat_Usuario>()
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.CorreoElectronico))
                 .ForMember(dest => dest.NumeroUsuario, opt => opt.Ignore());
 

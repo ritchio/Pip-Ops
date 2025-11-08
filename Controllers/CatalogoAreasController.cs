@@ -12,25 +12,24 @@ using HelpDesk.Services.Area.Interfaces;
 using HelpDesk.Models.Utils;
 using HelpDesk.Services.Plaza.Interfaces;
 using System.Numerics;
+using Microsoft.AspNetCore.Authorization;
+using System.Text.Json;
 
 namespace HelpDesk.Controllers
 {
-    public class CatalogoAreasController : Controller
+    [Authorize]
+    public class CatalogoAreasController(
+        IAreaService areaService,
+        IPlazaService plazaService
+            ) : Controller
     {
         #region [ Atributos ]
-        private readonly IAreaService _areaService;
-        private readonly IPlazaService _plazaService;
+        private readonly IAreaService _areaService = areaService;
+        private readonly IPlazaService _plazaService = plazaService;
+
         #endregion [ Atributos ]
 
-        public CatalogoAreasController(
-            IAreaService areaService,
-            IPlazaService plazaService
-            )
-        {
-            _areaService = areaService;
-            _plazaService = plazaService;
-        }
-
+        #region [ Consulta ]
         public async Task<IActionResult> Index()
         {
             var AreasViewModel = await _areaService.ObtenerAreasAsync();
@@ -47,6 +46,29 @@ namespace HelpDesk.Controllers
             return View(Area);
         }
 
+        [HttpGet]
+        [Route("CatalogoAreas/ObtenerPorPlaza/{idPlaza:int}")]
+        public async Task<IActionResult> ObtenerPorPlaza(int idPlaza)
+        {
+            var respuesta =  new RespuestaGenerica<List<CatAreaViewModel>>();
+
+            try
+            {
+                var areas = await _areaService.ObtenerAreasPorPlazaAsync(idPlaza);
+                respuesta.Exito = true;
+                respuesta.Datos = areas.Where(a => a.Activo == true).ToList();
+            }
+            catch (Exception ex)
+            {
+                respuesta.Exito = false;
+                respuesta.Mensaje = "Error al obtener las áreas por plaza: " + ex.Message;
+            }
+
+            return Ok(respuesta);
+        }
+        #endregion [ Consulta ]
+
+        #region [ Modificaciones ]
         public IActionResult Crear()
         {
             return View();
@@ -58,10 +80,20 @@ namespace HelpDesk.Controllers
         {
             if (ModelState.IsValid)
             {
-                var success = await _areaService.CrearAreaAsync(Area);
-                if (success) return RedirectToAction("Index", "CatalogoPlazas");
+                var respuesta = await _areaService.CrearAreaAsync(Area);
+                TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
             }
-            return View(Area);
+            else
+            {
+                var respuesta = new RespuestaGenerica<string>
+                {
+                    Exito = false,
+                    Mensaje = "Error al crear el área. Verifique los datos ingresados."
+                };
+                TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+            }
+            
+            return RedirectToAction("Index", "CatalogoPlazas");
         }
         public async Task<IActionResult> Editar(int? id)
         {
@@ -96,10 +128,22 @@ namespace HelpDesk.Controllers
 
             if (ModelState.IsValid)
             {
-                var success = await _areaService.ActualizarAreaAsync(Area);
-                if (success) return RedirectToAction("Index", "CatalogoPlazas");
+                var respuesta = await _areaService.ActualizarAreaAsync(Area);
+                TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                return RedirectToAction("Index", "CatalogoPlazas");
+
             }
-            return View(Area);
+            else
+            {
+                var respuesta = new RespuestaGenerica<string>
+                {
+                    Exito = false,
+                    Mensaje = "Error al actualizar el área. Verifique los datos ingresados."
+                };
+                TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                return RedirectToAction("Index", "CatalogoPlazas");
+            }
+
         }
 
         public async Task<IActionResult> CambiarEstado(int? id)
@@ -112,11 +156,14 @@ namespace HelpDesk.Controllers
             var respuesta = new RespuestaGenerica<string>
             {
                 Exito = true,
-                Mensaje = "Estatus del area cambiado con éxito.",
+                Mensaje = "Estatus del área ha cambiado con éxito.",
                 Datos = area ? "Activo" : "Inactivo"
             };
 
             return Ok(respuesta);
         }
+
+        #endregion [ Modificaciones ]
+
     }
 }

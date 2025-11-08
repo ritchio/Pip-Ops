@@ -1,4 +1,16 @@
-﻿function mostrarNotificacion(respuesta) {
+﻿const BASE_PATH = "/HelpDesk";
+//const BASE_PATH = "";
+
+$(function () {
+    // tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+  
+})
+
+function mostrarNotificacion(respuesta) {
     try {
         if (typeof respuesta === "string") {
             // Parseamos y convertimos las claves a minúsculas
@@ -11,23 +23,48 @@
             }
         }
         console.log(respuesta);
-        const { exito, mensaje, datos, redireccion } = respuesta;
+        const { exito, mensaje, datos, redireccion, llamada } = respuesta;
 
-        $("#notificacionTitulo").text(exito?"Notificación":"Error");
+        if (exito) {
+            $("#notificacionTitulo").text("Notificación");
+            $("#notificacionCabecera").removeClass("bg-danger");
+            $("#notificacionCabecera").addClass("bg-info");
+           
+        } else {
+            $("#notificacionTitulo").text("Error");
+            $("#notificacionCabecera").removeClass("bg-info");
+            $("#notificacionCabecera").addClass("bg-danger");
+        }
+        
         
 
         $("#notificacionMensaje").html(
             exito ? mensaje || 'Operación exitosa' : `<p class="text-danger">${mensaje}</p>` || '<p class="text-danger">Ocurrió un error</p>'
         );
 
-        if (datos && mensaje == null) {
+        if (datos != null && mensaje == null) {
             $("#notificacionMensaje").text(datos);
         }
 
-        const toast = new bootstrap.Toast(document.getElementById('notificacionToast'));
+        const toast = new bootstrap.Toast(document.getElementById('notificacionToast')); 
         toast.show();
 
-        if (redireccion) {
+        //console.log(typeof llamada);
+        //llamada a funcion
+        if (llamada != null) {
+           if (llamada != null) {
+               if (typeof llamada === "string" && typeof window[llamada] === "function") {
+                   window[llamada](datos);
+               } else if (typeof llamada === "function") {
+                   llamada(datos);
+               } else {
+                   console.log(`No existe la función ${llamada}`);
+               }
+            }
+        }
+
+
+        if (redireccion != null) {
             setTimeout(() => window.location.href = redireccion, 2000);
         }
     } catch (e) {
@@ -76,11 +113,7 @@ function mostrarModalGenerico(html=null,tamanio="normal") {
     }
     
 }
-// tooltips
-var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl)
-});
+
 
 
 //Lenguaje de tablas
@@ -263,6 +296,36 @@ const lenguajeTablaGenerica = {
     },
     "info": "Mostrando de _START_ a _END_ de _TOTAL_ entradas"
 };
+
+
+function solicitarPermisoNotificaciones() {
+    if ("Notification" in window) {
+        Notification.requestPermission().then(function (permiso) {
+            if (permiso === "granted") {
+                console.log("Permiso de notificaciones concedido.");
+            } else {
+                console.log("Permiso de notificaciones denegado.");
+            }
+        });
+    }
+}
+
+function mostrarNotificacionEscritorio(titulo, mensaje) {
+    if (Notification.permission === "granted") {
+        const opciones = {
+            body: mensaje,
+            //icon: "/icono-notificacion.png", // opcional, usa un ícono si tienes uno
+        };
+
+        const noti = new Notification(titulo, opciones);
+
+        // (Opcional) redirigir al hacer clic
+        noti.onclick = () => {
+            window.focus();
+            noti.close();
+        };
+    }
+}
 
 //if (Notification.permission === "default") {
 //    Notification.requestPermission().then(permission => {

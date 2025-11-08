@@ -11,9 +11,12 @@ using HelpDesk.Models.ViewModels;
 using HelpDesk.Services.Plaza.Interfaces;
 using HelpDesk.Services.Area.Interfaces;
 using HelpDesk.Models.Utils;
+using Microsoft.AspNetCore.Authorization;
+using System.Text.Json;
 
 namespace HelpDesk.Controllers
 {
+    [Authorize]
     public class CatalogoPlazasController : Controller
     {
         #region [ Atributos ]
@@ -78,10 +81,16 @@ namespace HelpDesk.Controllers
         {
             if (ModelState.IsValid)
             {
-                var success = await _plazaService.CrearPlazaAsync(plaza);
-                if (success) return RedirectToAction(nameof(Index));
+                var respuesta = await _plazaService.CrearPlazaAsync(plaza);
+
+                TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                return RedirectToAction(nameof(Index));
             }
-            return View(plaza);
+            else
+            {
+                return BadRequest();
+            }
+            
         }
         public async Task<IActionResult> Editar(int? id)
         {
@@ -107,10 +116,22 @@ namespace HelpDesk.Controllers
 
             if (ModelState.IsValid)
             {
-                var success = await _plazaService.ActualizarPlazaAsync(plaza);
-                if (success) return RedirectToAction(nameof(Index));
+                var respuesta = await _plazaService.ActualizarPlazaAsync(plaza);
+
+                TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                return RedirectToAction(nameof(Index));
             }
-            return View(plaza);
+            else
+            {
+                var respuesta = new RespuestaGenerica<string>
+                {
+                    Exito = false,
+                    Mensaje = "Error al actualizar la plaza. Verifique los datos ingresados."
+                };
+                TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                return RedirectToAction(nameof(Index));
+
+            }
         }
 
         public async Task<IActionResult> CambiarEstado(int? id)
@@ -121,7 +142,7 @@ namespace HelpDesk.Controllers
 
             var respuesta = new RespuestaGenerica<string> {
                 Exito = true,
-                Mensaje = "Estatus de la plaza cambiado con éxito.",
+                Mensaje = "Estatus de la plaza ha cambiado con éxito.",
                 Datos = plaza?"Activo":"Inactivo"
             };
 
