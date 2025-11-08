@@ -219,15 +219,33 @@ namespace HelpDesk.Controllers
             return Ok(respuesta);
         }
 
-        [HttpGet("/Tickets/Asignar/{idTicket}/{idUsuario}")]
-        public async Task<IActionResult> Asignar(int idTicket, string idUsuario)
+        [HttpGet("/Tickets/Asignar/{idTicket}/{idUsuario}/{reasignado}")]
+        public async Task<IActionResult> Asignar(int idTicket, string idUsuario, bool reasignado)
         {
             var ticket = await _ticketService.ObtenerPorId(idTicket);
             var usuario = await _usuarioService.ObtenerUsuarioActual(User);
+            var permisos = await _usuarioService.ObtenerPermisosDeUsuario(usuario.Id);
+            var esReasignacion = ticket.Asignacion != null && ticket.Asignacion.Any(a => a.Activo == true);
             if (idUsuario == "auto")
             {
+                if (esReasignacion)
+                {
+                    if (reasignado == false
+                        || permisos.Any(p => p.Valor == Permisos.Ticket.ReAsignar && p.Asignado == false)
+                        || usuario.RolNombre == Roles.Soporte
+                        || usuario.RolNombre == Roles.Usuario)
+                    {
+                        var respuesta = new RespuestaGenerica<string>
+                        {
+                            Exito = false,
+                            Mensaje = $"El ticket #{idTicket} ya ha sido asignado a otro agente.",
+                        };
+                        TempData["Notificacion"] = JsonSerializer.Serialize(respuesta);
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
                 
-                idUsuario = usuario.Id;
+                    idUsuario = usuario.Id;
             }
 
             var result = await _ticketService.Asignar(idTicket, idUsuario,usuario.Id);

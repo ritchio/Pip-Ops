@@ -10,8 +10,8 @@
         <label >Seleccione el agente</label>
         <select class="form-control" id="idUsuarioAsignar" asp-items="@(new SelectList(Model,"Id","NombreCompleto"))"></select>
        <div class="mt-4">
-            <button class="btn btn-primary" onclick="asignarTicket($('#idTicketAsignar').val(),$('#idUsuarioAsignar').val())">Asignar Agente</button>
-            <button class="btn btn-primary" onclick="asignarTicket($('#idTicketAsignar').val(),'auto')">Tomar el ticket</button>
+            <button class="btn btn-primary" onclick="asignarTicket($('#idTicketAsignar').val(),$('#idUsuarioAsignar').val(),true)">Asignar Agente</button>
+            <button class="btn btn-primary" onclick="asignarTicket($('#idTicketAsignar').val(),'auto',true)">Tomar el ticket</button>
        </div>
     </div>
 </div>

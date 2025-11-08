@@ -43,6 +43,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString)
     .LogTo(Console.WriteLine, LogLevel.Information)
     );
+//secondary connection string for the secondary database
+//var connectionString2 = builder.Configuration.GetConnectionString("SecondaryConnection") ?? throw new InvalidOperationException("Connection string 'SecondaryConnection' not found.");
+//builder.Services.AddDbContext<SecondaryDbContext>(options =>
+//    options.UseSqlServer(connectionString2)
+//    .LogTo(Console.WriteLine, LogLevel.Information)
+//    );
 
 builder.Logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Error);
 

@@ -638,7 +638,10 @@ namespace HelpDesk.Services.Ticket.Services
 
                 //traer los el total de tickets capturados
                 var totalTickets = await _context.Doc_Ticket
-                    .Where(t => t.FechaCreacion >= fechaInicio && t.FechaCreacion <= fechaFinal)
+                    .Where(t => t.FechaCreacion >= fechaInicio 
+                    && t.FechaCreacion <= fechaFinal 
+                    && t.IdEstadoTicket != EstadoTicket.Rechazado 
+                    && t.IdEstadoTicket != EstadoTicket.PorAutorizar)
                     .CountAsync();
 
                 var reporte = await _context.Cat_Usuario
@@ -647,9 +650,10 @@ namespace HelpDesk.Services.Ticket.Services
                 .Where(r => r.RolesUsuario.FirstOrDefault().Rol.Name != Roles.Usuario)
                 .GroupJoin(
                     _context.Doc_Ticket
+                    .Include(ta=> ta.Asignacion)
                         .Where(t => t.FechaCreacion >= fechaInicio && t.FechaCreacion <= fechaFinal),
                     user => user.Id,
-                    ticket => ticket.IdUsuario,
+                    ticket => ticket.Asignacion.Where(a=>a.Activo).FirstOrDefault().IdUsuario,
                     (user, tickets) => new ReporteAgenteViewModel
                     {
                         IdUsuario = user.Id,

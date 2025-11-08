@@ -1,5 +1,5 @@
-﻿const BASE_PATH = "/HelpDesk";
-//const BASE_PATH = "";
+﻿//const BASE_PATH = "/HelpDesk";
+const BASE_PATH = "";
 
 $(function () {
     // tooltips
@@ -326,47 +326,3 @@ function mostrarNotificacionEscritorio(titulo, mensaje) {
         };
     }
 }
-
-//if (Notification.permission === "default") {
-//    Notification.requestPermission().then(permission => {
-//        if (permission === "granted") {
-//            mostrarNotificacionAvanzada("Permiso concedido", {
-//                body: "Ahora recibirás notificaciones importantes"
-//            });
-//        }
-//    });
-//}
-
-
-//function crearNotificacion() {
-//    let ruta = "https://localhost:7196/CatalogoUsuarios";
-//    const timestamp = Date.now(); 
-
-//    Push.create("Notificación de prueba", {
-//        body: "Esta es una notificación de prueba con polling",
-//        timeout: 5000,
-//        onClick: function () {
-//            window.focus();
-//            this.close();
-//            //agregamos la ruta al storage pa que sea accesible desde la pestaña activa
-//            localStorage.setItem("notificacion-redireccion", JSON.stringify({
-//                url: ruta,
-//                timestamp: timestamp
-//            }));
-//            //en lugar de un eventListener  polleamos el storage después de crear la notificación
-//            //así en teoría la redirección no recae en la notificación, si no de la pestaña activa
-//            const intervalId = setInterval(() => {
-//                const data = localStorage.getItem("notificacion-redireccion");
-//                if (data) {
-//                    const parsed = JSON.parse(data);
-//                    if (parsed.timestamp === timestamp) {
-//                        clearInterval(intervalId); //pa que solo sea durante la notificación
-//                        localStorage.removeItem("notificacion-redireccion");
-//                        window.location.href = parsed.url;
-//                        //window.open(parsed.url, "_self"); //en mi navegador también funciona de esta manera
-//                    }
-//                }
-//            }, 500);
-//        }
-//    });
-//}
